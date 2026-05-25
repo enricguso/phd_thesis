@@ -1,0 +1,91 @@
+%\documentclass[11pt,b5paper,twoside,showtrims,openright]{memoir} show trims for printing
+\documentclass[11pt,b5paper,twoside,openright]{memoir}
+\input{ch00/0_imports.tex}
+\input{ch00/0_variables.tex}
+\input{ch00/0_user_config.tex}
+
+% \makesavenoteenv{tabular}
+% \makesavenoteenv{table}
+
+% Estil dels capitols (consulteu estils disponibles a http://www.imf.au.dk/system/latex/artikler/MemoirChapStyles/MemoirChapStyles.pdf)
+% \chapterstyle{veelo}
+% \chapterstyle{ell}
+% \chapterstyle{bianchi}
+\input{ch00/mychapterstyles}
+% \chapterstyle{mycombined}
+\chapterstyle{myveelo}
+
+% Labels when enumerating
+%\renewcommand{\labelenumi}{\alph{enumi})}
+%\renewcommand{\labelenumii}{\alph{enumii})}
+
+%quote al final
+\renewenvironment{quotation}
+  {\begin{trivlist} \setlength\leftskip{2cm} \setlength\rightskip{0pt}
+   \item\relax}
+  {\end{trivlist}}
+
+
+% ************ Lines for draft mode ************
+% \usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm,bindingoffset=0.8cm,includeheadfoot,paper=b5paper]{geometry}
+% \linespread{1.6}
+% **********************************************
+
+\hyphenation{Universitat Pompeu Fabra}
+
+\begin{document}
+\parindent0ex
+\selectlanguage{british}
+
+\include{ch00/portada}
+
+\frontmatter
+\include{ch00/preliminarystuff}
+
+%\cleartorecto
+%\input{ch00/abstract}
+\cleartorecto\tableofcontents % presenta la taula de continguts
+\renewcommand*\listfigurename{List of figures}
+\cleartorecto\listoffigures % presenta la llista de figures
+\renewcommand*\listtablename{List of tables}
+\cleartorecto\listoftables % presenta la llista de taules
+\cleartorecto\include{ch00/matematiques}
+
+
+
+\mainmatter
+\cleartorecto\include{ch01_introduction/introduction}
+\cleartorecto\include{ch02_sb/scientific_background}
+%\cleartorecto\include{ch03_data/datasets}      % chapter not yet written
+%\cleartorecto\include{ch04_melody/main}         % chapter not yet written
+%\cleartorecto\include{ch05_sep_nongen/main}     % chapter not yet written
+%\cleartorecto\include{ch06_sep_gen/main}        % chapter not yet written
+%\cleartorecto\include{ch07_misc/main}           % chapter not yet written
+\cleartorecto\include{ch98_conclusions/conclusions}
+
+
+\backmatter
+
+%\bibliographystyle{plainnat}
+% \bibliographystyle{apalike2-url-doi}
+%\bibliographystyle{apa_jserra}
+%\cleartorecto\small\bibliography{ch99/jserra}\normalsize
+
+%\cleartorecto\footnotesize\bibliography{ch99/jserra}\normalsize
+
+\cleartorecto\include{ch99/finalpage}
+\bibliographystyle{apa_jserra2}
+\cleartorecto\bibliography{references_unified}
+
+
+
+\let\svaddcontentsline\addcontentsline
+\renewcommand\addcontentsline[3]{%
+  \ifthenelse{\equal{#1}{lof}}{}%
+  {\ifthenelse{\equal{#1}{lot}}{}{\svaddcontentsline{#1}{#2}{#3}}}}
+
+\appendix
+\cleartorecto\include{ch99/pubs}
+\cleartorecto\newpage\thispagestyle{empty}\mbox{}
+
+\end{document}

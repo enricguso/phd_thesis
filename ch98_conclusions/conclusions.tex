@@ -1,0 +1,115 @@
+%! TeX root: ../thesis_a4.tex
+
+\chapter[Conclusion and future perspectives]{Conclusion and\\future perspectives}
+\label{chapter:conclusion}
+% General description of the thesis. Area of study and things researched
+This thesis presents a comprehensive exploration of \acrfull{DL} methods for the analysis and processing of vocal music, using Carnatic music as a case of study. The work is motivated by the need for high-quality, repertoire-specific data and methods to address the unique challenges posed by the musical and performance practices of this musical style. We focus on the tasks of \acrfull{VME} and \acrfull{SVE}, aiming at having an impact on the field of computational musicology.
+%contributing to the field of computational musicology.
+
+% In summary, Chapter~\ref{ch01_intro} defines the motivation, scope, and goals of this thesis, and summarizes the main contributions. 
+% %The precedent projects and initiatives that supported this thesis are also introduced.
+% %
+% Chapter~\ref{ch02_sb} provides the necessary musical and technical background for the reader to understand the challenges and opportunities in the computational analysis of Carnatic music. First, it introduces the concepts and practices of Carnatic music that are key for this thesis. It subsequently reviews existing literature on melodic analysis for Carnatic and Hindustani music, and it introduces the tasks of \acrshort{VME} and \acrshort{SVE}, highlighting the limitations of current approaches. % and the need for repertoire-specific data.
+% %
+% Chapter~\ref{ch03_data} presents the existing data collections for the computational, musicological study of Carnatic and Hindustani music, and it introduces the Saraga dataset, a large collection of live, multi-stem recordings of Carnatic music. This chapter also discusses the efforts undertaken toward data curation and dissemination. The Saraga dataset serves as a foundation for the subsequent studies in this thesis.
+
+% Having the background and data in place, Chapter~\ref{ch04_melody} presents a novel approach to automatically generate a large collection of vocal pitch annotations for Carnatic music, and how these annotations are used to train a tailored \acrshort{DL} model to improve \acrshort{VME} and subsequently, to discover melodic patterns in the repertoire. Chapter~\ref{ch05_sep_nongen} introduces a bleeding-aware \acrshort{SVE} system that leverages the inherent knowledge in live, multi-stem recordings of Carnatic music. Chapter~\ref{ch06_sep_gen} explores the potential of generative diffusion models for \acrshort{SVE}, using both waveform and latent diffusion frameworks. Building on these, a bleeding-level guidance for latent diffusion sampling is introduced. It improves the generation and separation quality of the model at inference time.
+
+
+% Finally, Chapter~\ref{ch07_misc} presents \texttt{compIAM}, a unified framework that provides access to datasets, tools, and pre-trained models for the computational analysis of Carnatic and Hindustani music, facilitating further research in the field. This chapter also introduces \texttt{dmx-diffusion}, a framework for generative diffusion-based source separation research, which provides a unified interface for training and running inference with diffusion models for the separation task.
+
+
+To conclude, this final chapter discusses the contributions of this thesis, and outlines future perspectives for research in the field of computational musicology, particularly in the context of Carnatic music. We close this dissertation by giving some final thoughts on the impact of this work and the potential of the research lines that have been studied.
+
+
+\section{Summary of contributions}
+This thesis contributes to the field of computational musicology, emphasizing the importance of repertoire-specific methods that incorporate musical and performance traits. %Contributing to music dataset dissemination and making tools and models available to the community is a high priority in this thesis.
+%
+The main contributions of this work are:
+
+\begin{itemize}
+    \item \textbf{Data curation and dissemination efforts.} We work toward a standardized and robust dissemination of the Saraga dataset and the \acrshort{IAM} corpora in Dunya. We extensively contribute to \texttt{mirdata} and \texttt{soundata} by leading the development of new dataloaders–-including several datasets for \acrshort{IAM} –-core improvements, and bug fixes.
+    \item \textbf{A large and self-contained vocal pitch annotated dataset for Carnatic music and a \acrshort{SOTA} trained network for \acrshort{VME}.} We develop a repertoire-specific analysis/synthesis pipeline to automatically generate a large collection of vocal pitch annotations for Carnatic music. We publish the dataset under the name of SCMS. We use the Saraga dataset as input, which serves as a rich source real-world data for our approach. The SCMS is used to train a tailored \acrshort{DL} model for \acrshort{VME}, achieving \acrshort{SOTA} performance and showing positive impact for the task of melodic pattern discovery. We perform a cross-cultural experiment showing the impact of domain shift in \acrshort{DL}-based melody estimation.
+    \item \textbf{A bleeding-aware system for \acrshort{SVE}.} We propose a bleeding-aware system to train a singing voice separator using live, multi-stem recordings for Carnatic music, exploiting the inherent domain information in the training data. We compare our system against a broadly-used model for Carnatic and Hindustani music research, showing the potential of the approach on removing the Carnatic accompaniment.
+    \item \textbf{A generative diffusion framework for \acrshort{SVE}.} We establish a base of diffusion-based generative separation research, exploring the potential of architecturally-conditioned \acrshort{DDPM} to separate the singing voice from music mixtures. Relying on clean, studio-recorded multi-stem recordings, we first propose a waveform generation model that is able to separate the singing voice from music mixtures, and then we extend the framework to latent diffusion. This enables a more efficient training and sampling, and it has enabled the work in this thesis in a context of limited resources.
+    \item \textbf{A bleeding-aware generative singing voice separator.} We propose bleeding level guidance for latent diffusion sampling, which improves the generation and separation quality of a latent diffusion model pre-trained on the Saraga multi-stem audio.
+    \item \textbf{Unified, open frameworks for further research.} We code and publish \texttt{compIAM} and \texttt{dmx-diffusion}, two open-source frameworks that provide easy access to the tools and models developed in this thesis. While \texttt{compIAM} hosts access to datasets, tools, and pre-trained models for the computational analysis of Carnatic and Hindustani music, \texttt{dmx-diffusion} provides a unified framework for generative diffusion-based source separation research. Both frameworks are designed to be user-friendly and accessible to researchers and practitioners in the field.
+\end{itemize}
+
+
+\section{Summary and discussion}
+
+%The work presented in this thesis represents a significant step forward in the integration of \acrshort{DL} systems into musicological analysis pipelines, particularly for the computational analysis of Carnatic and Hindustani music. By addressing the challenges of data scarcity, repertoire-specific features, and the need for high-quality annotations, this research paves the way for more robust and scalable approaches to music processing and analysis. The open-source tools and models developed in this thesis are expected to have a lasting impact on the field, facilitating further research and enabling more confident and insightful outcomes in musicological studies.
+
+
+This dissertation advances toward easing the integration of \acrshort{DL} systems into computational musicology pipelines, exploiting their potential for robust, scalable, and high-performance analysis and processing of music signals. The scope of this thesis is two-fold, focusing on two important vocal processing tasks for Carnatic and Hindustani music.  
+
+
+In Chapter~\ref{ch04_melody} we present a Carnatic-tailored pitch annotation pipeline to gather training and evaluation data for \acrshort{VME}. The compiled dataset–-which corresponds, to the best of our knowledge, to the largest collection for this particular purpose–-is used to train a model for Carnatic music, showing \acrshort{SOTA} performance and positive impact for the task of melodic pattern discovery. We also perform cross-cultural evaluations showing the impact of the repertoire domain in the melody estimation problem.
+
+However, this research is inherently limited by the numerous processing steps involved, which may affect the signal quality of the synthesized data or introduce artifacts. Although the trained \acrshort{VME} model shows positive impact for vocal melody estimation and subsequently, melodic pattern discovery, we acknowledge room for improvement which may be achieved by introducing improved or further tailored methods into the proposed pipeline. 
+
+
+
+
+In Chapter~\ref{ch05_sep_nongen} we propose a bleeding-aware strategy to train a \acrshort{DL} separation system using live, multi-stem recordings, exploiting the inherent domain knowledge in the data. By proposing a multi-step separation scheme inspired by the underlying definition of the forward diffusion process, we enable the development of a \acrshort{SVE} system using solely in-domain data with source bleeding. This enables an improved suppression of the Carnatic-specific accompaniment.
+
+
+
+Nevertheless, the gains on accompaniment removal capability come at a cost; there is a clear quality-interference trade-off, and the singing voice quality is degraded mostly given the potential loss of effects like vocal reverb and details in the high-frequency. %The non-linear correspondence between the singing voice in the mixture and the individual vocal stem–-in addition to the inherent bleeding–-adds another layer of complexity, suggesting the need for technologies that can account for these challenges in a more flexible manner.
+
+
+
+In Chapter~\ref{ch06_sep_gen} we introduce generative modeling for the separation task. %First, we explore the use of \acrshort{DDPM} to separate the singing voice using clean, studio recorded multi-stem recordings.
+Similarly to the research scheme in Chapter~\ref{ch05_sep_nongen}, we first rely on the clean, multi-stem datasets for Western commercial music to experiment first with waveform diffusion, and later with latent diffusion, the latter enabling alleviated computational cost and data dependence.
+%
+For our problem, while the waveform-based \acrshort{DDPM} achieves competitive scores on the standard separation metrics, this is only if leveraging extra training data. On the other hand, despite phase- and codec-related artifacts arise, the \acrshort{LDM} framework enables a more efficient training and sampling, and it has enabled the work in this thesis in a context with very limited resources. 
+
+
+Subsequently, we leverage the research idea from our work in \citep{shankar-disentangling} and use a bleeding estimator network to
+%to fine-tune
+%toward cleaner predictions, a separator that has been pre-trained using data with source bleeding. We 
+guide an \acrshort{LDM} for separation toward cleaner predictions. The research objective is to train the separator using Carnatic, live multi-stem recordings with source bleeding, while targeting further cleaning by nudging the diffusion sampling process toward the direction of $0$-bleeding. Despite the spectral metrics showing improvement, we struggle again with the vocal quality, which has room for improvement. We hypothesize that further enhancements–-e.g. Carnatic-tuned latent encoding or a better bleeding ratio predictor–-may potentially raise the fidelity. Also, this latter approach is composed of several building blocks, increasing the computational demands and the risk of introducing perceptible generation artifacts if pushing the generation trajectory too far from the learned manifold.
+
+
+
+
+Finally, in addition to the contributions to \texttt{mirdata} and \texttt{soundata}, we release two open-source frameworks: \texttt{compIAM} and \texttt{dmx-diffusion}. The former provides easy and unified access to datasets, tools and models––in most of the occasions pre-trained––for the computational analysis of Carnatic and Hindustani music. The latter provides a unified framework for generative diffusion-based source separation research. Despite the need for further growth and maintenance, which requires from regular fixes and updates, both frameworks represent a valuable contribution of this thesis.
+
+
+\section{Directions for future research}
+The work in this thesis opens up several avenues for future research. Some of the most promising directions include:
+
+\paragraph*{Extending the proposed pipelines to other domains.}
+\begin{itemize}
+    \item \textbf{Other repertoires.} We hypothesize that the work in this dissertation can be reproduced in other repertoires that share similar challenges and performance practices, being the other music cultures considered in the CompMusic project great examples. However, any repertoire featuring live performances could benefit from the approaches proposed here.
+    \item \textbf{Other instruments.} Within the context of this thesis, separation experiments on violin separation have been conducted, showing promising performance on explicitly disentangling vocals from violin. Moreover, the work in Chapter~\ref{ch04_melody} has been extended to the violin as well.\footnote{Implemented, trained and kindly provided by VV Krishnan. The model is documented in \url{https://mtg.github.io/compIAM/source/melody.html\#ftaresnet-carnatic}, and can be quickly loaded using \texttt{compiam.load\_model("melody:ftaresnet-carnatic-violin")}.} This suggests that there is a strong potential to extend the proposed pipelines to other instruments within the Carnatic repertoire and beyond.
+\end{itemize}
+
+
+\paragraph*{Source quality improvements on the separation work.}
+The reported results indicate that the interferences/artifacts trade-off is very much present in the proposed systems. While the accompaniment removal performance is competitive, the singing voice quality is degraded, especially in the high-frequency end. Future work could focus on improving the quality of the separated sources, possibly by exploring more sophisticated generative models or by improving individual elements of the proposed pipelines.
+
+
+\paragraph*{Evaluate the generalization of diffusion models for \acrshort{SVE}.} While in this thesis we have focused on directly leveraging the available live, multi-stem recordings for \acrshort{VME} and \acrshort{SVE}, it would be relevant to thoroughly evaluate the generalization potential of \acrshort{DDPM}, exploring to which extent, these systems present–-or not–-improved generalization between repertoires. 
+
+
+\paragraph*{Leveraging in-domain systems between tasks.} We propose, for thorough further investigation, to: \textbf{(i)} rely on our bleeding-aware separation systems for the vocal pitch generation pipeline, \textbf{(ii)} pitch-informed separation using FTANet-Carnatic~\citep{petermann-choir,richard-fully}, or even joint or cascaded separation and pitch estimation for Carnatic vocals or violin~\citep{jansson-joint,wei-djcm}. The two main \acrshort{MIR} tasks we address have shown potential when integrated together, and although this is out of the scope of this thesis, it can bring performance benefits and open up new lines of research.
+
+
+\paragraph*{Maintaining and enhancing the open-source tools.}
+Open-source, practical tools inherently require maintenance and improvement. The tools and models released in this thesis are already being adopted in musicological studies, supporting more reliable and insightful outcomes. However, the community is encouraged to contribute to the development of these tools, either by improving the existing code or by adding new features and functionalities. This will not only enhance the usability of the tools but also ensure that they remain relevant and up-to-date with the latest advancements in the field.
+
+
+
+\section{Final thoughts}
+The rapid advancements in \acrshort{DL} are constantly shaping the landscape of music technology, reframing computational musicology pipelines. However, challenges such as data scarcity and the need for high-quality and repertoire-specific features remain significant hurdles to overcome. Leveraging \acrshort{AI} systems toward a scalable analysis and processing of music repertoires is a complex task that requires careful consideration of each particular case and its unique traits. This thesis is an example of how the practical and theoretical particularities can motivate an extensive and diverse set of research efforts for music repertoires that are underrepresented in the \acrshort{MIR} community. %–-considering also how specific and well-defined is the scope of our work.
+
+
+\acrshort{DL} is a powerful tool that can help bridge these gaps, but it is essential to approach its application with a deep understanding of the musical context. The black box paradigm attributed to \acrshort{DL} systems creates skepticism in the music community, and they are not to blame, since music analysis, understanding, and learning really comes from nuanced and comprehensive studies that consider the cultural, performance, and theoretical aspects. It is crucial to encourage interdisciplinary collaboration between musicologists, musicians, and computer scientists to develop more robust and effective systems that can truly enhance the understanding of music.
+
+
+In this thesis, we frame \acrshort{DL} as a scalable tool to assist musicological studies, but we do not directly touch on steering musical knowledge from data collections explicitly. Instead, we focus on leveraging real and open data for the computational research on Carnatic music, and attempt to provide \acrshort{DL} systems to clean and retrieve information from the singing voice.
+%This is a complex task that requires interpretable techniques and a deep understanding of the musical context.
+%While we have made significant strides in developing tools and models that can assist in the analysis of Carnatic and Hindustani music, 
+We envision that future research will continue to explore the potential of \acrshort{DL} to uncover new insights from music repertoires by integrating the knowledge of musicologists and musicians into the design and development of these systems. We hope this enables the graceful insertion of \acrshort{DL} into musicological studies converting it into a powerful ally that aligns with creative and cultural practices.

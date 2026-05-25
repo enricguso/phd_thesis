@@ -1,0 +1,20 @@
+\vspace{-0.7cm}
+Deep learning (DL) systems have shown promise to assist musicological studies, especially to process and extract information from music audio signals. However, the practical application of DL into musicological research remains limited. Moreover, DL systems are generally designed and optimized for Western commercial music, and often fail to generalize to other music repertoires due to fundamental differences in concepts and practices. Carnatic music
+%, an Indian Art music tradition,
+exemplifies this problem with its intricate melodic embellishments, intrinsic improvisation, and unique instrumentation. The lack of large, annotated data, and the shortage of tailored methods to bridge the domain gap, compel researchers to use heuristic solutions that do not scale and often yield suboptimal performance.
+%
+This highlights the need for DL approaches that explicitly incorporate the unique qualities, performance practices, and cultural context of each style.
+
+%for DL approaches that prioritizes the unique qualities, performance practices, and cultural context of each repertoire.
+
+
+This thesis addresses two critical tasks in Carnatic music processing: vocal melody estimation and singing voice extraction, and it begins with the curation of datasets, prioritizing the Saraga collection, which includes live, multi-stem recordings with source bleeding.
+%
+An analysis/synthesis pipeline to compile artificial vocal pitch annotations is tailored to these data, enabling Carnatic-tuned training of a DL model for vocal melody estimation. For singing voice extraction, a separation system inspired on diffusion models is employed to iteratively transform mixtures into vocal tracks with inherent bleeding, later utilizing the evolution of spectrogram bins to construct the separation masks. 
+%This approach is first validated on clean studio recordings and later extended to Saraga.
+Subsequently, a generative diffusion framework is developed, progressing from waveform to latent diffusion, extending finally the diffusion sampling to account for the source bleeding in Carnatic live recordings. Objective and perceptual evaluations
+%both objective and through expert listening tests,
+show that the tailored approaches achieve state-of-the-art performance in vocal pitch estimation and accompaniment removal for Carnatic music. Experiments using the outputs of the tailored systems indicate improved performance in computational musicology tasks. This thesis also advances toward establishing a foundation for generative separation research.
+
+
+This thesis contributes with open code frameworks to integrate DL methods into computational musicology pipelines, enabling off-the-shelf access to datasets and pre-trained models for processing raw Carnatic music audio. The released models in this thesis are already being adopted in musicological studies, supporting more reliable and insightful outcomes.

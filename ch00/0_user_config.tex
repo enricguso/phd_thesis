@@ -1,0 +1,103 @@
+%--------------------
+% Notes
+% -------------------
+% Color definitions\
+% my color palette
+\definecolor{myClearGrey}{HTML}{e5e5e5}
+\definecolor{myYellow}{HTML}{ffbc42}
+\definecolor{myRed}{HTML}{d81159}
+\definecolor{myViolet}{HTML}{8f2d56}
+\definecolor{myOrange}{HTML}{e59945}
+\definecolor{myBlue}{HTML}{4361ee}
+\definecolor{myTurquoise}{HTML}{218380}
+\definecolor{myGrey}{HTML}{332f2e}
+\definecolor{myGreen}{HTML}{008148}
+% PASTEL COLORPALETTE
+\definecolor{pastelRed}{HTML}{ffaaa6} % ffadad
+\definecolor{pastelOrange}{HTML}{ffd3b5} %ffd6a5
+\definecolor{pastelYellow}{HTML}{fdffb6}
+\definecolor{pastelTurquoise}{HTML}{e4f1ee}
+\definecolor{pastelGreen}{HTML}{dcedc1}
+\definecolor{pastelBlue}{HTML}{d9edf8}
+\definecolor{pastelViolet}{HTML}{dedaf4}
+% GENIS COLORS
+\definecolor{colorINTRO}{HTML}{02ff00}
+\definecolor{colorMEL}{HTML}{1ba1e2}
+\definecolor{colorSEP}{HTML}{f0a30a}
+\definecolor{colorSEPDET}{HTML}{e3c800}
+\definecolor{colorSEPGEN}{HTML}{ffff88}
+\definecolor{colorPAT}{HTML}{cccccc}
+\definecolor{colorOPEN}{HTML}{ffe6cc}
+% OLD BMAT COLORS
+% \definecolor{myClearGrey}{HTML}{E5E5E5}
+% \definecolor{myRed}{HTML}{c23d5c}
+% \definecolor{myViolet}{HTML}{5f3c87}
+% \definecolor{myGrey}{HTML}{332f2e}
+% \definecolor{myBlue}{HTML}{0062a8}
+% \definecolor{myTurquoise}{HTML}{65c4a9}
+% \definecolor{myYellow}{HTML}{fefd00}
+% \definecolor{myOrange}{HTML}{e59945}
+
+\definecolor{links_clr}{HTML}{206899}		                % Custom blue
+\definecolor{notes_info_clr}{rgb}{0.33, 0.42, 0.18}         % Dark olive green
+\definecolor{notes_unsure_clr}{rgb}{1.0, 0.0, 0.0}          % Red
+\definecolor{notes_change_clr}{rgb}{0.0, 0.0, 1.0}          % Blue
+\definecolor{notes_improvement_clr}{rgb}{0.56, 0.27, 0.52}  % Plum
+\definecolor{code}{rgb}{0.58,0,0.82}	                    % Purple
+\definecolor{code_bg}{rgb}{0.96,0.96,0.96}	                % Light grey
+\definecolor{code_linenum}{rgb}{0.5,0.5,0.5}                % Grey
+\definecolor{code_comments}{rgb}{0,0.6,0}	                % Green
+
+\definecolor{pitchcolor}{HTML}{D1E7DD} % light green
+\definecolor{sepcolor}{HTML}{FADBD8}   % light red
+\definecolor{feacolor}{HTML}{FEF9E7}   % light yellow
+
+\newcommand{\highlightpitch}[1]{\cellcolor{pitchcolor}#1}
+\newcommand{\highlightsep}[1]{\cellcolor{sepcolor}#1}
+\newcommand{\highlightfeat}[1]{\cellcolor{feacolor}#1}
+
+\newcommandx{\info}[2][1=]{\todo[linecolor=notes_info_clr,backgroundcolor=notes_info_clr!25,bordercolor=notes_info_clr,#1]{#2}}
+\newcommandx{\infoinline}[2][1=]{\todo[inline,linecolor=notes_info_clr,backgroundcolor=notes_info_clr!25,bordercolor=notes_info_clr,#1]{#2}}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=notes_unsure_clr,backgroundcolor=notes_unsure_clr!25,bordercolor=notes_unsure_clr,#1]{#2}}
+\newcommandx{\unsureinline}[2][1=]{\todo[inline,linecolor=notes_unsure_clr,backgroundcolor=notes_unsure_clr!25,bordercolor=notes_unsure_clr,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=notes_change_clr,backgroundcolor=notes_change_clr!25,bordercolor=notes_change_clr,#1]{#2}}
+\newcommandx{\changeinline}[2][1=]{\todo[inline,linecolor=notes_change_clr,backgroundcolor=notes_change_clr!25,bordercolor=notes_change_clr,#1]{#2}}
+\newcommandx{\todoinline}[2][1=]{\todo[inline,linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=notes_improvement_clr,backgroundcolor=notes_improvement_clr!25,bordercolor=notes_improvement_clr,#1]{#2}}
+\newcommandx{\improvementinline}[2][1=]{\todo[inline,linecolor=notes_improvement_clr,backgroundcolor=notes_improvement_clr!25,bordercolor=notes_improvement_clr,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
+
+
+% Colors dels enllacos clickables (els que hi ha per defecte son molt kitsch)
+\definecolor{NoColor}{rgb}{0,0,0}
+\definecolor{LinkColor}{rgb}{0,0,0.25}
+\definecolor{ExtLinkColor}{rgb}{0,0.3,0}
+\hypersetup{citecolor=NoColor,linkcolor=NoColor,urlcolor=NoColor}
+
+%% Format UPF, dues cares. Recordeu que les dimensions d'A4 i B5 son (210mm,297mm) i (176mm,250mm), respectivament.
+\setstocksize{297mm}{210mm} % El suport original es A4
+\settrimmedsize{250mm}{176mm}{*} % El suport final, despres de tallar, B5.
+\setlength{\trimtop}{23mm} % Alcada de la franja superior a tallar.
+\setlength{\trimtop}{24mm} % Alcada de la franja inferior a tallar.
+\setlength{\trimedge}{17mm} % Amplada de la franja interior a tallar per cada costat.
+%\setulmarginsandblock{*}{29mm}{1.1} % Marges verticals (3cm a dalt, 0.9*3cm a baix)
+%\setlrmarginsandblock{30mm}{*}{0.75} % Marges laterals (3cm a la dreta, 0.75*3cm l'esquerra)
+\setulmarginsandblock{23mm}{18mm}{*} % used to be {25mm}{16mm}
+\setlrmarginsandblock{25mm}{*}{0.8}
+\checkandfixthelayout
+\trimLmarks % Marques de tall en forma de 'L'
+
+% arreglar que floats al final de capitol no es centrin verticalment
+%\makeatletter% Set distance from top of page to first float
+%\setlength{\@fptop}{5pt}
+%\makeatother
+
+% perque no es posi espai blanc raro entre coses
+%\raggedbottom
+\flushbottom
+
+% espai despres de floats
+\setlength{\textfloatsep}{0.5cm}
+
+% colored tags
+\tcbset{on line, boxsep=2pt, boxrule=0pt}

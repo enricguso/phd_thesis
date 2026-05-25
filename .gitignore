@@ -1,0 +1,24 @@
+samples_mtg/
+phd_proposal/
+
+# macOS
+.DS_Store
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.ist
+*.lof
+*.log
+*.lot
+*.out
+*.synctex.gz
+*.toc
+missfont.log
+
+# Compiled output
+*.pdf

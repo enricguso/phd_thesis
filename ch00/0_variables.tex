@@ -1,0 +1,82 @@
+%--------------------
+% VARIABLES
+% -------------------
+% --- TODO list
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
+    \hspace{-2.5pt}}
+\newcommand{\notdone}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
+
+
+\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
+\newcommand{\subscript}[1]{\ensuremath{_{\textrm{#1}}}}
+\newcommand{\quotat}[2]{
+    \begin{flushright}
+        \textit{``#1'',\\
+            \vspace*{0.3cm}
+            #2.\\
+            \vspace*{0.3cm}
+        }
+    \end{flushright}
+}
+%\newcommand{\comentari}[1]{\textcolor{red}{\textbf{[#1]}}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argsort}{\text{argsort}}
+
+% Space between paragraphs and lines
+\setlength{\parskip}{1.4mm} % space between paragraphs
+%\setlength{\parskip}{1mm plus1mm minus1mm}
+
+% \linespread{1.35}
+\linespread{1.15}
+%\linespread{1}
+
+% Bullet points index esquema
+%\newcommand{\point}{\vspace{0.25cm}$\bullet$\hspace{0.25cm}}
+\newcounter{points}
+\definecolor{orange}{rgb}{1,0.5,0}
+\newcommand*\point{%
+    \stepcounter{points}%
+    \vspace{0.25cm}
+    \textcolor{orange}{$\bullet^{\thepoints}$}
+}
+
+% per definir mides de figures
+\newcommand{\figSizeMax}{1.0\columnwidth}
+\newcommand{\figSizeLarge}{0.8\columnwidth}
+\newcommand{\figSizeMidLarge}{0.7\columnwidth}
+\newcommand{\figSizeMid}{0.6\columnwidth}
+\newcommand{\figSizeMidSmall}{0.5\columnwidth}
+
+% gcortes variables
+\newcommand{\peaks}{\textcolor{myOrange}{Peaks}}
+\newcommand{\patent}{\textcolor{myRed}{Patent}}
+\newcommand{\ld}{\textcolor{myBlue}{LD}}
+\newcommand{\nn}{\textcolor{myGreen}{NN}}
+\newcommand{\ml}{\textcolor{myViolet}{ML}}
+
+\newcommand{\tagtstretch}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=pastelRed, colback=pastelRed]{Time stretch}}
+\newcommand{\tagtscale}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=pastelOrange, colback=pastelOrange]{Time scale}}
+\newcommand{\tagpshift}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=pastelYellow, colback=pastelYellow]{Pitch shift}}
+\newcommand{\tagnoise}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=pastelBlue, colback=pastelBlue]{Noise}}
+\newcommand{\tagspeech}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=-2pt, colframe=pastelViolet, colback=pastelViolet]{Speech}}
+\newcommand{\tagbroadcast}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=pastelGreen, colback=pastelGreen]{Broadcast}}
+\newcommand{\tagother}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=pastelTurquoise, colback=pastelTurquoise]{Other}}
+% Variables matematiques i altres
+% \definecolor{darkgreen}{rgb}{0,0.5,0}
+% \newcommand{\TODO}[1]{{\color{red}{[{TODO:} #1}]}}
+% \newcommand{\COMMENT}[1]{{\color{darkgreen}{[#1}]}}
+% \newcommand{\XXX}[3]{{\color{blue}{{[#1$\rightarrow$#2:} #3{]}}}}
+% Uncomment next line to hide all comments
+%\renewcommand{\XXX}[3]{}
+%\renewcommand{\TODO}[1]{}
+%\renewcommand{\COMMENT}[1]{}
+\newcommand{\tagintro}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorINTRO, colback=colorINTRO]{BACK}}
+\newcommand{\tagmel}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorMEL, colback=colorMEL]{MEL}}
+\newcommand{\tagsep}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorSEP, colback=colorSEP]{SEP}}
+\newcommand{\tagsepdet}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorSEPDET, colback=colorSEPDET]{SEP-DET}}
+\newcommand{\tagsepgen}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorSEPGEN, colback=colorSEPGEN]{SEP-GEN}}
+\newcommand{\tagpat}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorPAT, colback=colorPAT]{PAT}}
+\newcommand{\tagopen}{\tcbox[left=1pt,right=1pt,top=-1pt,bottom=0pt, colframe=colorOPEN, colback=colorOPEN]{OPEN}}

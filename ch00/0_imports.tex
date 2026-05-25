@@ -1,0 +1,141 @@
+\usepackage[paper=b5paper]{geometry} %https://tex.stackexchange.com/questions/220139/b5paper-option-for-book-document-class-abnormal-results
+
+\usepackage[utf8]{inputenc} % codificacio dels caracters
+\usepackage[T1]{fontenc} % Nou esquema de codificacio (recomanat)
+\usepackage{lmodern} % latin modern 
+
+% \usepackage{ae,aecompl}
+\usepackage[british]{babel} % localitzacio de l'estil
+\usepackage[british]{isodate} % per les dates
+\usepackage[hyphens]{url}
+% \usepackage{amssymb,amsmath} % macros per matematiques
+\usepackage{amsmath,amssymb} 
+\usepackage[pdftex]{graphicx}	% support per figures
+%\usepackage{epsfig}
+\usepackage{lscape} % per poder posar figures i/o taules en horitzontal
+\usepackage{color} % per poder fer servir colors
+\usepackage{bibentry}
+
+\usepackage{colortbl}
+
+
+\nobibliography*
+\usepackage[colorlinks,bookmarks,pdftex,hyperfigures,breaklinks,backref=page,
+    pdfpagemode=UseOutlines,
+    pdftitle=GenisPlajaPhDThesis,
+    pdfauthor=Genís~Plaja-Roglans,
+    pdfsubject=PhD~Thesis,
+    pdfkeywords=carnatic music~music information retrieval~deep learning
+]{hyperref} % produeix enllacos clicables
+\usepackage[authoryear]{natbib} % per poder fer citacions Author-any
+\usepackage{fancyvrb}
+\usepackage{units}
+\usepackage[caption=false]{subfig}
+%\usepackage{natbibspacing}
+%\setlength{\bibspacing}{0.3\baselineskip}
+% per les pagines a la bibliografia
+% -> UN COMMENT A PARTIR D?AQUI
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{%
+    \ifcase #1 (Not cited.)%
+    \or        (Cited on page~#2.)%
+    \else      (Cited on pages~#2.)%
+    \fi}
+
+\usepackage{latexsym}
+\usepackage{rotating}
+\usepackage{bm}
+%\usepackage{bibentry}\nobibliography*
+\usepackage{longtable}
+%\usepackage{verbatim}
+% \newsubfloat{figure}
+\usepackage{wrapfig}
+% better tables
+\usepackage[]{threeparttable}
+\usepackage{booktabs}
+\usepackage{arydshln}
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
+\usepackage{array}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{L}[1]{>{\centering\arraybackslash}m{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{T}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcolumntype{H}{>{\setbox0=\hbox\bgroup}c<{\egroup}@{}}  %Hide column in a table
+% for footnotes in tables
+\usepackage{footnote}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage[toc]{glossaries}
+\usepackage{doi}
+\usepackage{rotating}
+\usepackage[htt]{hyphenat}
+
+\makenoidxglossaries
+\input{ch00/0_glossary.tex}
+
+\usepackage{ifthen} % per treure figures de apendix de la llista de figures, etc...
+
+% poerque els footnotes no tornin a començar a cada chapter
+\usepackage{chngcntr}
+\counterwithout{footnote}{chapter}
+
+\maxsecnumdepth{subsubsection} % Per defecte la classe 'memoir' no numera les subseccions. Que les numeri:
+\setsecnumdepth{subsubsection}
+\maxtocdepth{subsection} % Tampoc no inclou les subseccions a l'index. Que les inclogui:
+\settocdepth{subsection}
+
+\usepackage[font=small,labelfont=bf]{caption}
+
+% palonso packages
+\usepackage{soul}  % allows highlight
+\usepackage{listings} % for code snippets
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny,
+  breaklines=true,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray}\itshape,
+  stringstyle=\color{red!60!black},
+  showstringspaces=false
+}
+\usepackage{enumitem} % numbered lists
+\usepackage{subfiles} % including subfiles
+\usepackage[x11names,table,dvipsnames]{xcolor} % http://ctan.org/pkg/xcolor
+\usepackage{pifont} % commands for Pi fonts (Dingbats, Symbol, etc.)
+\usepackage{wasysym}
+\usepackage{fontawesome5}
+
+
+
+% gcortes packages
+\usepackage{bbm}
+\usepackage{musicography}
+\usepackage{subcaption}
+\usepackage{cleveref}
+\usepackage{rotating}
+\usepackage{xargs} % for \newcommandx
+\usepackage{longtable}
+\usepackage{adjustbox}  % adjust table width
+\usepackage{float} % Use H if don't want image/table repositioning
+\usepackage[most]{tcolorbox}  % Colored tags
+\usepackage{epigraph}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{mybox}[2][]{breakable, skin=enhancedmiddle jigsaw, parbox=false,
+boxrule=0mm, leftrule=2mm, boxsep=0mm, arc=5mm, outer arc=5mm, attach title to upper,
+after title={.\ }, coltitle=black, colback=white, colframe=gray!80, title={#2},
+fonttitle=\bfseries, before=\vspace{0.15cm}, #1}
+% Define a new tcolorbox environment with a thinner left rule and a fancy color
+\newtcolorbox{myboxhighlight}[2][]{breakable, skin=enhancedmiddle jigsaw, parbox=false,
+boxrule=0mm, leftrule=1mm, boxsep=0mm, arc=5mm, outer arc=5mm, attach title to upper,
+after title={.\ }, coltitle=black, colback=white, colframe=teal!60!black, title={#2}, fonttitle=\bfseries,
+before=\vspace{0.15cm}, #1}
+
+
+\newlist{todolist}{itemize}{2}
+\setlist[todolist]{label=$\square$}
+\usepackage[colorinlistoftodos,prependcaption,textsize=scriptsize]{todonotes}

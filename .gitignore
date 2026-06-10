@@ -1,5 +1,7 @@
 samples_mtg/
 phd_proposal/
+.claude/
+.venv/
 
 # macOS
 .DS_Store
@@ -21,4 +23,6 @@ phd_proposal/
 missfont.log
 
 # Compiled output
-*.pdf
+thesis_a4.pdf
+*.svg
+*.png

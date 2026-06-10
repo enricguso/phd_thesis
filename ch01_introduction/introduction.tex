@@ -18,31 +18,31 @@ Audio processing is the subfield of signal processing concerned with the
 analysis, modification, and generation of sound signals. Historically, its
 applications have grown around several research communities, some of which this thesis touches upon: the \emph{speech} field, devoted to understanding, transcribing and enhancing spoken language; the \emph{machine listening} field, which studies how to extract information about the acoustic environment; the \emph{computational audiology} field, which studies how to compensate for hearing loss and improve listening in adverse conditions; the \emph{music} field, where the retrieval and manipulation of musical content is studied under the umbrella of \acrshort{MIR}; and the \emph{acoustic signal processing} field, which encompasses the full range of audio tasks, among others. The work in this thesis sits at the intersection of these communities, several of whose most representative tasks are listed in Table~\ref{tab:tasks}.
 
-Until the last decade, these communities have relied on analytical, hand engineered solutions grounded in acoustics, psychoacoustics and
+Until the last decade, these communities have relied on analytical, hand-engineered solutions grounded in acoustics, psychoacoustics and
 statistical signal processing. However, the advent of deep learning \citep{lecun2015deep} has reshaped all of them, shifting the dominant paradigm from
-explicit modelling to data-driven learning, bringing unprecedented performance especially in tasks where analytical approaches are limited. This has led to significant advances in tasks such as retrieving specific elements from an audio mixture (source separation) and removing noise (denoising) or reverberation (dereverberation) to improve quality and/or intelligibility of signals, and also has given birth to new tasks and interfaces such as text-to-audio. 
+explicit modelling to data-driven learning, bringing unprecedented performance, especially in tasks where analytical approaches are limited. This has led to significant advances in tasks such as retrieving specific elements from an audio mixture (source separation) and removing noise (denoising) or reverberation (dereverberation) to improve quality and/or intelligibility of signals, and has also given rise to new tasks and interfaces previously unfeasible, such as text-to-audio. 
 
-These tasks (listed in Table \ref{tab:tasks}) can be grouped into three paradigms: those that \emph{categorize} audio content---such as tagging or key detection; those that \emph{infer} a structured output from the signal---such as source separation or \acrshort{RIR} parameter estimation; and those that \emph{generate} new audio---such as speech synthesis or text-to-music. These paradigms correspond, respectively, to the machine learning problems of \emph{classification}, \emph{regression}, and more recently to the \emph{sampling} of generative models. Although appealing to all three, this thesis particularly focuses on the regression-oriented family of tasks, which we refer to as \emph{audio processing} tasks, in the sense that both the model's inputs and outputs are audio signals and to differentiate them from \emph{audio analysis} and \emph{audio generation} models. 
+These tasks (listed in Table \ref{tab:tasks}) can be grouped into three paradigms: those that \emph{categorize} audio content---such as tagging or key detection; those that \emph{infer} a structured output from the signal---such as source separation or \acrshort{SE}; and those that \emph{generate} new audio---such as speech synthesis or text-to-music. These paradigms correspond, respectively, to the machine learning problems of \emph{classification}, \emph{regression}, and more recently to the \emph{sampling} of generative models. Although the contributions of this thesis may prove useful across all three paradigms, it particularly focuses on a subset of the regression-oriented family of tasks, which we refer to as \emph{audio processing} tasks, in the sense that both the model's inputs and outputs are audio signals and to differentiate them from \emph{audio analysis} and \emph{audio generation} models. 
 
-In this work, we focus on three of these representative tasks, the choice of which is also motivated by the industrial partners involved in the thesis, and each one from of a distinct audio research field: \textbf{\textit{(i)}~\acrshort{SE}} from the speech field, \textbf{\textit{(ii)}~\acrshort{MSS}} from the \acrshort{MIR} field, and \textbf{\textit{(iii)}~\acrshort{HAs}} processing from the computational audiology field. 
-
+In the present work, we focus on three of these representative tasks, the choice of which is also motivated by the industrial partners involved in the thesis, and each one from a distinct audio research field: \textbf{\textit{(i)}~\acrshort{SE}} from the speech field, \textbf{\textit{(ii)}~\acrshort{MSS}} from the \acrshort{MIR} field, and \textbf{\textit{(iii)}~\acrshort{HAs}} processing from the computational audiology field. 
 
 \begin{table}[t]
 \centering
 \begin{tabular}{p{0.18\textwidth}|p{0.28\textwidth}|p{0.44\textwidth}}
-\makecell{\textbf{Field}} & \textbf{\makecell{Venues}} & \makecell{\textbf{Representative tasks}} \\
+\makecell[cc]{\textbf{Field}} & \makecell[cc]{\textbf{Venues}} & \makecell[cc]{\textbf{Representative tasks}} \\
 \hline
-\makecell{Acoustics} & \makecell{ICASSP  \\WASPAA\\EUSIPCO} & \makecell{DoA estimation \\ Beamforming \\ Echo cancellation \\ \acrshort{RIR} estimation} \\
+\makecell[l]{Acoustics} & \makecell[l]{ICASSP  \\WASPAA\\EUSIPCO} & \makecell[l]{DoA estimation \\ Beamforming \\ Echo cancellation \\ \acrshort{RIR} estimation} \\
 \hline
-\makecell{Speech} & \makecell{Interspeech \\ ASRU\\ICASSP\\WASPAA } & \makecell{\acrshort{ASR} \\ Speaker verification \\ \acrshort{SE} \\ Text-to-Speech \\ Voice conversion} \\
+\makecell[l]{Speech} & \makecell[l]{Interspeech \\ ASRU\\ICASSP\\WASPAA } & \makecell[l]{\acrshort{ASR} \\ Speaker verification \\ \acrshort{SE} \\ Text-to-Speech \\ Voice conversion} \\
 \hline
-\makecell{Machine \\listening} & \makecell{DCASE \\ ICASSP \\ WASPAA} & \makecell{Acoustic scene classification \\ Sound event detection \\ Audio moment retrieval \\ Sound localization} \\
+\makecell[l]{Machine \\listening} & \makecell[l]{DCASE \\ ICASSP \\ WASPAA} & \makecell[l]{Acoustic scene classification \\ Sound event detection \\ Audio moment retrieval \\ Sound localization} \\
 \hline
-\makecell{Computational \\audiology} & \makecell{Interspeech \\ AES \\ EMBC \\ ICASSP\\WASPAA} & \makecell{\acrshort{HAs} processing \\ Noise reduction \\ Speech intelligibility prediction \\ Hearing loss simulation} \\
+% Fixed: Removed the trailing \\ after audiology
+\makecell[l]{Computational \\audiology} & \makecell[l]{VCCA \\ AES \\ EMBC \\ ICASSP\\WASPAA} & \makecell[l]{\acrshort{HAs} processing \\ Cochlear implant processing \\Noise reduction \\ Speech intelligibility prediction \\ Hearing loss simulation} \\
 \hline
-\makecell{\acrshort{MIR}} & \makecell{ISMIR \\ SMC \\ICASSP\\WASPAA} & \makecell{Beat tracking \\ Chord recognition \\ Melody extraction \\ Source separation \\ Transcription \\ Music generation} \\
+\makecell[l]{\acrshort{MIR}} & \makecell[l]{ISMIR \\ SMC \\ICASSP\\WASPAA} & \makecell[l]{Beat tracking \\ Chord recognition \\ Source separation \\ Transcription \\ Text-to-song} \\
 \end{tabular}
-\caption{Some representative audio processing tasks for each research community and the main venues where those are traditionally presented. The list is not exhaustive, and the tasks are not mutually exclusive --- for example, source separation is relevant to both the acoustics and music fields. A more comprehensive taxonomy can be found in \cite{huang2025dynamic}.}
+\caption{Some representative audio processing tasks for each research community and the main venues where they are traditionally presented. This selection is merely illustrative and intended to contextualize the thesis within the broader audio processing landscape; it is by no means exhaustive, and the tasks are not mutually exclusive --- for example, source separation is relevant to both the acoustics and music fields. A more comprehensive taxonomy can be found in \cite{huang2025dynamic}.}
 \label{tab:tasks}
 \end{table}
 
@@ -50,30 +50,30 @@ In this work, we focus on three of these representative tasks, the choice of whi
 \section{Context}
 \label{sec:context}
 
-The transition from analytical to data-driven methods has unfolded along two axes. The first concerns the signal representations. Models
+To situate the contributions of this thesis within the broader shift reshaping audio processing, we first trace the transition from analytical to data-driven methods, which has unfolded along two axes. The first concerns the signal representations. Models
 that used to operate on hand-crafted descriptors built from expert
-domain knowledge progressively have given way to architectures that learn their own representations directly from time--frequency transforms or even from the raw waveform \citep{pons2019}. These learned representations have themselves grown more abstract: continuous, high-dimensional feature maps have increasingly given way to discrete latent codes, learned end-to-end and quantised into a finite vocabulary. Neural audio codecs epitomise this shift, compressing the waveform into a handful of discrete tokens that preserve perceptual fidelity
+domain knowledge have progressively given way to architectures that learn their own representations directly from time--frequency transforms or even from the raw waveform \citep{pons2019}. These learned representations have themselves grown more abstract: continuous, high-dimensional feature maps have increasingly been substituted by to discrete latent codes, learned end-to-end and quantised into a finite vocabulary. Neural audio codecs epitomise this shift, compressing the waveform into a handful of discrete tokens that preserve perceptual fidelity
 \citep{zeghidour2021soundstream,defossez2022high} while exposing a tokenised
 substrate over which language-model architectures can operate directly
 \citep{borsos2023audiolm}. Continuous latent spaces have remained equally
-productive, most notably the encoders-decoder structure of \acrfullpl{VAE}s that underpin latent-diffusion
-generative models such as \cite{evans2025stable}, where a
+productive, most notably the encoder-decoder structure of \acrfull{VAE}s that underpin latent-diffusion
+generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
-process is defined. However, these models work at a latent rate in the order of 10Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency contraints (with some notable recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
+process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
 
-The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then adapted to specific downstream tasks by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in natural language processing \cite{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as hearing aids.
+The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in \acrfull{NLP} \cite{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as hearing aids.
 
 Likewise, the trajectory from analytical methods to learned, increasingly end-to-end models and with weaker supervision has been observed across the three fields we address. 
 
-\textbf{\textit{(i)}~In the \emph{speech}} field}, classical \acrshort{ASR} pipelines were traditionally built on Mel-Frequency Cepstral Coefficients \citep{davis1980mfcc} feeding statistical
-acoustic models \citep{rabiner1989tutorial}, an approach later overtaken by DNN acoustic modelling
+\textbf{\textit{(i)}~In the \emph{speech} field}, classical \acrshort{ASR} pipelines were traditionally built on Mel-Frequency Cepstral Coefficients \citep{davis1980mfcc} feeding statistical
+acoustic models \citep{rabiner1989tutorial}, an approach later overtaken by \acrshort{DNN} acoustic modelling
 \citep{hinton2012} and, more recently, by large end-to-end models such as
 Whisper, trained on hundreds of thousands of hours of weakly supervised audio
 \citep{radford2022whisper}. 
 
 \textbf{\textit{(ii)}~In the \emph{music} field}, source separation was long
 dominated by analytical decompositions such as non-negative matrix
-factorization \citep{virtanen2007nmf}, before being superseded by DNN-based
+factorization \citep{virtanen2007nmf}, before being superseded by \acrshort{DNN}-based
 systems exemplified by open, reproducible baselines such as Open-Unmix \citep{stoter2019openunmix}. 
 
 \textbf{\textit{(iii)}~In the \emph{computational audiology} field}, traditional methods of \acrshort{HAs} improve the signal-to-noise ratio through directional microphones and adaptive beamforming
@@ -93,65 +93,141 @@ that make real-time deployment difficult. This thesis explores an alternative
 direction. Rather than chasing capability through ever-larger models trained on
 ever-more data, can we displace part of the complexity onto the selection and
 construction of the training data, while keeping model size fixed? Put differently: \textbf{can \emph{better} data --- more representative of the conditions a
-model will actually face --- substitute for more data and larger models?}
+model will actually face --- improve performance without resorting to more data and larger models?}
 
 
 
 
 
-\section{Motivation: ecological validity}
+\section{Motivation: the importance of ecological validity}
 \label{sec:motivation}
+In this section, we lay out two examples that have motivated the data-centric direction this thesis pursues. We have mentioned that \acrshort{DNN}-based audio processing performs extremely well on many tasks. This performance is traditionally measured on benchmark datasets the community
+has standardized around, and progress on these benchmarks is pursued so
+relentlessly that successive systems have \emph{saturated} them. By saturation we mean that performance gains have largely plateaued, so that further improvements demand disproportionately more compute and parameters for diminishing returns. We illustrate this for the two-speaker speech separation task and the progress of the \acrfull{SOTA} across the last decade, which we depict in Figure~\ref{fig:wsj0_2mix_sota}.
 
-Recent DNN-based models perform extremely well on the benchmarks the community
-has standardized around, to the point that successive systems progressively
-\emph{saturate} these datasets: on speech separation benchmarks such as
-WSJ0-2mix \cite{hershey2016deepclustering} the best systems now reach scores at
-which processed and reference signals are nearly indistinguishable, and a
-similar saturation is observed on music source separation with MUSDB18(-HQ)
-\cite{rafii2019musdbhq} and on speech enhancement with corpora such as
-VoiceBank+DEMAND or the WHAM!/WHAMR! family
-\cite{wichern2019wham, maciejewski2020whamr}. Figure~{fig:sisdri}
-illustrates this trend for speech separation. However, this apparent progress
-can be misleading: when the very same models are evaluated across datasets
-(cross-dataset evaluation), performance frequently degrades sharply
-\cite{pandey2020crosscorpus}, revealing that they have, to a large extent,
-overfitted the idiosyncrasies of a particular dataset rather than learned to
-generalize to real-world conditions.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth,trim={.25cm .25cm .25cm .25cm},clip]{ch01_introduction/figures/wsj0_2mix_sota_v6.pdf}
+      \caption{Progress on clean two-speaker speech separation over the last decade,
+      evaluated on the WSJ0-2mix test set. Each marker is a published model: grey
+      markers are individual systems, and blue markers trace the
+      \emph{frontier} of performance --- the \acrshort{SOTA} \acrshort{SI-SDRi} at each
+      point in time (left y-axis), with the current \acrshort{SOTA} highlighted. The
+      orange and green lines (right y-axis) report the computational cost and model
+      size of the frontier models for which such data was available, expressed in
+      \acrshort{GMACs}/s and millions of parameters, respectively. While performance
+      has plateaued around 22~dB, compute and size have continued to grow, illustrating
+      the saturation discussed in the text. Computational figures are taken from
+      \cite{wang2025flasepformer}.}
+    \label{fig:wsj0_2mix_sota}
+\end{figure}
 
-We frame this gap through the notion of \emph{ecological validity}. The term was
-originally introduced in psychology by Egon Brunswik \cite{brunswik1955} to
-describe how faithfully the cues and conditions of a controlled experiment
-represent those an organism actually encounters in its natural environment; in
-its contemporary, broader usage it refers to the extent to which findings
-obtained under laboratory conditions generalize to real-life settings.
+Speech separation performance is commonly measured by the \acrfull{SI-SDR} proposed by \cite{le2019sdr}, which quantifies the similarity between the separation estimate and a reference ground truth source signal, usually reported as improvement upon the mixture (denoted with the \textit{i} in \acrshort{SI-SDRi}). Traditionally, the speech community has used the WSJ0-2mix dataset \citep{hershey2016deepclustering} to assess progress on clean speech separation and to compare with previous existing literature. \acrshort{SOTA} performance over time shows that progress is increasingly hard, and although the saturation seemed more pronounced at the beginning of this thesis (around 2022), the progress leaps that have been made in \cite{rixen2022sfsrnet} and \cite{shin2024separate} grow smaller. Note also how the computational cost, here measured in terms of the number of matrix multiplications per second, is also increasing. As a rule of thumb, an \acrshort{SI-SDRi} >20dB is often taken for near-perfect separation, which was already achieved in 2022.  
+
+However, this apparent progress can be misleading: when the same models are
+evaluated across datasets (cross-dataset evaluation), performance often degrades
+sharply, revealing that they have, to a large extent, overfit to the
+idiosyncrasies of a particular dataset rather than generalised to unseen conditions. Continuing with the two-speaker clean speech
+separation example, \citet{kadiouglu2020empirical} proposed cross-dataset
+evaluation and showed that a Conv-TasNet trained on WSJ0-2mix degrades sharply on
+LibriTTS and vice-versa, as we depict in Figure~\ref{fig:convtasnet_xdataset}.
+A similar pattern holds for tasks other than separation: \acrshort{SE} models
+trained on one dataset degrade on others, in their case due to channel and
+recording-condition mismatch \citep{pandey2020crosscorpus}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ch01_introduction/figures/xdataset_matrix.pdf}
+      \caption{Cross-dataset generalization of Conv-TasNet on two-speaker speech
+      separation, reported in SI-SNRi (dB) in the original study. Each row corresponds to the
+      training dataset and each column to the test set; diagonal cells, outlined in
+      orange, are in-domain (matched train/test) references. Off-diagonal cells report
+      out-of-domain performance, with the drop relative to the corresponding in-domain
+      reference shown in parentheses. Models trained on one corpus lose roughly 6~dB
+      when evaluated on a different one (e.g.\ $-6.1$ and $-6.3$~dB for the WSJ0-2mix
+      model on LibriTTS and VCTK), illustrating that high in-domain scores do not
+      transfer across datasets. Values taken from \citet{kadiouglu2020empirical}.}
+    \label{fig:convtasnet_xdataset}
+\end{figure}
+
+We frame this gap through the notion of \textbf{\emph{ecological validity}}. The
+term was originally introduced in psychology by Egon Brunswik \cite{brunswik1955}
+with a narrow, technical meaning: within his lens model of perception, it
+denoted the statistical reliability of a perceptual cue. In its contemporary and considerably broader usage, however, the term
+has come to mean something Brunswik did not intend: the extent to which findings
+obtained under controlled laboratory conditions generalize to real-life
+settings \citep{leglaive2023chime}. We adopt this modern sense throughout this thesis.
+
 Transposed to supervised audio processing, ecological validity concerns the
-degree to which the (often synthetic) training and evaluation data reproduce
+degree to which the training and evaluation data reproduce
 the acoustic conditions of the intended deployment scenario: realistic noise
 and reverberation, source and receiver directivity, room and venue acoustics,
 transducer responses, and so on. From this perspective, saturating a benchmark
 is a perfectly legitimate measure of progress, but it must be complemented by
-evaluations that are themselves ecologically valid, so that reported gains
+evaluations that are themselves ecologically valid, so that gains
 translate into the real world.
 
-A common response to the generalization gap is to scale up: larger models
-trained on ever larger datasets, using unlabelled data to ``compress'' more
-knowledge into more parameters. Yet the resulting foundation models are
-computationally demanding, and even at inference they are often impractical to
-run locally --- LLaMA, for instance, cannot be run in real time on a CPU
-\cite{touvron2023llama}. This is particularly problematic for audio, where many
-applications are expected to run in real time and on-device. The constraint is
-most acute in the hearing field, where algorithmic latency must remain very low
-to be tolerable \cite{stone2008delays} and where energy efficiency is a
-critical requirement for wearable devices.
 
-In this thesis we therefore ask whether there is a complement --- or an
-alternative --- to this scaling strategy: rather than scaling to larger models
-and ever larger datasets, can we instead improve the \emph{quality} of the
-datasets by raising their ecological validity? This approach has an appealing
-property: it moves the added complexity to a single, one-off step performed
-before any model is trained, rather than to inference time. It is thus aligned
-with the audio field's recurring demand for lightweight, real-time, on-device
-processing.
+
+
+A complementary, more quantitative view of the same gap comes from the machine
+learning literature, where it is studied under the notion of \emph{domain
+mismatch} (or \emph{distribution shift}). Supervised models are trained under the
+implicit assumption that training and real data are drawn from the same underlying distribution; when this assumption is violated performance degrades, often severely \citep{quinonero2008dataset}. In audio processing this mismatch is rarely a single
+factor but the compound effect of many: the recording channel and microphone
+response, room acoustics and reverberation, the noise types and signal-to-noise
+ratios present, speaker or instrument characteristics, and the way mixtures are
+constructed in synthetic benchmarks. The cross-dataset degradation reported above
+(Figure~\ref{fig:convtasnet_xdataset} and the channel-mismatch effects of
+\citealp{pandey2020crosscorpus}) are concrete examples of this shift. Reducing domain mismatch and improving ecological validity are thus two
+framings of a single objective, and the one this thesis pursues: aligning the
+data a model is trained and evaluated on with the conditions of its intended use.
+
+This intuition can be made precise. Let $\mathcal{X}$ denote the space of input
+signals and $\mathcal{Y}$ the space of targets (separated sources/instruments, enhanced speech,
+etc.), and let a model $f_\theta : \mathcal{X} \rightarrow \mathcal{Y}$ be trained
+to minimize the expected loss $\mathcal{L}$ over a \emph{source} distribution
+$p_S(x, y)$:
+\begin{equation}
+    \theta^\star = \arg\min_\theta \;
+    \mathbb{E}_{(x,y)\sim p_S}\!\left[\mathcal{L}\!\left(f_\theta(x), y\right)\right].
+    \label{eq:erm}
+\end{equation}
+At deployment, however, the model is evaluated on a \emph{target} distribution
+$p_T(x, y)$, and the quantity we actually care about is the target risk
+$\mathbb{E}_{(x,y)\sim p_T}[\mathcal{L}(f_{\theta^\star}(x), y)]$. Empirical risk
+minimization offers guarantees only when $p_S = p_T$; \emph{domain mismatch} is
+precisely the condition
+\begin{equation}
+    p_S(x, y) \neq p_T(x, y),
+    \label{eq:mismatch}
+\end{equation}
+under which a model optimal on the source need not be optimal---or even
+adequate---on the target. 
+
+It is often illuminating to factorize the joint
+distribution as $p(x, y) = p(x)\,p(y \mid x)$. In the audio processing tasks we
+consider, the conditional input--output relationship is largely physical and
+stable across domains (e.g.\ the mapping from a noisy mixture to its clean
+sources is governed by the same acoustics everywhere), so $p_S(y \mid x) \approx
+p_T(y \mid x)$, and the dominant discrepancy lies in the marginal over inputs,
+$p_S(x) \neq p_T(x)$. Each benchmark fixes a particular $p(x)$---a specific
+distribution of channels, rooms, noises and speakers---and the cross-dataset
+degradation reported above is the gap between performance under $p_S(x)$ and under
+a different $p_T(x)$. The contributions of this thesis can be read
+as efforts to bring the training input distribution $p_S(x)$ closer to the
+deployment distribution $p_T(x)$ through the selection and construction of
+training data.
+
+Several broad strategies exist to mitigate this mismatch. A first family acts on the
+\emph{model}: \emph{domain adaptation} techniques adjust a trained model towards the target domain, often using small amounts
+of unlabelled target data \citep{hsu2017vaeadapt}; A second, complementary family
+acts on the \emph{data}, seeking to reshape the training input distribution
+$p_S(x)$ so that it better covers the deployment distribution $p_T(x)$. The
+classical instance is \emph{data augmentation}, which enriches clean corpora with
+synthetic variability---e.g. additive noise at controlled \acrshort{SNR}s for denoising or \acrshort{SE}, speed or
+pitch perturbation, and convolution with simulated or measured room impulse
+responses to impose realistic reverberation \citep{ko2017study}. This thesis pursues the latter. 
 
 \section{An industrial PhD}
 \label{sec:industrial}
@@ -193,7 +269,7 @@ datasets that are standard in the field.
 
 \textbf{Chapter~\ref{ch03_hearing}} addresses the hearing aids field and asks:
 can we leverage the techniques above to improve the ecological validity of
-hearing aid \emph{evaluation}? And are DNNs a promising route to generalize
+hearing aid \emph{evaluation}? And are \acrshort{DNN}s a promising route to generalize
 better than traditional beamforming algorithms?
 
 \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, studying

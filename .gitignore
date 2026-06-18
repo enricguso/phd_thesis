@@ -2,6 +2,7 @@ samples_mtg/
 phd_proposal/
 .claude/
 .venv/
+old_papers/
 
 # macOS
 .DS_Store

@@ -24,7 +24,7 @@ explicit modelling to data-driven learning, bringing unprecedented performance, 
 
 These tasks (listed in Table \ref{tab:tasks}) can be grouped into three paradigms: those that \emph{categorize} audio content---such as tagging or key detection; those that \emph{infer} a structured output from the signal---such as source separation or \acrshort{SE}; and those that \emph{generate} new audio---such as speech synthesis or text-to-music. These paradigms correspond, respectively, to the machine learning problems of \emph{classification}, \emph{regression}, and more recently to the \emph{sampling} of generative models. Although the contributions of this thesis may prove useful across all three paradigms, it particularly focuses on a subset of the regression-oriented family of tasks, which we refer to as \emph{audio processing} tasks, in the sense that both the model's inputs and outputs are audio signals and to differentiate them from \emph{audio analysis} and \emph{audio generation} models. 
 
-In the present work, we focus on three of these representative tasks, the choice of which is also motivated by the industrial partners involved in the thesis, and each one from a distinct audio research field: \textbf{\textit{(i)}~\acrshort{SE}} from the speech field, \textbf{\textit{(ii)}~\acrshort{MSS}} from the \acrshort{MIR} field, and \textbf{\textit{(iii)}~\acrshort{HAs}} processing from the computational audiology field. 
+In the present work, we focus on three of these representative tasks, the choice of which is also motivated by the industrial partners involved in the thesis, and each one from a distinct audio research field: \textbf{\textit{(i)}~\acrfull{SE}} from the speech field, \textbf{\textit{(ii)}~\acrfull{MSS}} from the \acrfull{MIR} field, and \textbf{\textit{(iii)}~\acrfull{HAs}} processing from the computational audiology field. 
 
 \begin{table}[t]
 \centering
@@ -56,12 +56,12 @@ domain knowledge have progressively given way to architectures that learn their 
 \citep{zeghidour2021soundstream,defossez2022high} while exposing a tokenised
 substrate over which language-model architectures can operate directly
 \citep{borsos2023audiolm}. Continuous latent spaces have remained equally
-productive, most notably the encoder-decoder structure of \acrfull{VAE}s that underpin latent-diffusion
+productive, most notably the encoder-decoder structure of the \acrfull{VAE} that underpin latent-diffusion
 generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
 process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
 
-The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in \acrfull{NLP} \cite{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as hearing aids.
+The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in \acrfull{NLP} \citep{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as \acrshort{HAs}.
 
 Likewise, the trajectory from analytical methods to learned, increasingly end-to-end models and with weaker supervision has been observed across the three fields we address. 
 
@@ -121,8 +121,8 @@ relentlessly that successive systems have \emph{saturated} them. By saturation w
       \cite{wang2025flasepformer}.}
     \label{fig:wsj0_2mix_sota}
 \end{figure}
-
-Speech separation performance is commonly measured by the \acrfull{SI-SDR} proposed by \cite{le2019sdr}, which quantifies the similarity between the separation estimate and a reference ground truth source signal, usually reported as improvement upon the mixture (denoted with the \textit{i} in \acrshort{SI-SDRi}). Traditionally, the speech community has used the WSJ0-2mix dataset \citep{hershey2016deepclustering} to assess progress on clean speech separation and to compare with previous existing literature. \acrshort{SOTA} performance over time shows that progress is increasingly hard, and although the saturation seemed more pronounced at the beginning of this thesis (around 2022), the progress leaps that have been made in \cite{rixen2022sfsrnet} and \cite{shin2024separate} grow smaller. Note also how the computational cost, here measured in terms of the number of matrix multiplications per second, is also increasing. As a rule of thumb, an \acrshort{SI-SDRi} >20dB is often taken for near-perfect separation, which was already achieved in 2022.  
+\vspace{1cm}
+Speech separation performance is commonly measured by the \acrfull{SI-SDR} proposed by \cite{le2019sdr}, which quantifies the similarity between the separation estimate and a reference ground truth source signal, usually reported as improvement upon the mixture (denoted with the \textit{i} in \acrshort{SI-SDRi}). Traditionally, the speech community has used the WSJ0-2mix dataset \citep{hershey2016deepclustering} to assess progress on clean speech separation and to compare with previous existing literature. \acrshort{SOTA} performance over time shows that progress is increasingly hard, and although the saturation seemed more pronounced at the beginning of this thesis (around 2022, where performance progress had largely stalled), the performance leaps that have been made in \cite{rixen2022sfsrnet} and \cite{shin2024separate} grow smaller every time. Note also how the computational cost, here measured in terms of the number of matrix multiplications per second, is also increasing. As a rule of thumb, an \acrshort{SI-SDRi} >20dB is often taken for near-perfect separation, which was already achieved in 2022.  
 
 However, this apparent progress can be misleading: when the same models are
 evaluated across datasets (cross-dataset evaluation), performance often degrades
@@ -167,9 +167,6 @@ is a perfectly legitimate measure of progress, but it must be complemented by
 evaluations that are themselves ecologically valid, so that gains
 translate into the real world.
 
-
-
-
 A complementary, more quantitative view of the same gap comes from the machine
 learning literature, where it is studied under the notion of \emph{domain
 mismatch} (or \emph{distribution shift}). Supervised models are trained under the
@@ -205,7 +202,7 @@ precisely the condition
 under which a model optimal on the source need not be optimal---or even
 adequate---on the target. 
 
-It is often illuminating to factorize the joint
+We can factorize the joint
 distribution as $p(x, y) = p(x)\,p(y \mid x)$. In the audio processing tasks we
 consider, the conditional input--output relationship is largely physical and
 stable across domains (e.g.\ the mapping from a noisy mixture to its clean
@@ -217,74 +214,74 @@ degradation reported above is the gap between performance under $p_S(x)$ and und
 a different $p_T(x)$. The contributions of this thesis can be read
 as efforts to bring the training input distribution $p_S(x)$ closer to the
 deployment distribution $p_T(x)$ through the selection and construction of
-training data.
+training data. Several broad strategies exist to mitigate this mismatch. 
 
-Several broad strategies exist to mitigate this mismatch. A first family acts on the
-\emph{model}: \emph{domain adaptation} techniques adjust a trained model towards the target domain, often using small amounts
-of unlabelled target data \citep{hsu2017vaeadapt}; A second, complementary family
-acts on the \emph{data}, seeking to reshape the training input distribution
-$p_S(x)$ so that it better covers the deployment distribution $p_T(x)$. The
-classical instance is \emph{data augmentation}, which enriches clean corpora with
-synthetic variability---e.g. additive noise at controlled \acrshort{SNR}s for denoising or \acrshort{SE}, speed or
-pitch perturbation, and convolution with simulated or measured room impulse
-responses to impose realistic reverberation \citep{ko2017study}. This thesis pursues the latter. 
+A first family acts on the
+model: \emph{domain adaptation} techniques adjust a trained model towards the target domain, often using small amounts
+of unlabelled target data \citep{hsu2017unsupervised}. A second, radically different response to domain mismatch is simply to enlarge the
+training distribution until it subsumes the deployment one. Rather than adapting
+to a specific target, one trains a single large model on a corpus so vast and
+heterogeneous that few conditions remain genuinely out-of-distribution; the
+target $p_T(x)$ then falls within the support of an enormous $p_S(x)$. This is the
+logic behind large-scale weak supervision in speech: \citet{radford2022whisper},
+for instance, train on hundreds of thousands of hours of diverse web audio and
+obtain strong \emph{zero-shot} robustness across datasets, attributing the gain to
+data diversity rather than to any adaptation mechanism. From the perspective of
+the previous paragraphs, this is a brute-force way of minimising the gap between
+$p_S(x)$ and $p_T(x)$---not by carefully shaping $p_S(x)$, but by making it large
+enough to cover everything.
 
-\section{An industrial PhD}
+This strategy is remarkably effective, but it is precisely the one that the
+constraints of this thesis rule out; the parameter counts and inference
+budgets that make web-scale training pay off are incompatible with the real-time,
+on-device deployment targets that motivate our work. When scaling the model and the data indiscriminately is not an option,
+the quality and representativeness of a fixed-size training set become the primary
+lever---which returns us to ecological validity.
+
+\section{Industrial PhD}
 \label{sec:industrial}
 
-This dissertation has been carried out as an \emph{industrial PhD}, a modality
-in which doctoral research is conducted jointly between a university and a
-company, so that the work simultaneously advances scientific knowledge and
-addresses a concrete industrial need; a defined fraction of the candidate's
-time is contractually devoted to generating industrial intellectual property.
-% CITE: add reference to the industrial-PhD definition / programme
-% (e.g. tesis_guillem.pdf or the official Doctorats Industrials programme).
+The choice of the specific tasks in which we investigate towards improving ecological validity has been motivated by the partners involved in this PhD. This dissertation has been carried out as an \emph{industrial PhD}, a doctoral modality designed to bridge academia and industry by embedding the doctoral candidate within a company or organisation while maintaining a formal partnership with a university or research centre. Unlike a traditional academic PhD — which primarily advances knowledge within a scientific discipline — an industrial PhD aligns research objectives with the strategic needs of the industrial partner, targeting outcomes such as technological innovation, process improvement, or competitive advantage. The candidate operates across both environments simultaneously, contributing to the partner's goals while producing original research that culminates in a doctoral thesis.
 
-Three partners are involved, each connected to one of the fields introduced
-above:
-\begin{itemize}
-  \item \textbf{Amplifon} (through its manufacturer Microson), a hearing aids
-        company, anchors the \emph{hearing} strand of the thesis, providing
-        devices and access to listeners for evaluation.
-  \item \textbf{Eurecat} (Centre Tecnol\`ogic de Catalunya), the industrial
-        host, contributes through its participation in the European project
-        \textbf{GuestXR}, which motivates the \emph{speech} enhancement strand.
-  \item The \textbf{Music Technology Group} (MTG) at Universitat Pompeu Fabra,
-        the academic host, anchors the \emph{music} (MIR) strand and provides
-        the broader research environment.
+Eurecat is a foundation whose mission is to promote research, technological development, and knowledge transfer in order to improve the competitiveness of companies and the well-being of society. It was created in 2015 through the consolidation of several industrial research units from across Catalonia. The audio research group at Eurecat traces its origins to Barcelona Media, a foundation for innovation and interdisciplinary research that operated from 2002 and developed solutions across a broad range of technological domains, including image, audio, and social media analysis. Among its most notable achievements, the Barcelona Media audio team developed the immersive 3D audio technology behind Imm Sound, a cinema sound solution acquired by Dolby Laboratories in 2012. The researchers who remained at Barcelona Media after that acquisition formed the core of what would become Eurecat's audio group when the centre was established in 2015.
+
+Three Eurecat projects underpin the work presented in this thesis.
+
+\begin{itemize}{
+    \item \textbf{Eurecat-Microson} collaboration project, focusing on the development of a new benchmark for evaluating \acrshort{HAs} and speech denoising algorithms. 
+    
+    \item \textbf{GuestXR} (Horizon 2020) project, aimed at creating an immersive online social space through extended reality, centred on a machine learning agent called ``The Guest'' designed to facilitate interaction between participants, mitigate conflicts and cyberbullying, support people with communication difficulties, and detect antisocial behaviour. 
+    
+    \item \textbf{Traça IAGen}, an internal Eurecat initiative funded by the Catalan Government with the goal of driving the adoption of generative AI across the centre's different research units.
+}
 \end{itemize}
 
-\section{Research objectives and outline}
+From the academic side, the Music Technology Group (MTG) at the Universitat Pompeu Fabra (UPF) in Barcelona is one of the leading research groups in sound and music computing worldwide. Founded in 1994 within UPF's Department of Information and Communication Technologies, and now part of the Department of Engineering, the MTG conducts research spanning signal processing, machine learning, music perception, computational musicology, and human-computer interaction, with applications ranging from music creation and performance to education and cultural heritage. A defining characteristic of the group is its commitment to open science: flagship initiatives such as Freesound, a collaborative repository of Creative Commons audio samples, and Essentia, an open-source library for audio analysis and music description, have become widely adopted tools in both the research community and industry. The MTG has grown into an interdisciplinary team that combines scientific rigour with artistic and societal relevance, and maintains active collaborations with musicians, educators, and industry partners.
+
+\section{Research objectives and thesis outline}
 \label{sec:outline}
 
 In light of the above, this thesis investigates whether improving the
 ecological validity of (often synthetic) training and evaluation data is an
 effective lever for closing the generalization gap, across three audio
-processing tasks --- one per partner field. The remainder of the manuscript is
+processing tasks --- one per partner field. The remainder of the manuscript tackles the following Research Objectives (RO) and is
 organized as follows.
 
-\textbf{Chapter~\ref{ch02_sota}} introduces the spatial-audio, deep-learning
-and virtual-acoustics techniques used throughout the thesis, together with the
-datasets that are standard in the field.
+\begin{itemize}{
+    \item \textbf{Chapter~\ref{ch02_sota}} introduces the scientific background used broadly throughout the thesis: spatial-audio techniques, deep-learning for audio, and virtual-acoustics on which the contributions build, together with a summary of the datasets that are standard in every field.
 
-\textbf{Chapter~\ref{ch03_hearing}} addresses the hearing aids field and asks:
-can we leverage the techniques above to improve the ecological validity of
-hearing aid \emph{evaluation}? And are \acrshort{DNN}s a promising route to generalize
-better than traditional beamforming algorithms?
+    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshort{HAs} field, developed in collaboration with Microson. It asks whether the techniques introduced above can improve the ecological validity of \acrshort{HAs} devices \emph{evaluation} (\textbf{RO1}), and whether \acrshort{DNN}s are a promising route to generalise better than traditional algorithms (\textbf{RO2}).
 
-\textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, studying
-how to improve the ecological validity of synthetic training data for
-normal-hearing monaural speech enhancement.
+    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, within the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}).
 
-\textbf{Chapter~\ref{ch05_mss}} brings the same idea to music source separation,
-adding noise and reverberation to approximate a live-music use case.
+    \item \textbf{Chapter~\ref{ch05_mss}} brings the same idea to \acrfull{MSS}, in line with the research interests of the MTG (UPF). We identify that \acrfull{SOTA} models designed for studio music do not work well on recordings captured by attendees (mobile-phone recordings from the audience). This raises several questions: can we generate synthetic data that transforms studio datasets into live datasets? Can a generative singing-voice conversion model produce synthetic audiences that sing along to the vocals of the studio songs (\textbf{RO5})? Can we curate additional audience noise from internet audio archives (\textbf{RO6})? And what about acoustics --- does adding impulse responses specifically measured in real, modern music venues improve upon using existing non-concert \acrshort{RIR}s (\textbf{RO7})?
 
-\textbf{Chapter~\ref{ch98_conclusions}} closes the dissertation with conclusions.
+    \item \textbf{Chapter~\ref{ch98_conclusions}} closes the dissertation with conclusions and perspectives for future work, and lists the publications and research materials that this thesis has made freely public to foster open research.
+}
+\end{itemize}
 
-Having grounded the concepts of \emph{audio processing} and \emph{ecological
+Having grounded the concepts of \acrshort{DNN}-based \emph{audio processing} and \emph{ecological
 validity}, the title of this thesis can now be read in full: our aim is to
-improve the ecological validity of (often synthetic) datasets as a lightweight
-route to better-generalizing, deployable audio processing models. Although we
-focus on regression tasks (enhancement and separation), improving ecological
-validity is, in principle, equally beneficial for the more classification-
-oriented tasks discussed above.
+improve the ecological validity of datasets as a lightweight route to
+better-generalizing, deployable audio processing models---one per project of
+this Industrial PhD.

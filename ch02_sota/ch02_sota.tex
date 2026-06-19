@@ -35,8 +35,7 @@ This section is intended as a non-exhaustive, deliberately synthetic recap
 of the \acrshort{DNN} concepts needed to follow the rest of the thesis,
 rather than a thorough survey. It is written primarily for the neophyte,
 or for the audio researcher whose expertise lies in a neighbouring field. \footnote{This section grew out of a series of internal seminars held within the
-multimedia unit at Eurecat. Accordingly, the presentation is
-intentionally informal and prioritises intuition over rigour; the
+Multimedia Unit at Eurecat. Accordingly, the presentation prioritises intuition over rigour; the
 interested reader is referred to standard texts for a complete treatment.}
 
 \subsection{The advent of DNNs (2015--2017)}
@@ -229,6 +228,275 @@ speech-enhancement models.
     VGG-like encoder--decoder (blue) with ResNet-style skip connections (red). Details are omitted for clarity.}
     \label{fig:unet}
 \end{figure}
+
+When an encoder--decoder is trained to reconstruct its own input rather
+than to predict a different target, it is called an \emph{autoencoder}:
+the encoder compresses the input into the low-dimensional \emph{embedding}
+of Section~\ref{sec:bg_dl_advent} --- here acting as a \emph{bottleneck}
+or \emph{latent} --- and the decoder rebuilds the input from it, so the
+network learns a compact representation with no labels at all. This
+unsupervised encoder--decoder is the basis of many of the generative
+models of Section~\ref{sec:bg_dl_generative}.
+
+\subsection{Temporal networks (2018--2022)}
+\label{sec:bg_dl_temporal}
+
+
+The architectures of the previous section map a fixed-size input to its
+output in a single shot, with no notion of order. Audio, however, is
+inherently \emph{sequential}: a waveform or a spectrogram is an ordered
+sequence of samples or frames whose interpretation depends on context.
+This section reviews three complementary ways of modelling that temporal
+structure --- recurrence, autoregression, and dilated causal convolution.
+
+\textbf{\acrfull{RNN} ---} process a sequence one step
+at a time while carrying a hidden state $h_t$ that summarises
+everything seen so far. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{ch02_sota/figures/rnn.pdf}
+    \caption{Recurrent networks. \textbf{(a)}~A recurrent cell $f_\theta$
+    maps an input $x_t$ to a hidden state $h_t$ while feeding that state
+    back into the next step; unrolling the recurrence over time (right)
+    reveals a deep network that shares its weights across all steps.
+    \textbf{(b)}~Schematic of the plain \acrshort{RNN} cell (a single
+    $\tanh$), the \acrshort{LSTM} (a cell-state highway regulated by
+    forget, input and output gates), and the \acrshort{GRU} (reset and
+    update gates). $\sigma$ denotes a sigmoid gate, and $\times$, $+$
+    element-wise operations.}
+    \label{fig:rnn}
+\end{figure}
+
+Writing $x_t$ for the input at time $t$ (e.g.\ a
+single spectrogram frame), the same cell is applied at every step,
+\begin{equation}
+    h_t = f\!\left(\mathbf{W}_x\, x_t + \mathbf{W}_h\, h_{t-1} + b\right),
+    \label{eq:rnn}
+\end{equation}
+where $f$ is the activation (typically $\tanh$), $\mathbf{W}_x$ and
+$\mathbf{W}_h$ are the input and recurrent weight matrices, and the
+feedback of $h_{t-1}$ is the \emph{recurrence}. Unrolling this loop over
+time (Figure~\ref{fig:rnn}a) shows that an \acrshort{RNN} is effectively a
+very deep network that \emph{shares} its parameters
+$\theta = \{\mathbf{W}_x, \mathbf{W}_h, b\}$ across all steps, trained by
+back-propagation through time. Plain \acrshort{RNN}s struggle to retain
+information over long sequences, as gradients tend to vanish or explode;
+the gated \acrfull{LSTM} \citep{hochreiter1997long} and the lighter
+\acrfull{GRU} \citep{cho2014learning} mitigate this with multiplicative
+gates that learn what to keep, forget and output (Figure~\ref{fig:rnn}b).
+Their main drawback is practical: the recurrence in
+Equation~\ref{eq:rnn} is inherently \emph{sequential} --- step $t$ cannot
+be computed until $h_{t-1}$ is available --- which makes recurrent models
+hard to parallelise on \acrshort{GPU}s and slow to train. They were
+nonetheless the dominant sequence models of their era and remain in use,
+underpinning music source-separation systems such as Open-Unmix
+\citep{stoter2019openunmix} and Spleeter \citep{hennequin2020spleeter} and
+text-to-speech models such as Tacotron~2 \citep{shen2018natural}.
+
+
+
+\textbf{Autoregressive models ---} A second strategy models a sequence by
+\emph{factorising} its joint distribution into a product of conditionals,
+predicting each element from the ones before it:
+\begin{equation}
+    p(x) = \prod_{t} p\!\left(x_t \mid x_{1}, \dots, x_{t-1}\right).
+    \label{eq:autoregressive}
+\end{equation}
+WaveNet \citep{van2016wavenet} was the landmark example, generating raw
+audio one sample at a time with a stack of dilated causal convolutions and
+reaching unprecedented synthesis quality (Figure \ref{fig:wavenet}). The same autoregressive
+principle underlies today's GPT-style language models
+\citep{radford2019language}: applied to the discrete tokens produced by
+neural audio codecs (Section~\ref{sec:context}), it drives much of modern
+generative audio \citep{borsos2023audiolm}. Autoregressive models are
+expressive density estimators, but inherently sequential at inference ---
+each element requires all the previous ones --- and therefore slow to
+sample.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth,trim={.25cm .26cm .25cm 7cm},clip]{ch02_sota/figures/wavenet.pdf}
+    \caption{\textbf{(a)}~Autoregression: each element $x_t$ is predicted
+    from all the previous ones, factorising the sequence distribution as
+    $p(x)=\prod_t p(x_t\mid x_{<t})$; generation proceeds one element at a
+    time (dashed). \textbf{(b)}~A stack of \emph{dilated causal}
+    convolutions: connections reach only into the past (causal) and skip
+    an exponentially growing number of steps with depth (dilation
+    $1,2,4,8$), so a single output (highlighted) sees a large receptive
+    field --- here the entire input --- with only a few layers.}
+    \label{fig:wavenet}
+\end{figure}
+
+
+\textbf{Temporal convolutional networks ---} A third strategy keeps the
+convolutional machinery of Section~\ref{sec:bg_dl_advent} but adapts it to
+sequences. \acrfull{TCN}s are one-dimensional \acrshort{CNN}s built from
+\emph{dilated causal} convolutions stacked in residual blocks: \emph{causal}, because each output depends only on present and past inputs --- suiting
+streaming and real-time use; and \emph{dilated}, because inserting gaps
+between the kernel taps expands the receptive field \emph{exponentially}
+with depth, so that long temporal context is captured with few layers
+while remaining fully parallelisable, unlike the recurrence of
+Equation~\ref{eq:rnn}. Introduced by WaveNet and characterised as a
+generic sequence model by \citet{bai2018empirical}, dilated causal
+convolutions are the backbone of many audio-processing systems, including
+Conv-TasNet \citep{luo2019conv} for source separation, the
+waveform-domain Wave-U-Net \citep{stoller2018wave}, and general-purpose
+audio-effect removal \citep{rice2023general}. Their efficiency and
+causality made them particularly well suited to the real-time, on-device
+setting. Notably, many of these temporal models ---WaveNet, Conv-TasNet and Wave-U-Net among them--- operate directly on the raw waveform, and in doing so sidestep the magnitude--phase compromise of the early spectrogram \acrshort{CNN}s of Section~\ref{sec:bg_dl_advent}, which discarded the phase altogether.
+
+
+\textbf{Attention and Transformers ---} The Transformer \citep{vaswani2017attention} replaced recurrence with \emph{attention}, yielding a better
+\emph{parallelisable} architecture that processes all positions of a
+sequence at once rather than one step at a time --- a decisive advantage
+for training on modern \acrshort{GPU}s. Its structure is
+sketched in Figure~\ref{fig:transformer}. Both the input and the output are treated as sequences of discrete
+\emph{tokens} --- words or sub-words for text and, in the audio domain,
+short frames or the discrete codes produced by a neural codec. Each token
+is first mapped to an \emph{embedding} --- the same compact, learned
+vector representation introduced for \acrshort{CNN}s in
+Section~\ref{sec:bg_dl_advent} --- so that every token becomes a point in
+a continuous space the network can operate on. Because attention is order-agnostic, a \emph{positional
+encoding} is then added to these embeddings to inject information about
+each token's position in the sequence. The core operation is
+\emph{self-attention}: within a sequence, every embedding is updated as a
+weighted combination of all the others, so that tokens exchange
+information directly regardless of how far apart they are. These attention
+sublayers are stacked into blocks, each wrapped in a \emph{residual
+connection} (the ``Add~\& Norm'' of Figure~\ref{fig:transformer}) in
+exactly the spirit of the ResNets of Section~\ref{sec:bg_dl_advent}, which
+is what keeps such deep stacks trainable. A second form,
+\emph{cross-attention}, lets one sequence attend to another: the decoder
+queries the encoder's embeddings, which is how a generator is
+\emph{conditioned} on an input.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textheight]{ch02_sota/figures/transformer.pdf}
+    \caption{The Transformer \citep{vaswani2017attention}. The encoder (left) refines the input
+    embeddings through stacked \emph{self-attention} and feed-forward
+    sublayers, each wrapped in a residual ``Add~\& Norm'' connection (red).
+    The decoder (right) generates the output autoregressively, combining
+    masked self-attention with \emph{cross-attention} (green) that queries
+    the encoder embeddings. This sketch is a
+    simplified rendering of the original figure of
+    \citet{vaswani2017attention}.}
+    \label{fig:transformer}
+\end{figure}
+
+The architecture thus splits naturally into an \emph{encoder}, which
+builds contextual embeddings of the input, and a \emph{decoder}, which
+generates the output autoregressively; either half can be used on its own,
+as in the encoder-only BERT \citep{devlin2019bert} for representation
+learning or the decoder-only GPT-2 \citep{radford2019language} for
+generation. Crucially, cross-attention does not require the two sequences
+to be of the same kind: a decoder can be conditioned on embeddings from a
+different \emph{modality} altogether --- text on audio, audio on text,
+images on text --- which is precisely what has enabled the recent
+explosion of multimodal tasks such as text-to-audio or audio captioning.
+
+
+
+
+A representative audio example is Whisper \citep{radford2022whisper}, an
+encoder--decoder Transformer for speech recognition trained on hundreds of
+thousands of hours of weakly labelled audio: its encoder ingests a
+log-mel spectrogram and its decoder cross-attends to that representation
+to produce the transcript, with a single model also performing
+translation and language identification.
+
+\subsection{Generative models}
+\label{sec:bg_dl_generative}
+
+Every research objective of this thesis except \textbf{RO5} is addressed
+with \emph{discriminative} models, which learn a direct mapping from an
+input to a target by estimating the conditional $p(y \mid x)$ --- the
+classification and regression setting of the previous sections. Only
+\textbf{RO5} relies on \emph{generative} models, which instead learn the
+data distribution $p(x)$ itself (or a conditional $p(x \mid c)$) and can
+\emph{sample} new, previously unseen data from it. Since the autoregressive
+generative models were already introduced in
+Section~\ref{sec:bg_dl_temporal}, this section reviews the remaining
+generative families at the level of detail needed to follow the rest of
+the thesis.
+
+\textbf{GANs ---} A \acrfull{GAN} \citep{goodfellow2014generative} casts
+generation as a two-player game: a \emph{generator} maps random noise to
+samples, while a \emph{discriminator} learns to tell real data from the
+generator's output. The two are trained adversarially --- the generator
+improving until its samples can no longer be distinguished from real ones
+--- which produces sharp, realistic outputs but can be delicate to train.
+In audio, \acrshort{GAN}s are the standard choice for \emph{vocoders} that
+invert a mel-spectrogram back into a waveform; a vocoder of this kind,
+HiFi-GAN \citep{kong2020hifi}, underlies the voice-conversion pipeline
+used in this thesis (RO5).
+
+
+\textbf{Beyond supervised learning ---} All the models discussed so far
+are trained with \emph{supervised} learning, which requires paired
+examples $(x, y)$. \emph{Self-supervised} learning lifts this requirement
+by manufacturing the target from the unlabelled data itself, through a
+\emph{pretext} task. The simplest is \emph{reconstruction}: an autoencoder learns to rebuild
+its input, and a \emph{denoising} autoencoder does so from a deliberately
+corrupted version, forcing the embedding to capture the signal's
+structure rather than copy it verbatim. A second is \emph{masking}: part of the signal, or of its latent representation, is hidden and the model must fill it in, much as
+masked-language modelling does for text; HuBERT \citep{hsu2021hubert}, for
+instance, masks spans of the audio latent and predicts pre-clustered
+targets at the masked positions. A third is \emph{autoregression}: merely
+predicting the next frame or token from the past is itself a supervisory
+signal, which is why the autoregressive models of
+Section~\ref{sec:bg_dl_temporal} (WaveNet, \acrshort{GPT}-style decoders)
+are, in effect, trained in a self-supervised manner. A further,
+orthogonal ingredient is the \emph{contrastive} objective, which neither
+reconstructs nor predicts a value but learns \emph{by comparison}: the
+representation of a \emph{positive} pair is pulled close to its context, while a set
+of \emph{negative} distractors is pushed away. wav2vec~2.0 \citep{baevski2020wav2vec2} combines masking
+with exactly such an objective, learning to single out the correct
+quantised latent of a masked span among many distractors. Once trained,
+these label-free representations can feed a small \emph{supervised}
+classifier --- a \emph{semi-supervised} pipeline --- and, at scale,
+they are precisely what
+makes the pre-training of foundation models (Section~\ref{sec:context})
+feasible.
+
+\textbf{Discrete latent codecs ---} A further family quantises the
+continuous latent of an autoencoder into a finite \emph{codebook}, turning
+audio into a sequence of discrete tokens (Section~\ref{sec:context}).
+Building on the discrete-codebook idea of the VQ-VAE \citep{oord2017neural},
+residual vector quantisation (RVQ) stacks several codebooks, each
+quantising the residual left by the previous one, to encode the waveform
+at a very low bitrate; SoundStream \citep{zeghidour2021soundstream} and
+EnCodec \citep{defossez2022high} are the standard neural codecs of this
+kind. Their training also illustrates how the pieces connect: EnCodec
+combines time- and frequency-domain \emph{reconstruction} losses with an
+\emph{adversarial} (\acrshort{GAN}) loss from a set of multi-scale
+discriminators, bridging the discriminative models of the previous
+sections with the adversarial training above. The resulting discrete codes
+are exactly the tokens over which the autoregressive and Transformer
+models of Section~\ref{sec:bg_dl_temporal} operate, and they underpin
+language-model-style audio generation \citep{borsos2023audiolm}.
+
+\textbf{Diffusion ---} Diffusion models \citep{ho2020denoising} define a
+fixed \emph{forward} process that gradually corrupts data into pure noise,
+and learn the \emph{reverse} process that removes it step by step;
+generation then starts from noise and iteratively denoises towards a clean
+sample. This yields high-quality, diverse samples, but at the cost of many
+sequential denoising steps. Running the process not on the raw signal but
+in the compressed latent space of an autoencoder, and parametrising the
+denoiser with a Transformer, gives \emph{latent diffusion} models --- the
+combination behind recent text-to-audio systems such as Stable Audio
+\citep{evans2025stable}.
+
+\textbf{Flow matching ---} Flow matching \citep{lipman2022flow}
+generalises diffusion. Instead of reversing a fixed noising process, it
+learns a continuous-time \emph{velocity field} that transports a simple
+noise distribution to the data distribution along a chosen probability
+path, trained by directly regressing that velocity. The paths can be made
+much straighter than those implied by diffusion, so high-quality samples
+require far fewer integration steps, with diffusion itself recovered as a
+particular case. It has quickly become a competitive and often faster
+alternative for generative audio, used for instance in \citep{mehta2024matcha}.
 
 
 \section{Spatial Audio and Ambisonics}

@@ -52,11 +52,11 @@ In the present work, we focus on three of these representative tasks, the choice
 
 To situate the contributions of this thesis within the broader shift reshaping audio processing, we first trace the transition from analytical to data-driven methods, which has unfolded along two axes. The first concerns the signal representations. Models
 that used to operate on hand-crafted descriptors built from expert
-domain knowledge have progressively given way to architectures that learn their own representations directly from time--frequency transforms or even from the raw waveform \citep{pons2019}. These learned representations have themselves grown more abstract: continuous, high-dimensional feature maps have increasingly been substituted by to discrete latent codes, learned end-to-end and quantised into a finite vocabulary. Neural audio codecs epitomise this shift, compressing the waveform into a handful of discrete tokens that preserve perceptual fidelity
+domain knowledge have progressively given way to architectures that learn their own representations directly from time--frequency transforms or even from the raw waveform \citep{pons2019}. These learned representations have themselves grown more abstract: continuous, high-dimensional feature maps have transitioned to discrete latent codes, learned end-to-end and quantised into a finite vocabulary. Neural audio codecs epitomise this shift, compressing the waveform into a handful of discrete tokens that preserve perceptual fidelity
 \citep{zeghidour2021soundstream,defossez2022high} while exposing a tokenised
 substrate over which language-model architectures can operate directly
 \citep{borsos2023audiolm}. Continuous latent spaces have remained equally
-productive, most notably the encoder-decoder structure of the \acrfull{VAE} that underpin latent-diffusion
+productive, most notably the encoder-decoder structure of the \acrfull{VAE} that underpins latent-diffusion
 generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
 process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
@@ -170,7 +170,7 @@ translate into the real world.
 A complementary, more quantitative view of the same gap comes from the machine
 learning literature, where it is studied under the notion of \emph{domain
 mismatch} (or \emph{distribution shift}). Supervised models are trained under the
-implicit assumption that training and real data are drawn from the same underlying distribution; when this assumption is violated performance degrades, often severely \citep{quinonero2008dataset}. In audio processing this mismatch is rarely a single
+implicit assumption that training and real data are drawn from the same underlying distribution; when this assumption is violated performance degrades, often severely \citep{quinonero2008dataset}. In audio processing, this mismatch is rarely a single
 factor but the compound effect of many: the recording channel and microphone
 response, room acoustics and reverberation, the noise types and signal-to-noise
 ratios present, speaker or instrument characteristics, and the way mixtures are
@@ -180,33 +180,17 @@ constructed in synthetic benchmarks. The cross-dataset degradation reported abov
 framings of a single objective, and the one this thesis pursues: aligning the
 data a model is trained and evaluated on with the conditions of its intended use.
 
-This intuition can be made precise. Let $\mathcal{X}$ denote the space of input
-signals and $\mathcal{Y}$ the space of targets (separated sources/instruments, enhanced speech,
-etc.), and let a model $f_\theta : \mathcal{X} \rightarrow \mathcal{Y}$ be trained
-to minimize the expected loss $\mathcal{L}$ over a \emph{source} distribution
-$p_S(x, y)$:
-\begin{equation}
-    \theta^\star = \arg\min_\theta \;
-    \mathbb{E}_{(x,y)\sim p_S}\!\left[\mathcal{L}\!\left(f_\theta(x), y\right)\right].
-    \label{eq:erm}
-\end{equation}
-At deployment, however, the model is evaluated on a \emph{target} distribution
-$p_T(x, y)$, and the quantity we actually care about is the target risk
-$\mathbb{E}_{(x,y)\sim p_T}[\mathcal{L}(f_{\theta^\star}(x), y)]$. Empirical risk
-minimization offers guarantees only when $p_S = p_T$; \emph{domain mismatch} is
-precisely the condition
-\begin{equation}
+
     p_S(x, y) \neq p_T(x, y),
     \label{eq:mismatch}
 \end{equation}
-under which a model optimal on the source need not be optimal---or even
-adequate---on the target. 
+under which a model trained to be optimal on the source domain may perform poorly---or even inadequately—--on the target domain.
 
 We can factorize the joint
 distribution as $p(x, y) = p(x)\,p(y \mid x)$. In the audio processing tasks we
 consider, the conditional input--output relationship is largely physical and
 stable across domains (e.g.\ the mapping from a noisy mixture to its clean
-sources is governed by the same acoustics everywhere), so $p_S(y \mid x) \approx
+elements is governed by the same acoustics everywhere), so $p_S(y \mid x) \approx
 p_T(y \mid x)$, and the dominant discrepancy lies in the marginal over inputs,
 $p_S(x) \neq p_T(x)$. Each benchmark fixes a particular $p(x)$---a specific
 distribution of channels, rooms, noises and speakers---and the cross-dataset
@@ -233,8 +217,8 @@ enough to cover everything.
 
 This strategy is remarkably effective, but it is precisely the one that the
 constraints of this thesis rule out; the parameter counts and inference
-budgets that make web-scale training pay off are incompatible with the real-time,
-on-device deployment targets that motivate our work. When scaling the model and the data indiscriminately is not an option,
+budgets inherent to web-scale training are incompatible with the real-time,
+on-device deployment targets that motivate our work. When scaling the model and the data is not an option,
 the quality and representativeness of a fixed-size training set become the primary
 lever---which returns us to ecological validity.
 
@@ -250,8 +234,8 @@ Three Eurecat projects underpin the work presented in this thesis.
 \begin{itemize}{
     \item \textbf{Eurecat-Microson} collaboration project, focusing on the development of a new benchmark for evaluating \acrshort{HAs} and speech denoising algorithms. 
     
-    \item \textbf{GuestXR} (Horizon 2020) project, aimed at creating an immersive online social space through extended reality, centred on a machine learning agent called ``The Guest'' designed to facilitate interaction between participants, mitigate conflicts and cyberbullying, support people with communication difficulties, and detect antisocial behaviour. 
-    
+    \item \textbf{GuestXR} (Horizon 2020) project, aimed at creating an immersive online social space through extended reality, centred on a machine learning agent called ``The Guest'' designed to facilitate interaction between participants, mitigate conflicts and cyberbullying. Because supporting participants with and without hearing difficulties requires intelligible speech, our contribution addressed \acrshort{SE}.
+
     \item \textbf{Traça IAGen}, an internal Eurecat initiative funded by the Catalan Government with the goal of driving the adoption of generative AI across the centre's different research units.
 }
 \end{itemize}
@@ -267,17 +251,17 @@ effective lever for closing the generalization gap, across three audio
 processing tasks --- one per partner field. The remainder of the manuscript tackles the following Research Objectives (RO) and is
 organized as follows.
 
-\begin{itemize}{
+\begin{itemize}
     \item \textbf{Chapter~\ref{ch02_sota}} introduces the scientific background used broadly throughout the thesis: spatial-audio techniques, deep-learning for audio, and virtual-acoustics on which the contributions build, together with a summary of the datasets that are standard in every field.
+    
+    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshort{HAs} field and is developed in collaboration with Microson. Because \acrshort{HAs} performance under lab conditions degrades in real-life situations, we ask whether the techniques introduced above can improve the ecological validity of \acrshort{HAs} \emph{evaluation} (\textbf{RO1}), and whether \acrshort{DNN}s are a promising route to generalise better than traditional algorithms (\textbf{RO2}). Beyond their technical interest, both objectives foster accessibility, and thus inclusivity, for people with hearing loss.
 
-    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshort{HAs} field, developed in collaboration with Microson. It asks whether the techniques introduced above can improve the ecological validity of \acrshort{HAs} devices \emph{evaluation} (\textbf{RO1}), and whether \acrshort{DNN}s are a promising route to generalise better than traditional algorithms (\textbf{RO2}).
+    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, within the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}). While large, realistic \acrshort{RIR} datasets already exist privately within industry --- where major labs maintain their own simulation tools --- replicating them for open science and releasing them freely to every research lab carries value in itself.
 
-    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, within the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}).
-
-    \item \textbf{Chapter~\ref{ch05_mss}} brings the same idea to \acrfull{MSS}, in line with the research interests of the MTG (UPF). We identify that \acrfull{SOTA} models designed for studio music do not work well on recordings captured by attendees (mobile-phone recordings from the audience). This raises several questions: can we generate synthetic data that transforms studio datasets into live datasets? Can a generative singing-voice conversion model produce synthetic audiences that sing along to the vocals of the studio songs (\textbf{RO5})? Can we curate additional audience noise from internet audio archives (\textbf{RO6})? And what about acoustics --- does adding impulse responses specifically measured in real, modern music venues improve upon using existing non-concert \acrshort{RIR}s (\textbf{RO7})?
+    \item \textbf{Chapter~\ref{ch05_mss}} brings the same idea to \acrfull{MSS}, in line with the research interests of the MTG (UPF). We identify that \acrfull{SOTA} models designed for studio music do not work well on recordings captured by attendees (mobile-phone recordings from the audience). This raises several questions: can we generate synthetic data that transforms studio datasets into live datasets? Can a generative singing-voice conversion model produce synthetic audiences that sing along to the vocals of the studio songs (\textbf{RO5})? Can we curate additional audience-like noise from internet audio archives (\textbf{RO6})? And what about acoustics --- does adding impulse responses specifically measured in real, modern music venues improve upon using existing non-concert \acrshort{RIR}s (\textbf{RO7})?
 
     \item \textbf{Chapter~\ref{ch98_conclusions}} closes the dissertation with conclusions and perspectives for future work, and lists the publications and research materials that this thesis has made freely public to foster open research.
-}
+
 \end{itemize}
 
 Having grounded the concepts of \acrshort{DNN}-based \emph{audio processing} and \emph{ecological

@@ -34,14 +34,14 @@ and music source separation (Section~\ref{ssec:bg_mss}).
 This section is intended as a non-exhaustive, deliberately synthetic recap
 of the \acrshort{DNN} concepts needed to follow the rest of the thesis,
 rather than a thorough survey. It is written primarily for the neophyte,
-or for the audio researcher whose expertise lies in a neighbouring field. \footnote{This section grew out of a series of internal seminars held within the
+or for the audio researcher whose expertise lies in a neighbouring field\footnote{This section grew out of a series of internal seminars held within the
 Multimedia Unit at Eurecat. Accordingly, the presentation prioritises intuition over rigour; the
-interested reader is referred to standard texts for a complete treatment.}
+interested reader is referred to standard texts for a complete treatment.}.
 
 \subsection{The advent of DNNs (2014--2024)}
 \label{sec:bg_dl_advent}
 
-\textbf{The Perceptron ---} The basic unit of a neural network is the \emph{perceptron} \citep{rosenblatt1958perceptron}, depicted in
+\textbf{The Perceptron ---} The basic unit of a neural network is the \emph{perceptron}~\citep{rosenblatt1958perceptron}, depicted in
 Figure~\ref{fig:perceptron}. Given an input $x \in \mathcal{X}$ with
 components $x_1, \dots, x_n$, the perceptron forms a weighted sum of its
 inputs, adds a bias, and passes the result through a non-linear
@@ -60,19 +60,11 @@ simplest instance of the parametric map $f_\theta : \mathcal{X}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{ch02_sota/figures/perceptron.pdf}
-    \caption{The Perceptron, the basic unit of a neural network. The
-    inputs $x_1, \dots, x_n$ are weighted by $w_1, \dots, w_n$, summed
-    together with a bias $b$, and passed through an activation function
-    $f$ to produce the output $o$. During training, $o$ is compared to a
-    target $y$ through a loss --- binary cross-entropy for classification,
-    mean absolute (or squared) error for regression --- and the weights
-    are updated by back-propagation and stochastic gradient descent.}
+    \caption{The Perceptron, the basic unit of a neural network.}
     \label{fig:perceptron}
 \end{figure}
 
-\textbf{The multi-layer perceptron} \citep{rumelhart1986learning} stacks many perceptron units into
-layers and composing them yields a \acrshort{DNN}, but the learning
-principle is already visible in a single unit. Training begins from \emph{randomly initialised} weights and proceeds by
+Training begins from \emph{randomly initialised} weights and proceeds by
 making the output $o$ progressively closer to a target $y$ by a \emph{loss} $\mathcal{L}(o, y)$ whose form depends on the task. For a
 \emph{classification} task the target $y$ is a class label and a common
 choice is the binary cross-entropy, $\mathcal{L}_{\mathrm{BCE}}(o, y) = -\big[\, y \log o + (1-y)\log(1-o)\,\big] $, whereas for a \emph{regression} task --- the family this thesis focuses
@@ -90,9 +82,13 @@ converges. This cycle --- forward pass, loss, back-propagation,
 parameter update --- is the engine behind every model in this thesis. Crucially, all of the above presupposes that for every input $x$ we have
 access to its corresponding target $y$: it is the pairing $(x, y)$ that
 makes the loss in Equation~\ref{eq:erm} computable. This is
-known as \emph{supervised learning}.
+known as \emph{supervised learning}. 
 
-\textbf{The \acrfull{CNN}} \citep{lecun1998gradient} was a pivotal refinement: instead of learning an independent weight for every input--unit connection, we learn a set of
+\textbf{The multi-layer perceptron}~\citep{rumelhart1986learning} stacks many perceptron units into
+layers and composing them yields a \acrshort{DNN}, but the learning
+principle is already visible in a single unit (the perceptron). 
+
+\textbf{The \acrfull{CNN}}~\citep{lecun1998gradient} is a pivotal refinement: instead of learning an independent weight for every input--unit connection, we learn a set of
 \emph{filters} (or \emph{kernels}) that are slid across the input, as
 illustrated in Figure~\ref{fig:cnn}. Each is applied at
 every spatial location, so the same weights are reused throughout the
@@ -154,8 +150,7 @@ task-relevant content of the input into a fixed-size vector, the same
 embedding can often be reused for tasks other than the one it was trained
 on --- an idea we return to when discussing pre-trained representations.
 
-A canonical example is the VGG network
-\citep{simonyan2014very}, sketched in Figure~\ref{fig:vgg16}: a deep stack
+A canonical example is the VGG network~\citep{simonyan2014very}, sketched in Figure~\ref{fig:vgg16}: a deep stack
 of small $3\times3$ convolutions and max-pooling layers that successively
 halve the spatial resolution while increasing the number of feature maps,
 followed by a few fully connected layers that map the final embedding to
@@ -164,7 +159,7 @@ the output classes.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=.8\textwidth, trim={.25cm 3cm .25cm 1.3cm}]{ch02_sota/figures/vgg16.pdf}
-    \caption{The VGG-16 architecture \citep{simonyan2014very}, a canonical
+    \caption{The VGG-16 architecture~\citep{simonyan2014very}, a canonical
     \acrshort{CNN}. Stacks of $3\times3$ convolutions (blue) followed by
     max-pooling (red) progressively reduce the spatial resolution while
     increasing the number of feature maps, until a small set of fully
@@ -175,7 +170,7 @@ the output classes.
 
 
 Beyond a certain depth, adding more layers
-makes the network harder to optimise. ResNets \citep{he2016deep}
+makes the network harder to optimise. ResNets~\citep{he2016deep}
 resolved this with a simple architectural change. Rather than asking a
 stack of layers to fit a target mapping $\mathcal{H}(x)$ directly, a
 ResNet lets it fit only the \emph{residual}
@@ -198,7 +193,7 @@ non-convex surface of a deep plain network gives way to a far smoother, near-con
     non-convex $\mathcal{L}$ surface with many poor local minima, whereas \textbf{(b)}~the
     same network with skip connections has a near-convex
     landscape much easier to optimise, following the
-    visualisation of \citet{li2018visualizing}.      
+    visualisation of~\citet{li2018visualizing}.      
     \textbf{(c)}~A ResNet block: the two
     weight layers $\mathbf{W}^{(1)}$ and $\mathbf{W}^{(2)}$, with activation
     $f$, map the input through the feature maps $\mathbf{H}_1$ and
@@ -216,8 +211,7 @@ symmetric \emph{expanding} path that upsamples back to the original
 resolution, gives an \emph{encoder--decoder}. Adding skip connections in
 the spirit of ResNet --- here linking each encoder layer to the decoder
 layer of matching resolution, so that fine-grained detail can bypass the
-bottleneck and reach the output directly --- gives the U-Net
-\citep{ronneberger2015u}. Originally proposed for image segmentation, it
+bottleneck and reach the output directly --- gives the U-Net~\citep{ronneberger2015u}. Originally proposed for image segmentation, it
 has become the backbone of countless source-separation and
 speech-enhancement models.
 
@@ -283,16 +277,15 @@ $\theta = \{\mathbf{W}_x, \mathbf{W}_h, b\}$ across all steps, trained by
 back-propagation through time. Plain \acrshort{RNN}s struggle to retain
 information over long sequences, as gradients tend to vanish or explode;
 the gated \acrfull{LSTM} \citep{hochreiter1997long} and the lighter
-\acrfull{GRU} \citep{cho2014learning} mitigate this with multiplicative
+\acrfull{GRU}~\citep{cho2014learning} mitigate this with multiplicative
 gates that learn what to keep, forget and output (Figure~\ref{fig:rnn}b).
 Their main drawback is practical: the recurrence in
 Equation~\ref{eq:rnn} is inherently \emph{sequential} --- step $t$ cannot
 be computed until $h_{t-1}$ is available --- which makes recurrent models
 hard to parallelise on \acrshort{GPU}s and slow to train. They were
 nonetheless the dominant sequence models of their era and remain in use,
-underpinning music source-separation systems such as Open-Unmix
-\citep{stoter2019openunmix} and Spleeter \citep{hennequin2020spleeter} and
-text-to-speech models such as Tacotron~2 \citep{shen2018natural}.
+underpinning music source-separation systems such as Open-Unmix~\citep{stoter2019openunmix} and Spleeter~\citep{hennequin2020spleeter} and
+text-to-speech models such as Tacotron~2~\citep{shen2018natural}.
 
 
 
@@ -303,7 +296,7 @@ predicting each element from the ones before it:
     p(x) = \prod_{t} p\!\left(x_t \mid x_{1}, \dots, x_{t-1}\right).
     \label{eq:autoregressive}
 \end{equation}
-WaveNet \citep{van2016wavenet} was the landmark example, generating raw
+WaveNet~\citep{van2016wavenet} was the landmark example, generating raw
 audio one sample at a time with a stack of dilated causal convolutions and
 reaching unprecedented synthesis quality (Figure \ref{fig:wavenet}). The same autoregressive
 principle underlies today's GPT-style language models
@@ -316,8 +309,8 @@ sample.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth,trim={.25cm .26cm .25cm 7cm},clip]{ch02_sota/figures/wavenet.pdf}
-    \caption{\textbf{(a)}~Autoregression: each element $x_t$ is predicted
+    \includegraphics[width=\textwidth,trim={.25cm .26cm .25cm 7cm},clip]{ch02_sota/figures/wavenet.pdf}
+    \caption{WaveNet model. \textbf{(a)}~Autoregression: each element $x_t$ is predicted
     from all the previous ones, factorising the sequence distribution as
     $p(x)=\prod_t p(x_t\mid x_{<t})$; generation proceeds one element at a
     time (dashed). \textbf{(b)}~A stack of \emph{dilated causal}
@@ -340,14 +333,14 @@ while remaining fully parallelisable, unlike the recurrence of
 Equation~\ref{eq:rnn}. Introduced by WaveNet and characterised as a
 generic sequence model by \citet{bai2018empirical}, dilated causal
 convolutions are the backbone of many audio-processing systems, including
-Conv-TasNet \citep{luo2019conv} for source separation, the
-waveform-domain Wave-U-Net \citep{stoller2018wave}, and general-purpose
-audio-effect removal \citep{rice2023general}. Their efficiency and
+Conv-TasNet~\citep{luo2019conv} for source separation, the
+waveform-domain Wave-U-Net~\citep{stoller2018wave}, and general-purpose
+audio-effect removal~\citep{rice2023general}. Their efficiency and
 causality made them particularly well suited to the real-time, on-device
 setting. Notably, many of these temporal models ---WaveNet, Conv-TasNet and Wave-U-Net among them--- operate directly on the raw waveform, and in doing so sidestep the magnitude--phase compromise of the early spectrogram \acrshort{CNN}s of Section~\ref{sec:bg_dl_advent}, which discarded the phase altogether.
 
 
-\textbf{Attention and Transformers ---} The Transformer \citep{vaswani2017attention} replaced recurrence with \emph{attention}, yielding a better
+\textbf{Attention and Transformers ---} The Transformer~\citep{vaswani2017attention} replaced recurrence with \emph{attention}, yielding a better
 \emph{parallelisable} architecture that processes all positions of a
 sequence at once rather than one step at a time --- a decisive advantage
 for training on modern \acrshort{GPU}s. Its structure is
@@ -374,7 +367,7 @@ queries the encoder's embeddings, which is how a generator is
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textheight]{ch02_sota/figures/transformer.pdf}
-    \caption{The Transformer \citep{vaswani2017attention}. The encoder (left) refines the input
+    \caption{The Transformer~\citep{vaswani2017attention}. The encoder (left) refines the input
     embeddings through stacked \emph{self-attention} and feed-forward
     sublayers, each wrapped in a residual ``Add~\& Norm'' connection (red).
     The decoder (right) generates the output autoregressively, combining
@@ -388,8 +381,8 @@ queries the encoder's embeddings, which is how a generator is
 The architecture thus splits naturally into an \emph{encoder}, which
 builds contextual embeddings of the input, and a \emph{decoder}, which
 generates the output autoregressively; either half can be used on its own,
-as in the encoder-only BERT \citep{devlin2019bert} for representation
-learning or the decoder-only GPT-2 \citep{radford2019language} for
+as in the encoder-only BERT~\citep{devlin2019bert} for representation
+learning or the decoder-only GPT-2~\citep{radford2019language} for
 generation. Crucially, cross-attention does not require the two sequences
 to be of the same kind: a decoder can be conditioned on embeddings from a
 different \emph{modality} altogether --- text on audio, audio on text,
@@ -409,19 +402,20 @@ translation and language identification.
 \subsection{Generative models (2020--2026)}
 \label{sec:bg_dl_generative}
 
-Every research objective of this thesis except \textbf{RO5} is addressed
+Every research objective of this thesis except the generation of audience musical noise (\textbf{RO5}) is addressed
 with \emph{discriminative} models, which learn a direct mapping from an
 input to a target by estimating the conditional $p(y \mid x)$ --- the
 classification and regression setting of the previous sections. Only
 \textbf{RO5} relies on \emph{generative} models, which instead learn the
-data distribution $p(x)$ itself (or a conditional $p(x \mid c)$) and can
+data distribution $p(x)$ itself ---or the conditional $p(x \mid c)$ if using a conditioning input $c$ such
+as a text prompt or a reference voice--- and can
 \emph{sample} new, previously unseen data from it. Since the autoregressive
 generative models were already introduced in
-Section~\ref{sec:bg_dl_temporal}, this section reviews the remaining
+Section~\ref{sec:bg_dl_temporal}, this section briefly outlines the remaining
 generative families at the level of detail needed to follow the rest of
 the thesis.
 
-\textbf{GANs ---} A \acrfull{GAN} \citep{goodfellow2014generative} casts
+\textbf{GANs ---} A \acrfull{GAN} from~\cite{goodfellow2014generative} casts
 generation as a two-player game: a \emph{generator} maps random noise to
 samples, while a \emph{discriminator} learns to tell real data from the
 generator's output. The two are trained adversarially --- the generator
@@ -429,7 +423,7 @@ improving until its samples can no longer be distinguished from real ones
 --- which produces sharp, realistic outputs but can be delicate to train.
 In audio, \acrshort{GAN}s are the standard choice for \emph{vocoders} that
 invert a mel-spectrogram back into a waveform; a vocoder of this kind,
-HiFi-GAN \citep{kong2020hifi}, underlies the voice-conversion pipeline
+HiFi-GAN~\citep{kong2020hifi}, underlies the voice-conversion pipeline
 used in this thesis (RO5).
 
 
@@ -440,18 +434,17 @@ by manufacturing the target from the unlabelled data itself, through a
 \emph{pretext} task. The simplest is \emph{reconstruction}: an autoencoder learns to rebuild
 its input, and a \emph{denoising} autoencoder does so from a deliberately
 corrupted version, forcing the embedding to capture the signal's
-structure rather than copy it verbatim. A second is \emph{masking}: part of the signal, or of its latent representation, is hidden and the model must fill it in, much as
-masked-language modelling does for text; HuBERT \citep{hsu2021hubert}, for
+structure rather than copying it verbatim. A second is \emph{masking}: part of the signal, or of its latent representation, is hidden and the model must fill it in, much as
+masked-language modelling does for text; HuBERT~\citep{hsu2021hubert}, for
 instance, masks spans of the audio latent and predicts pre-clustered
-targets at the masked positions. A third is \emph{autoregression}: merely
-predicting the next frame or token from the past is itself a supervisory
+targets at the masked positions. A third is \emph{autoregression}: predicting the next frame or token from the past is itself a supervisory
 signal, which is why the autoregressive models of
 Section~\ref{sec:bg_dl_temporal} (WaveNet, \acrshort{GPT}-style decoders)
 are, in effect, trained in a self-supervised manner. A further,
 orthogonal ingredient is the \emph{contrastive} objective, which neither
 reconstructs nor predicts a value but learns \emph{by comparison}: the
 representation of a \emph{positive} pair is pulled close to its context, while a set
-of \emph{negative} distractors is pushed away. wav2vec~2.0 \citep{baevski2020wav2vec2} combines masking
+of \emph{negative} distractors is pushed away. wav2vec~2.0~\citep{baevski2020wav2vec2} combines masking
 with exactly such an objective, learning to single out the correct
 quantised latent of a masked span among many distractors. Once trained,
 these label-free representations can feed a small \emph{supervised}
@@ -463,11 +456,11 @@ feasible.
 \textbf{Discrete latent codecs ---} A further family quantises the
 continuous latent of an autoencoder into a finite \emph{codebook}, turning
 audio into a sequence of discrete tokens (Section~\ref{sec:context}).
-Building on the discrete-codebook idea of the VQ-VAE \citep{oord2017neural},
+Building on the discrete-codebook idea of the VQ-VAE~\citep{oord2017neural},
 residual vector quantisation (RVQ) stacks several codebooks, each
 quantising the residual left by the previous one, to encode the waveform
-at a very low bitrate; SoundStream \citep{zeghidour2021soundstream} and
-EnCodec \citep{defossez2022high} are the standard neural codecs of this
+at a very low bitrate; SoundStream~\citep{zeghidour2021soundstream} and
+EnCodec~\citep{defossez2022high} are the standard neural codecs of this
 kind. Their training also illustrates how the pieces connect: EnCodec
 combines time- and frequency-domain \emph{reconstruction} losses with an
 \emph{adversarial} (\acrshort{GAN}) loss from a set of multi-scale
@@ -475,9 +468,9 @@ discriminators, bridging the discriminative models of the previous
 sections with the adversarial training above. The resulting discrete codes
 are exactly the tokens over which the autoregressive and Transformer
 models of Section~\ref{sec:bg_dl_temporal} operate, and they underpin
-language-model-style audio generation \citep{borsos2023audiolm}.
+language-model-style audio generation~\citep{borsos2023audiolm}.
 
-\textbf{Diffusion ---} Diffusion models \citep{ho2020denoising} define a
+\textbf{Diffusion ---} Diffusion models~\citep{ho2020denoising} define a
 fixed \emph{forward} process that gradually corrupts data into pure noise,
 and learn the \emph{reverse} process that removes it step by step;
 generation then starts from noise and iteratively denoises towards a clean
@@ -485,10 +478,9 @@ sample. This yields high-quality, diverse samples, but at the cost of many
 sequential denoising steps. Running the process not on the raw signal but
 in the compressed latent space of an autoencoder, and parametrising the
 denoiser with a Transformer, gives \emph{latent diffusion} models --- the
-combination behind recent text-to-audio systems such as Stable Audio
-\citep{evans2025stable}.
+combination behind recent text-to-audio systems such as~\cite{evans2025stable,nistal2024improving}.
 
-\textbf{Flow matching ---} Flow matching \citep{lipman2022flow}
+\textbf{Flow matching ---}~\citep{lipman2022flow}
 generalises diffusion. Instead of reversing a fixed noising process, it
 learns a continuous-time \emph{velocity field} that transports a simple
 noise distribution to the data distribution along a chosen probability
@@ -496,12 +488,304 @@ path, trained by directly regressing that velocity. The paths can be made
 much straighter than those implied by diffusion, so high-quality samples
 require far fewer integration steps, with diffusion itself recovered as a
 particular case. It has quickly become a competitive and often faster
-alternative for generative audio, used for instance in \citep{mehta2024matcha}.
+alternative for generative audio, used for instance in~\citep{mehta2024matcha}.
 
+
+This section has traced the \acrshort{DNN} toolkit on which the rest of the
+thesis builds: from the perceptron and the supervised training loop,
+through convolutional networks, the residual
+connections and encoder--decoder patterns, the extension to sequences via recurrence, autoregression,
+dilated causal convolutions and attention. We presented \emph{embeddings} ---the compact learned representation that every such
+architecture produces and that later models reuse --- and the
+distinction between \emph{discriminative} models, which map an
+input to a target, and \emph{generative} ones, which model the data
+distribution and sample from it; However, a model is only half of the story and is ultimately only as good as the
+\emph{data} that is train and evaluate on. The remainder of this chapter
+therefore turns from the model to the signal, beginning with techniques for capturing sound
+fields and represent them spatially.
 
 \section{Spatial Audio and Ambisonics}
 \label{sec:bg_spatial}
-i aquí una subsecció.fdsaf
+
+The next two chapters and the corresponding audio processing tasks --- \acrshort{HAs}
+(Chapter~\ref{ch03_hearing}) and \acrshort{SE}
+(Chapter~\ref{ch04_mbrirs}), \textbf{RO1} to \textbf{RO4} --- rely on spatial audio to build and
+reverberate their datasets. This is most evident in \textbf{RO1},
+where the evaluation benchmark for \acrshort{HAs} is created by reproducing
+complex acoustic scenes over a Ambisonics. We additionally apply spatial audio concepts like
+binaural-rendering and directional room-simulation accross
+\textbf{RO2}--\textbf{RO4}. This section introduces the necessary background: first the
+general paradigms of spatial audio as a whole, and then a chronological account of
+Ambisonics development.
+
+\subsection{Spatial audio paradigms}
+\label{sec:bg_spatial_paradigms}
+Spatial audio is the body of techniques for capturing, representing and
+reproducing the directional properties of sound, so that a listener
+perceives sources at their intended positions in space. Human spatial hearing relies on a small set of cues: the \acrfull{ITD} and the \acrfull{ILD} —the differences in arrival time and in level between the two ears— together with the direction-dependent spectral colouring imposed by the head, torso and outer ears. Spatial-audio systems work by evoking or preserving these cues, and their methods are commonly grouped into three paradigms: channel-based, object-based and
+scene-based.
+
+\emph{Channel-based} audio, the oldest and most widespread, stores one
+signal per loudspeaker and assumes a fixed playback layout. It grew from
+two-channel stereo to multichannel \emph{surround}, adding centre and
+surround channels around the listener in the now-ubiquitous 5.1 and 7.1
+configurations. Dolby Laboratories was
+central to this evolution, popularising cinema surround with
+Dolby Stereo from the mid-1970s and discrete 5.1 with Dolby Digital in the
+early 1990s. In all of these formats, spatialisation is fixed at
+production time through \emph{panning} --- distributing a source's energy
+across the available loudspeakers according to a panning law --- so the
+spatial image is correct only for the intended layout and within a small
+\emph{sweet spot}.
+
+\emph{Object-based} audio instead stores each source as a separate
+\emph{audio object} together with metadata describing its position, and
+defers rendering to playback time, where it is adapted to whatever
+loudspeaker or headphone configuration is available. This decoupling of
+content from layout underlies modern immersive formats.
+
+\emph{Scene-based} audio sits between the two: it encodes the whole sound
+field around a point, independently of any loudspeaker layout, and decodes
+it to the available system at playback. Its prime exampleis \emph{Ambisonics}: the
+sound field around a point is sampled into a series of directional
+components --- the \acrfull{SH} --- of increasing angular order. Ambisonics is a \emph{complete} theory in the sense that it supports the
+entire chain: a sound field can be
+\emph{recorded} directly with a compact microphone array; a synthetic
+source can be \emph{encoded} into that same representation by panning it
+according to its direction; and the result can then be \emph{decoded} to
+arbitrary loudspeaker layouts. The remainder of this section will trace its development and details these encoding and decoding steps.
+
+
+Closely related to these paradigms, but concerned with
+reproduction over headphones, is \emph{binaural} audio. Its
+starting point is that the head and body filter incoming sound in a
+direction-dependent way: most simply, the head casts an \emph{acoustic
+shadow}, so that a source off to one side reaches the far ear later and
+weaker than the near ear, by an amount that depends on its direction. This
+direction-dependent shadowing is exactly what we exploit in \textbf{RO1},
+where the signals at the input of a hearing-aid microphone are
+approximated with a dummy head. Beyond the head, the \emph{pinna} (outer ear) and ear canal
+add their own direction-dependent spectral filtering --- the peaks and
+notches that, in particular, disambiguate elevation --- and, since these
+depend on each person's anatomy, they vary substantially from one listener
+to another. This complete filter is precisely the \acrshort{HRTF}. Because measuring it individually is
+impractical, considerable effort goes into \emph{personalising}
+\acrshort{HRTF}s, for instance by predicting them from a 3D scan of the
+listener's head and ears acquired with a depth sensor
+\citep{miccini2020hrtf}.
+
+Finally, with the rise of \acrfull{XR}, binaural rendering of Ambisonics
+has become especially attractive: because the sound field is represented
+in the \acrshort{SH} domain, decoding it to the two ears reduces to
+multiplying the Ambisonic signals by a fixed matrix of \acrshort{HRTF}s,
+and following the listener's head rotations is itself just another matrix
+multiplication.
+
+\subsection{A chronological perspective of Ambisonics}
+\label{sec:bg_ambi_timeline}
+
+The development of Ambisonics is best understood as a gradual generalisation
+of stereophony, followed by decades of refinement of its encoding and
+decoding. Figure~\ref{fig:ambi_timeline} situates the milestones discussed
+below in time.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{ch02_sota/figures/ambisonics_timeline.pdf}
+    \caption{A personal, simplified selection of the Ambisonics,
+    \acrshort{VBAP} and binaural-audio literature, restricted to the
+    concepts most relevant to the work of
+    Chapter~\ref{ch03_hearing}; the review extends up to 2023.}
+    \label{fig:ambi_timeline}
+\end{figure}
+
+\textbf{Stereo and the \acrfull{MS} technique.}
+The earliest spatial-audio format, two-channel stereophony, was pioneered
+by Alan Blumlein around 1930 \citep{alexander2013inventor}, who introduced
+both coincident microphone techniques --- $XY$ (two coincident
+cardioids) and \acrshort{MS} --- and the panning laws (such as
+the sine law) still in use today. In the \acrshort{MS} technique a
+forward-facing microphone, the \emph{Mid} $M$, is combined with a sideways
+figure-of-eight, the \emph{Side} $S$, and the stereo loudspeaker signals are
+obtained by a simple sum and difference,
+\begin{equation}
+    L = M + S, \qquad R = M - S,
+    \label{eq:ms}
+\end{equation}
+so that the $M/S$ ratio controls the stereo width. The Side microphone is
+the key element: being a figure-of-eight, it is positive towards the left
+and negative towards the right, encoding left--right direction as a single
+\emph{signed} amplitude.
+
+\textbf{\acrshort{ITD} and \acrshort{ILD}.}
+\cite{wendt1964richtungshoren} carried out careful
+listening experiments on two-channel stereophony, characterising how time
+and level differences between the loudspeakers map onto the perceived
+direction of a phantom source. These cues reflect the classical duplex
+theory of localisation: the \acrshort{ITD} dominates at low frequencies,
+where diffraction keeps phase cues unambiguous, while the \acrshort{ILD}
+dominates at high frequencies, where phase becomes ambiguous. 
+
+\textbf{From \acrshort{MS} to \acrfull{FOA}.}
+\citet{gerzon1973periphony} took the step from two-channel stereo
+to a complete description of the sound field, in what he called
+\emph{periphony} and we now know as First-Order Ambisonics. The idea
+generalises the \acrshort{MS} pair: the Side figure-of-eight is just one
+first-order directional component, so capturing the \emph{full} first-order
+field requires the omnidirectional pressure --- the Mid, when it is an
+omni --- together with \emph{three} orthogonal figure-of-eight components
+aligned with the front--back, left--right and up--down axes. These four
+signals are the $B-format$ channels $\mathbf{b} = [\,W, X, Y, Z\,]^\top$.
+
+Mathematically, this is the expansion of the sound field around a point
+into \acrfull{SH}, truncated at first order \citep{zotter2019ambisonics}.
+The \acrshort{SH} are a set of functions on the sphere of increasing
+angular \emph{order} $\ell$ (Figure~\ref{fig:spherical_harmonics}): order
+$\ell = 0$ is a single omnidirectional function (the pressure $W$), order
+$\ell = 1$ adds the three dipoles $X, Y, Z$, and each higher order
+contributes $2\ell + 1$ functions of finer angular detail, used by
+\acrfull{HOA}. First-Order Ambisonics keeps orders $\ell \le 1$, the four
+B-format channels; in this work we use Ambisonics and \acrshort{SH}
+interchangeably.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth,trim={.25cm .25cm .75cm 1.25cm},clip]{ch02_sota/figures/spherical_harmonics.pdf}
+    \caption{The real spherical harmonics up to order $\ell = 3$, the basis
+    functions of the Ambisonic sound-field representation. Lobes are
+    coloured by sign (teal positive, blue negative) and their radius by
+    magnitude. Orders $\ell \le 1$ (the four leftmost-to-top functions)
+    form \acrshort{FOA}, i.e.\ the B-format; each additional order adds
+    $2\ell + 1$ components of finer angular resolution, used by
+    \acrshort{HOA}.}
+    \label{fig:spherical_harmonics}
+\end{figure}
+
+\emph{Encoding.} A mono source $s$ arriving from azimuth $\theta$ and
+elevation $\varphi$ is panned into B-format by weighting it with the
+\acrshort{SH} evaluated at that direction,
+\begin{equation}
+    \mathbf{b} = s\,\mathbf{y}(\theta,\varphi), \qquad
+    \mathbf{y}(\theta,\varphi) =
+    \begin{bmatrix}
+        1/\sqrt{2} \\ \cos\theta\cos\varphi \\
+        \sin\theta\cos\varphi \\ \sin\varphi
+    \end{bmatrix},
+    \label{eq:foa_encode}
+\end{equation}
+so that $W = s/\sqrt{2}$ carries the pressure while $X, Y, Z$ carry the
+projection of the source onto the three axes; a full sound field is the
+superposition of all such contributions.
+
+\emph{A-format versus B-format.} The same B-format can be captured
+acoustically. Ideally it would be recorded with one coincident
+omnidirectional microphone (for $W$) and three coincident figure-of-eight
+microphones aligned with the axes (for $X, Y, Z$). In practice this is
+approximated by a compact tetrahedral array of four (sub)cardioid capsules,
+whose raw signals form the \emph{A-format}
+$\mathbf{a} = [\,a_1, a_2, a_3, a_4\,]^\top$; B-format is then obtained
+through a fixed linear transform --- sums yield the omni $W$, differences
+yield the dipoles --- $\mathbf{b} = \mathbf{M}\,\mathbf{a}$, followed by a
+frequency correction for the finite capsule spacing. A-format is thus what
+the microphone records, whereas B-format is the layout-independent
+representation we work with. A-format is encountered only when physically
+recording with an Ambisonic microphone, and even then only as an internal
+intermediate; a large share of today's Ambisonic content is instead
+\emph{encoded} synthetically --- panned, simulated, or rendered --- straight into B-format, so A-format never appears. We introduce
+it here mainly to make the step from \acrshort{MS} recording to Ambisonics
+concrete.
+
+\emph{Decoding.} To play a B-format signal over $L$ loudspeakers at unit
+directions $\mathbf{n}_l = (\cos\theta_l\cos\varphi_l,\,
+\sin\theta_l\cos\varphi_l,\, \sin\varphi_l)$, each feed is obtained as a
+\emph{virtual microphone} pointing towards that loudspeaker,
+\begin{equation}
+    p_l = a_0\,W + a_1\,\big(\mathbf{n}_l \cdot [\,X, Y, Z\,]^\top\big),
+    \label{eq:foa_decode}
+\end{equation}
+where $(a_0, a_1)$ set the directivity of the virtual first-order
+microphone (e.g.\ a cardioid), so that $p_l$ predominantly picks up energy
+from the speaker's direction; stacking the $L$ feeds gives the matrix form
+$\mathbf{p} = \mathbf{D}\,\mathbf{b}$. This also makes the \acrshort{MS}
+analogy precise: keeping only $W$ and $Y$ and decoding to two opposing
+cardioids ($\mathbf{n}_{L} = (0,1,0)$, $\mathbf{n}_{R} = (0,-1,0)$) recovers
+exactly $L = W + Y$ and $R = W - Y$, i.e.\ Equation~\ref{eq:ms}. B-format is
+therefore the \acrshort{MS} pair completed: adding the front--back dipole $X$
+and the vertical dipole $Z$ turns a fixed two-channel stereo image into a
+rotatable, layout-independent sound field.
+
+The same Gerzon will later introduce in 1992 the energy
+and velocity localisation vectors $r_E$ and $r_V$ commonly used to
+summarise these cues \citep{gerzon1992general},
+$r_E$ in particular becoming a standard descriptor of directional
+concentration: $\|r_E\| = 0$ indicates no directionality and
+$\|r_E\| = 1$ a spatial Dirac.
+
+
+\textbf{Refining encoding and decoding.}
+Subsequent work largely refines how the sound field is encoded and,
+especially, decoded --- including to binaural. In \citet{pulkki1997virtual},
+\acrfull{VBAP} reproduces a source by decomposing space into speaker pairs
+or triplets and panning within one; it is robust (few speakers active at a
+time) and easy to adapt to irregular layouts, but it is not a complete
+theory (recording is not possible) and source size and coloration vary with
+position. In \citet{pulkki1999uniform} the same author mitigates this by
+spreading each source with a pair of auxiliary directions at
+$r_E \pm \alpha$. In \citet{jot1999comparative}, techniques for combining
+binaural audio and Ambisonics are discussed: a basic binaural render is
+obtained by decoding Ambisonics to a virtual, ideally placed loudspeaker
+layout and convolving each virtual loudspeaker with its \acrshort{HRIR}
+pair --- especially practical when real-time rotations must follow a
+head-tracking device.
+
+\textbf{\acrfull{HOA}}. In \citet{daniel2000representation}, \acrshort{FOA} is expanded to
+\acrshort{HOA} for regular layouts, trading the constant source size and
+smooth panning of low orders for a larger sweet spot and sharper
+localisation, at the cost of as many loudspeakers as channels. Basic
+decoding to ideal layouts (spherical $T$-designs) uses the pseudo-inverse
+of the \acrshort{SH} transform but works well only at low frequencies;
+Daniel therefore robustifies the decoder by weighting the \acrshort{SH}s so
+that the secondary lobes of the virtual microphones are attenuated
+($\mathrm{max}\,r_E$) or suppressed (the in-phase decoder). Tapering the \acrshort{SH} orders in this way is the
+angular counterpart of \emph{windowing} a signal before a Fourier
+analysis: smoothing a truncated expansion lowers its side lobes (here, the
+off-axis leakage of the virtual microphones) at the price of a wider main
+lobe (a loss of angular resolution).
+
+In \citet{avni2010sound}, \acrshort{HRTF}s are represented in the
+\acrshort{SH} domain, enabling interpolation between their discrete
+measured directions, and in \citet{zotter2012all} AllRAD provides
+a physics-based \acrshort{HOA} decoder for irregular layouts by first
+decoding to an ideal virtual layout and then rendering those signals with the available speaker triplets through
+\acrshort{VBAP}.
+
+\textbf{Ambisonics to Binaural}. The remaining developments concern binaural rendering of 
+Ambisonics, which are limited-order. \citet{bernschutz2013spherical} address low-frequency group
+delay in \acrshort{HRIR} databases by replacing the low band with a
+synthetic spherical model called \acrfull{LFE}, while
+\citet{bernschutz2014binaural} show that pairing high-order \acrshort{HRTF}s
+with lower-order soundfields causes severe losses in the 
+high frequencs in a frequency-dependant way; \citet{ben2017spectral} compensate the resulting
+low-pass effect of \acrshort{SH} truncation with a global Spectral
+Equalisation (SpecEQ) filter. \citet{zaunschirm2018binaural} adapt the
+\acrshort{HRIR}s for direct low-order rendering by removing the
+\acrshort{ITD} linear-phase component and matching diffuse-field covariances
+(Time Alignment and diffuseness Constraint, TAC), and
+\citet{schorkhuber2018binaural} propose \acrfull{MagLS}, which in the high
+frequencies optimises the magnitudes alone, disregarding phase. In parallel,
+\citet{armstrong2018bi} introduce a bi-radial render with two sets of
+virtual loudspeakers, one centred at each ear, gaining up to two Ambisonic
+orders of perceptual quality, and \citet{hold2019improving} reduce
+angle-dependent artefacts by also tapering the \acrshort{SH}s.
+Finally, \citet{ben2021binaural} time-align the \acrshort{HRIR}s with
+respect to each ear for direct bilateral rendering, and these threads are
+combined in \citet{engel2021improving}, the current state of the art:
+\acrfull{BiMagLS}, which ear-aligns the \acrshort{HRTF}s, fits the
+low-frequency \acrshort{SH}-\acrshort{HRTF}s with an L2 approximation of the
+higher-order version, and disregards phase at high frequencies as in
+\acrshort{MagLS}. We use \acrshort{BiMagLS} in Chapters~\ref{ch03_hearing} and~\ref{ch04_mbrirs}.
+
+%TODO: perhaps add the equations fo HOA??
 
 \section{Room Impulse Response simulation}
 \label{sec:bg_rir}

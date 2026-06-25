@@ -180,11 +180,27 @@ constructed in synthetic benchmarks. The cross-dataset degradation reported abov
 framings of a single objective, and the one this thesis pursues: aligning the
 data a model is trained and evaluated on with the conditions of its intended use.
 
-
+This intuition can be made precise. Let $\mathcal{X}$ denote the space of input
+signals and $\mathcal{Y}$ the space of targets (separated sources/instruments, enhanced speech,
+etc.), and let a model $f_\theta : \mathcal{X} \rightarrow \mathcal{Y}$ be trained
+to minimize the expected loss $\mathcal{L}$ over a \emph{source} domain
+$p_S(x, y)$:
+\begin{equation}
+    \theta^\star = \arg\min_\theta \;
+    \mathbb{E}_{(x,y)\sim p_S}\!\left[\mathcal{L}\!\left(f_\theta(x), y\right)\right].
+    \label{eq:erm}
+\end{equation}
+At deployment, however, the model is evaluated on a \emph{target} distribution
+$p_T(x, y)$, and the quantity we actually care about is the target risk
+$\mathbb{E}_{(x,y)\sim p_T}[\mathcal{L}(f_{\theta^\star}(x), y)]$. Empirical risk
+minimization offers guarantees only when $p_S = p_T$; \emph{domain mismatch} is
+precisely the condition
+\begin{equation}
     p_S(x, y) \neq p_T(x, y),
     \label{eq:mismatch}
 \end{equation}
-under which a model trained to be optimal on the source domain may perform poorly---or even inadequately—--on the target domain.
+under which a model optimal on the source domain need not be optimal---or even
+adequate---on the target domain. 
 
 We can factorize the joint
 distribution as $p(x, y) = p(x)\,p(y \mid x)$. In the audio processing tasks we
@@ -232,9 +248,9 @@ Eurecat is a foundation whose mission is to promote research, technological deve
 Three Eurecat projects underpin the work presented in this thesis.
 
 \begin{itemize}{
-    \item \textbf{Eurecat-Microson} collaboration project, focusing on the development of a new benchmark for evaluating \acrshort{HAs} and speech denoising algorithms. 
+    \item \textbf{Eurecat-Microson} collaboration project, focusing on the development of a new benchmark for evaluating \acrshort{HAs} and speech denoising algorithms in realistic conditions.
     
-    \item \textbf{GuestXR} (Horizon 2020) project, aimed at creating an immersive online social space through extended reality, centred on a machine learning agent called ``The Guest'' designed to facilitate interaction between participants, mitigate conflicts and cyberbullying. Because supporting participants with and without hearing difficulties requires intelligible speech, our contribution addressed \acrshort{SE}.
+    \item \textbf{GuestXR} (Horizon 2020) project, aimed at creating an immersive online social space through extended reality, centred on a machine learning agent called ``The Guest'' designed to facilitate interaction between participants, mitigate conflicts and cyberbullying. Because supporting participants with and without hearing difficulties requires intelligible speech, our contribution addresses \acrshort{SE}.
 
     \item \textbf{Traça IAGen}, an internal Eurecat initiative funded by the Catalan Government with the goal of driving the adoption of generative AI across the centre's different research units.
 }
@@ -248,13 +264,13 @@ From the academic side, the Music Technology Group (MTG) at the Universitat Pomp
 In light of the above, this thesis investigates whether improving the
 ecological validity of (often synthetic) training and evaluation data is an
 effective lever for closing the generalization gap, across three audio
-processing tasks --- one per partner field. The remainder of the manuscript tackles the following Research Objectives (RO) and is
+processing tasks --- one per partner and field. The remainder of the manuscript tackles the following Research Objectives (RO) and is
 organized as follows.
 
 \begin{itemize}
     \item \textbf{Chapter~\ref{ch02_sota}} introduces the scientific background used broadly throughout the thesis: spatial-audio techniques, deep-learning for audio, and virtual-acoustics on which the contributions build, together with a summary of the datasets that are standard in every field.
     
-    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshort{HAs} field and is developed in collaboration with Microson. Because \acrshort{HAs} performance under lab conditions degrades in real-life situations, we ask whether the techniques introduced above can improve the ecological validity of \acrshort{HAs} \emph{evaluation} (\textbf{RO1}), and whether \acrshort{DNN}s are a promising route to generalise better than traditional algorithms (\textbf{RO2}). Beyond their technical interest, both objectives foster accessibility, and thus inclusivity, for people with hearing loss.
+    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshort{HAs} field and is the result of the collaboration with Microson: the developement of an ecologically-avlid \emph{evaluation} for \acrshort{HAs} (\textbf{RO1}), and whether \acrshort{DNN}s are a promising route to generalise better than traditional \acrshort{HAs} algorithms (\textbf{RO2}). Beyond their technical interest, both objectives foster accessibility, and thus inclusivity, for people with hearing loss.
 
     \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, within the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}). While large, realistic \acrshort{RIR} datasets already exist privately within industry --- where major labs maintain their own simulation tools --- replicating them for open science and releasing them freely to every research lab carries value in itself.
 

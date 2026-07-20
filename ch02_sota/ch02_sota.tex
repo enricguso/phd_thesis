@@ -12,11 +12,13 @@ and \acrshort{MSS}. This chapter introduces that background in
 the order in which the remainder of the manuscript relies on it. We begin
 with an overview of \acrshort{DNN}-based audio processing
 (Section~\ref{sec:bg_dl}). We then turn to spatial audio and Ambisonics
-(Section~\ref{sec:bg_spatial}), followed by the simulation of \acrshort{RIR}s
-(Section~\ref{sec:bg_rir}). Finally, we review the scientific background
-specific to each of the three tasks (Section~\ref{sec:tasks}): \acrshort{HAs}
-(Subsection~\ref{ssec:bg_ha}), speech enhancement (Subsection~\ref{ssec:bg_se}),
-and music source separation (Section~\ref{ssec:bg_mss}).
+(Section~\ref{sec:bg_spatial}), followed by the measurement and simulation of \acrshort{RIR}s
+(Section~\ref{sec:bg_rir}). 
+
+Note that in the chapters that follow we also review additional scientific background
+specific to each of the three tasks: \acrfull{HAs}
+in section~\ref{sec:sota_ha}, \acrfull{SE}  in Section~\ref{sec:sota_se},
+and \acrfull{MSS} in Section~\ref{sec:sota_mss}.
 
 
 %\begin{itemize}
@@ -310,10 +312,10 @@ sample.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth,trim={.25cm .26cm .25cm 7cm},clip]{ch02_sota/figures/wavenet.pdf}
-    \caption{WaveNet model. \textbf{(a)}~Autoregression: each element $x_t$ is predicted
+    \caption{WaveNet model. Autoregression: each element $x_t$ is predicted
     from all the previous ones, factorising the sequence distribution as
     $p(x)=\prod_t p(x_t\mid x_{<t})$; generation proceeds one element at a
-    time (dashed). \textbf{(b)}~A stack of \emph{dilated causal}
+    time (dashed). A stack of \emph{dilated causal}
     convolutions: connections reach only into the past (causal) and skip
     an exponentially growing number of steps with depth (dilation
     $1,2,4,8$), so a single output (highlighted) sees a large receptive
@@ -350,19 +352,9 @@ short frames or the discrete codes produced by a neural codec. Each token
 is first mapped to an \emph{embedding} --- the same compact, learned
 vector representation introduced for \acrshort{CNN}s in
 Section~\ref{sec:bg_dl_advent} --- so that every token becomes a point in
-a continuous space the network can operate on. Because attention is order-agnostic, a \emph{positional
-encoding} is then added to these embeddings to inject information about
-each token's position in the sequence. The core operation is
-\emph{self-attention}: within a sequence, every embedding is updated as a
-weighted combination of all the others, so that tokens exchange
-information directly regardless of how far apart they are. These attention
-sublayers are stacked into blocks, each wrapped in a \emph{residual
-connection} (the ``Add~\& Norm'' of Figure~\ref{fig:transformer}) in
-exactly the spirit of the ResNets of Section~\ref{sec:bg_dl_advent}, which
-is what keeps such deep stacks trainable. A second form,
-\emph{cross-attention}, lets one sequence attend to another: the decoder
-queries the encoder's embeddings, which is how a generator is
-\emph{conditioned} on an input.
+a continuous space the network can operate on.
+
+\vspace{0.8cm}
 
 \begin{figure}[htbp]
     \centering
@@ -378,6 +370,22 @@ queries the encoder's embeddings, which is how a generator is
     \label{fig:transformer}
 \end{figure}
 
+Because attention is order-agnostic, a \emph{positional
+encoding} is then added to these embeddings to inject information about
+each token's position in the sequence. The core operation is
+\emph{self-attention}: within a sequence, every embedding is updated as a
+weighted combination of all the others, so that tokens exchange
+information directly regardless of how far apart they are. These attention
+sublayers are stacked into blocks, each wrapped in a \emph{residual
+connection} (the ``Add~\& Norm'' of Figure~\ref{fig:transformer}) in
+exactly the spirit of the ResNets of Section~\ref{sec:bg_dl_advent}, which
+is what keeps such deep stacks trainable. A second form,
+\emph{cross-attention}, lets one sequence attend to another: the decoder
+queries the encoder's embeddings, which is how a generator is
+\emph{conditioned} on an input.
+
+
+
 The architecture thus splits naturally into an \emph{encoder}, which
 builds contextual embeddings of the input, and a \emph{decoder}, which
 generates the output autoregressively; either half can be used on its own,
@@ -387,7 +395,7 @@ generation. Crucially, cross-attention does not require the two sequences
 to be of the same kind: a decoder can be conditioned on embeddings from a
 different \emph{modality} altogether --- text on audio, audio on text,
 images on text --- which is precisely what has enabled the recent
-explosion of multimodal tasks such as text-to-audio or audio captioning.
+explosion of cross-modal tasks such as text-to-audio or audio captioning.
 
 
 
@@ -470,6 +478,8 @@ are exactly the tokens over which the autoregressive and Transformer
 models of Section~\ref{sec:bg_dl_temporal} operate, and they underpin
 language-model-style audio generation~\citep{borsos2023audiolm}.
 
+\vspace{0.8cm}
+
 \textbf{Diffusion ---} Diffusion models~\citep{ho2020denoising} define a
 fixed \emph{forward} process that gradually corrupts data into pure noise,
 and learn the \emph{reverse} process that removes it step by step;
@@ -479,6 +489,7 @@ sequential denoising steps. Running the process not on the raw signal but
 in the compressed latent space of an autoencoder, and parametrising the
 denoiser with a Transformer, gives \emph{latent diffusion} models --- the
 combination behind recent text-to-audio systems such as~\cite{evans2025stable,nistal2024improving}.
+%TODO: add sentence for bit of notion of the solvers (ODE SDE etc)
 
 \textbf{Flow matching ---}~\citep{lipman2022flow}
 generalises diffusion. Instead of reversing a fixed noising process, it
@@ -499,10 +510,22 @@ dilated causal convolutions and attention. We presented \emph{embeddings} ---the
 architecture produces and that later models reuse --- and the
 distinction between \emph{discriminative} models, which map an
 input to a target, and \emph{generative} ones, which model the data
-distribution and sample from it; However, a model is only half of the story and is ultimately only as good as the
-\emph{data} that is train and evaluate on. The remainder of this chapter
-therefore turns from the model to the signal, beginning with techniques for capturing sound
-fields and represent them spatially.
+distribution and sample from it.
+
+\textbf{However, a model is only half of the story: it is ultimately only as
+good as the \emph{data} it is trained and evaluated on.} This is doubly true
+in this thesis, where much of that data is not recorded but
+\emph{synthesised} --- sound fields spatialised and convolved with simulated
+room responses. Such synthetic data is only useful insofar as it is
+\emph{ecologically valid}: faithful to the real signals the model will
+encounter at deployment. And faithfulness cannot be conjured from the
+generative pipeline alone; it presupposes a solid grasp of the physical
+phenomena being imitated --- how sound propagates and is captured in space,
+and how rooms colour it. In short, \textbf{generating good synthetic data
+requires first understanding real data}. The remainder of this chapter
+therefore turns from the model to the data: first the capture and spatial
+representation of sound fields, and then the measurement and simulation of
+\acrshort{RIR}s.
 
 \section{Spatial Audio and Ambisonics}
 \label{sec:bg_spatial}
@@ -546,7 +569,7 @@ content from layout underlies modern immersive formats.
 
 \emph{Scene-based} audio sits between the two: it encodes the whole sound
 field around a point, independently of any loudspeaker layout, and decodes
-it to the available system at playback. Its prime exampleis \emph{Ambisonics}: the
+it to the available system at playback. Its prime examples are \emph{Ambisonics}: the
 sound field around a point is sampled into a series of directional
 components --- the \acrfull{SH} --- of increasing angular order. Ambisonics is a \emph{complete} theory in the sense that it supports the
 entire chain: a sound field can be
@@ -561,18 +584,15 @@ reproduction over headphones, is \emph{binaural} audio. Its
 starting point is that the head and body filter incoming sound in a
 direction-dependent way: most simply, the head casts an \emph{acoustic
 shadow}, so that a source off to one side reaches the far ear later and
-weaker than the near ear, by an amount that depends on its direction. This
-direction-dependent shadowing is exactly what we exploit in \textbf{RO1},
-where the signals at the input of a hearing-aid microphone are
-approximated with a dummy head. Beyond the head, the \emph{pinna} (outer ear) and ear canal
+weaker than the near ear, by an amount that depends on its direction. Beyond the head, the \emph{pinna} (outer ear) and ear canal
 add their own direction-dependent spectral filtering --- the peaks and
 notches that, in particular, disambiguate elevation --- and, since these
 depend on each person's anatomy, they vary substantially from one listener
-to another. This complete filter is precisely the \acrshort{HRTF}. Because measuring it individually is
+to another. This complete filter is precisely the \acrshort{HRTF}, and is exactly what we exploit for building the datasets for \textbf{RO2}. Because measuring \acrshort{HRTF}s individually is
 impractical, considerable effort goes into \emph{personalising}
-\acrshort{HRTF}s, for instance by predicting them from a 3D scan of the
+them, for instance by predicting them from a 3D scan of the
 listener's head and ears acquired with a depth sensor
-\citep{miccini2020hrtf}.
+\citep{miccini2020hrtf}. 
 
 Finally, with the rise of \acrfull{XR}, binaural rendering of Ambisonics
 has become especially attractive: because the sound field is represented
@@ -589,6 +609,7 @@ of stereophony, followed by decades of refinement of its encoding and
 decoding. Figure~\ref{fig:ambi_timeline} situates the milestones discussed
 below in time.
 
+\vspace{0.8cm}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\columnwidth]{ch02_sota/figures/ambisonics_timeline.pdf}
@@ -652,9 +673,7 @@ interchangeably.
     \centering
     \includegraphics[width=0.92\textwidth,trim={.25cm .25cm .75cm 1.25cm},clip]{ch02_sota/figures/spherical_harmonics.pdf}
     \caption{The real spherical harmonics up to order $\ell = 3$, the basis
-    functions of the Ambisonic sound-field representation. Lobes are
-    coloured by sign (teal positive, blue negative) and their radius by
-    magnitude. Orders $\ell \le 1$ (the four leftmost-to-top functions)
+    functions of the Ambisonic sound-field representation.  Orders $\ell \le 1$ 
     form \acrshort{FOA}, i.e.\ the B-format; each additional order adds
     $2\ell + 1$ components of finer angular resolution, used by
     \acrshort{HOA}.}
@@ -663,25 +682,29 @@ interchangeably.
 
 \emph{Encoding.} A mono source $s$ arriving from azimuth $\theta$ and
 elevation $\varphi$ is panned into B-format by weighting it with the
-\acrshort{SH} evaluated at that direction,
+spherical harmonics evaluated at that direction. In the now-standard
+$ACN$ channel ordering with $SN3D$ normalisation,
 \begin{equation}
-    \mathbf{b} = s\,\mathbf{y}(\theta,\varphi), \qquad
+    \mathbf{b} = [\,W, Y, Z, X\,]^\top = s\,\mathbf{y}(\theta,\varphi),
+    \qquad
     \mathbf{y}(\theta,\varphi) =
     \begin{bmatrix}
-        1/\sqrt{2} \\ \cos\theta\cos\varphi \\
-        \sin\theta\cos\varphi \\ \sin\varphi
+        1 \\ \sin\theta\cos\varphi \\ \sin\varphi \\ \cos\theta\cos\varphi
     \end{bmatrix},
     \label{eq:foa_encode}
 \end{equation}
-so that $W = s/\sqrt{2}$ carries the pressure while $X, Y, Z$ carry the
-projection of the source onto the three axes; a full sound field is the
-superposition of all such contributions.
+so that $W = s$ carries the pressure while $X, Y, Z$ carry the projection
+of the source onto the three axes; a full sound field is the superposition
+of all such contributions. (The older FuMa B-format orders the channels
+$[\,W, X, Y, Z\,]$ and scales $W$ by $1/\sqrt{2}$; the conventions differ
+only by a permutation and constant factors.)
+
 
 \emph{A-format versus B-format.} The same B-format can be captured
 acoustically. Ideally it would be recorded with one coincident
 omnidirectional microphone (for $W$) and three coincident figure-of-eight
 microphones aligned with the axes (for $X, Y, Z$). In practice this is
-approximated by a compact tetrahedral array of four (sub)cardioid capsules,
+approximated by a compact tetrahedral array of four cardioid capsules,
 whose raw signals form the \emph{A-format}
 $\mathbf{a} = [\,a_1, a_2, a_3, a_4\,]^\top$; B-format is then obtained
 through a fixed linear transform --- sums yield the omni $W$, differences
@@ -691,9 +714,11 @@ the microphone records, whereas B-format is the layout-independent
 representation we work with. A-format is encountered only when physically
 recording with an Ambisonic microphone, and even then only as an internal
 intermediate; a large share of today's Ambisonic content is instead
-\emph{encoded} synthetically --- panned, simulated, or rendered --- straight into B-format, so A-format never appears. We introduce
+\emph{encoded} synthetically --- panned, simulated, or rendered --- straight into B-format. We introduce
 it here mainly to make the step from \acrshort{MS} recording to Ambisonics
 concrete.
+
+
 
 \emph{Decoding.} To play a B-format signal over $L$ loudspeakers at unit
 directions $\mathbf{n}_l = (\cos\theta_l\cos\varphi_l,\,
@@ -722,28 +747,57 @@ concentration: $\|r_E\| = 0$ indicates no directionality and
 $\|r_E\| = 1$ a spatial Dirac.
 
 
+\textbf{A parallel line: amplitude panning.}
+Developed independently of, and in parallel to, Ambisonics,
+\citet{pulkki1997virtual} introduced \acrfull{VBAP}, which reproduces a
+source by decomposing space into loudspeaker pairs or triplets and panning
+within one. It is robust (only a few loudspeakers are active at a time) and
+easy to adapt to irregular layouts, but --- unlike Ambisonics --- it is not
+a complete theory (recording is not possible), and the apparent source size
+and coloration vary with position. \citet{pulkki1999uniform} mitigates the
+latter by spreading each source across a pair of auxiliary directions at
+$r_E \pm \alpha$. Although a distinct paradigm, \acrshort{VBAP} later
+re-enters the Ambisonic pipeline as the loudspeaker-panning stage of the
+AllRAD decoder (below).
+
 \textbf{Refining encoding and decoding.}
-Subsequent work largely refines how the sound field is encoded and,
-especially, decoded --- including to binaural. In \citet{pulkki1997virtual},
-\acrfull{VBAP} reproduces a source by decomposing space into speaker pairs
-or triplets and panning within one; it is robust (few speakers active at a
-time) and easy to adapt to irregular layouts, but it is not a complete
-theory (recording is not possible) and source size and coloration vary with
-position. In \citet{pulkki1999uniform} the same author mitigates this by
-spreading each source with a pair of auxiliary directions at
-$r_E \pm \alpha$. In \citet{jot1999comparative}, techniques for combining
-binaural audio and Ambisonics are discussed: a basic binaural render is
-obtained by decoding Ambisonics to a virtual, ideally placed loudspeaker
-layout and convolving each virtual loudspeaker with its \acrshort{HRIR}
-pair --- especially practical when real-time rotations must follow a
-head-tracking device.
+Within Ambisonics, subsequent work largely refines how the sound field is
+encoded and, especially, decoded --- including to binaural. In
+\citet{jot1999comparative}, techniques for combining binaural audio and
+Ambisonics are discussed: a basic binaural render is obtained by decoding
+Ambisonics to a virtual, ideally placed loudspeaker layout and convolving
+each virtual loudspeaker with its \acrshort{HRIR} pair --- especially
+practical when real-time rotations must follow a head-tracking device.
+
 
 \textbf{\acrfull{HOA}}. In \citet{daniel2000representation}, \acrshort{FOA} is expanded to
 \acrshort{HOA} for regular layouts, trading the constant source size and
 smooth panning of low orders for a larger sweet spot and sharper
-localisation, at the cost of as many loudspeakers as channels. Basic
-decoding to ideal layouts (spherical $T$-designs) uses the pseudo-inverse
-of the \acrshort{SH} transform but works well only at low frequencies;
+localisation, at the cost of as many loudspeakers as channels. 
+
+The Ambisonic signal becomes a vector $\mathbf{b}\in\mathbb{R}^{(N+1)^2}$
+collecting all spherical harmonics up to order $N$, and encoding a source
+keeps the same form,
+\begin{equation}
+    \mathbf{b} = s\,\mathbf{y}_N(\theta,\varphi), \qquad
+    \mathbf{y}_N(\theta,\varphi)=\big[\,Y_0^{0},\,Y_1^{-1},\,Y_1^{0},\,
+    Y_1^{1},\,\dots,\,Y_N^{N}\,\big]^{\!\top}\!(\theta,\varphi),
+    \label{eq:hoa_encode}
+\end{equation}
+with the $(N+1)^2$ real spherical harmonics $Y_\ell^{m}$ evaluated at the
+source direction (\acrshort{FOA} is the case $N=1$). Decoding to $L$
+loudspeakers is likewise a single linear map,
+\begin{equation}
+    \mathbf{p} = \mathbf{D}\,\mathbf{b}, \qquad
+    \mathbf{D}\in\mathbb{R}^{L\times(N+1)^2},
+    \label{eq:hoa_decode}
+\end{equation}
+
+whose decoding matrix $\mathbf{D}$ is built from the loudspeaker directions
+(the basic decoder takes $\mathbf{D}=\mathbf{Y}^{+}$, the pseudo-inverse of
+the spherical-harmonic sampling matrix). Binaural rendering is simply
+the case $L=2$, where the rows of $\mathbf{D}$ are the left- and right-ear
+\acrshort{HRTF}s expressed in the \acrshort{SH} domain. This basic decoding works well only at low frequencies;
 Daniel therefore robustifies the decoder by weighting the \acrshort{SH}s so
 that the secondary lobes of the virtual microphones are attenuated
 ($\mathrm{max}\,r_E$) or suppressed (the in-phase decoder). Tapering the \acrshort{SH} orders in this way is the
@@ -757,10 +811,12 @@ In \citet{avni2010sound}, \acrshort{HRTF}s are represented in the
 measured directions, and in \citet{zotter2012all} AllRAD provides
 a physics-based \acrshort{HOA} decoder for irregular layouts by first
 decoding to an ideal virtual layout and then rendering those signals with the available speaker triplets through
-\acrshort{VBAP}.
+\acrshort{VBAP}. We use AllRAD in Chapter~\ref{ch03_hearing}.
 
-\textbf{Ambisonics to Binaural}. The remaining developments concern binaural rendering of 
-Ambisonics, which are limited-order. \citet{bernschutz2013spherical} address low-frequency group
+\vspace{0.8cm}
+
+\textbf{Ambisonics to Binaural}. The remaining developments concern improving binaural rendering of 
+limited-order Ambisonics. \citet{bernschutz2013spherical} address low-frequency group
 delay in \acrshort{HRIR} databases by replacing the low band with a
 synthetic spherical model called \acrfull{LFE}, while
 \citet{bernschutz2014binaural} show that pairing high-order \acrshort{HRTF}s
@@ -785,24 +841,406 @@ low-frequency \acrshort{SH}-\acrshort{HRTF}s with an L2 approximation of the
 higher-order version, and disregards phase at high frequencies as in
 \acrshort{MagLS}. We use \acrshort{BiMagLS} in Chapters~\ref{ch03_hearing} and~\ref{ch04_mbrirs}.
 
-%TODO: perhaps add the equations fo HOA??
+\textbf{Beyond this scope.}
+Several further directions, left out of the timeline above because they lie
+outside the scope of this thesis, are nonetheless worth signposting: \acrshort{HOA} coding \citep{hold2023compression}, \acrshort{DNN}-based microphone-to-Ambisonics encoding \citep{heikkinen2025gen}, continuous representations of the sound
+field, or of the room impulse responses themselves, so that the response at
+unmeasured positions can be interpolated from only a sparse set of probes \citep{luo2022learning, masuyama2025physics, erdem2026sf, baek2025av} or spatial audio generation from vision, producing Ambisonic soundtracks directly from
+360\textdegree{} video \citep{morgado2018self, liu2025omniaudio}. 
 
-\section{Room Impulse Response simulation}
+\section{Room Impulse Responses}
 \label{sec:bg_rir}
-i aquí una subsecció.fdsaf
+\acrshort{RIR}s are recurrent in this thesis:
+in Chapter~\ref{ch03_hearing}, to assemble the
+\acrshort{HRTF}s of \acrshort{HAs}; in Chapter~\ref{ch04_mbrirs} used to generate a \acrshort{SE} dataset; and in Chapter~\ref{ch05_mss} to measure a
+dataset of concert-hall responses for live \acrshort{MSS}. We devote this section to defining and to reviewing \acrshort{RIR}s and how to simulate them.
 
-\section{Task-specific scientific background}
-\label{sec:tasks}
-i aquí una subsecció.fdsaf
 
-\subsection{Hearing Aids}
-\label{ssec:bg_ha}
-i aquí una subsecció.fdsaf
+Sound propagation from a source to a receiver in a room is, to a good
+approximation, a \acrfull{LTI} system. Its \acrfull{RIR} $h(t)$ is the
+signal captured at the receiver when the source emits an ideal impulse ---
+the Dirac delta $\delta(t)$ --- and it characterises that source--receiver
+path completely: the signal $y(t)$ recorded for any emitted signal $s(t)$
+is the convolution
+\begin{equation}
+    y(t) = (s * h)(t)
+         = \int_{-\infty}^{\infty} s(\tau)\,h(t-\tau)\,\mathrm{d}\tau .
+    \label{eq:rir_convolution}
+\end{equation}
 
-\subsection{Speech Enhancement}
-\label{ssec:bg_se}
-i aquí una subsecció.fdsaf
+As illustrated in Figure~\ref{fig:rir}, a \acrshort{RIR} is conventionally
+split into three regions. The \emph{direct sound} is the first arrival,
+travelling straight from source to receiver. It is followed by the
+\emph{early reflections}, a sparse set of strong, temporally distinct
+reflections off the nearest boundaries, whose timing and direction shape the
+perceived location, width and timbre of the source. As time passes the
+reflections grow exponentially denser until they can no longer be resolved
+individually, forming the diffuse \emph{late reverberation} (or
+\emph{tail}), which decays approximately exponentially and is described
+statistically rather than reflection by reflection --- most commonly through
+the reverberation time $T_{60}$, the time its energy takes to decay by
+60\,dB.
 
-\subsection{Music Source Separation}
-\label{ssec:bg_mss}
-i aquí una subsecció.fdsaf
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=.75\columnwidth]{ch02_sota/figures/rir.pdf}
+    \caption{A typical room impulse response and its three regions: the
+    direct sound, the early reflections, and the late reverberation tail.}
+    \label{fig:rir}
+\end{figure}
+
+\subsection{Measuring RIRs with the exponential sweep}
+\label{sec:bg_rir_sweep}
+
+
+In principle, a \acrshort{RIR} could be obtained by exciting the room acoustically with a
+physical impulse --- like a pistol shot or a bursting balloon --- and recording
+the result, but such sources are poorly repeatable, difficult to equalise
+and offer a limited \acrshort{SNR}. 
+
+In practice, the emitted signal $s(t)$ of
+Equation~\ref{eq:rir_convolution} is an excitation reproduced by the
+\emph{source} loudspeaker, and $y(t)$ is what a measurement
+microphone at the \emph{receiver} position records; the goal is to recover $h(t)$
+from this known input and recorded output. For the measured response to
+reflect the room rather than the measurement chain, both transducers are
+traditionally chosen to be as neutral and direction-independent as
+possible: the microphone is an omnidirectional capsule with a flat magnitude
+and linear-phase response, and the source approximates an ideal point
+emitter radiating uniformly in all directions --- classically a dodecahedron
+loudspeaker, whose twelve drivers on the faces of the solid yield
+near-omnidirectional coverage. 
+
+A \acrshort{RIR} can also be estimated
+from \emph{continuous noise} excitation, as routinely done in live sound
+with dual-channel \acrshort{FFT} analysers that recover the transfer
+function between the noise feeding the loudspeakers and a measurement
+microphone in the room. The now-standard alternative, however, is the
+Exponential Swept-Sine method of \citet{farina2000simultaneous}, in which the room is
+excited with a sinusoid $x(t)$ whose instantaneous frequency rises exponentially
+from $f_1$ to $f_2$ over a duration $T$,
+
+\begin{equation}
+    x(t) = \sin\!\left[ \frac{2\pi f_1 T}{\ln(f_2/f_1)}
+           \left( e^{\,\frac{t}{T}\ln(f_2/f_1)} - 1 \right) \right],
+           \qquad 0 \le t \le T .
+    \label{eq:ess}
+\end{equation}
+
+The \acrshort{RIR} is recovered by \emph{deconvolution} with an inverse
+filter $f(t)$ designed so that $x * f = \delta$. This filter is the
+time-reversed sweep, $x(T-t)$, weighted by an exponentially decaying
+envelope that whitens the sweep's pink spectrum,
+\begin{equation}
+    f(t) \;\propto\; x(T-t)\,\left(\frac{f_1}{f_2}\right)^{\!t/T},
+    \label{eq:ess_inverse}
+\end{equation}
+up to a normalisation that sets $x * f = \delta$. Convolving the recorded
+signal $y(t)$ with it,
+\begin{equation}
+    h(t) = (y * f)(t),
+    \label{eq:ess_deconv}
+\end{equation}
+collapses the sweep back to an impulse and returns the \acrshort{RIR}. Applying a time window to $h(t)$ is itself a versatile
+analysis tool, since cropping the \acrshort{RIR} in time selects which part
+of the source--receiver interaction is retained. Windowing out everything
+before $t=0$ discards the harmonic-distortion responses that the
+ESS maps to negative times. Keeping only a short
+segment after the direct sound, ending before the first early reflection,
+yields a \emph{quasi-anechoic} response that captures the magnitude and
+phase of the measurement chain itself --- loudspeaker, microphone and
+direct path --- free of the room. Extending the window to include the early
+reflections brings in the strongly \emph{position-dependent} part of the
+response, which varies markedly with source and receiver placement within
+the room. The late reverberation, by contrast, is diffuse and statistically
+similar throughout the room.
+
+
+\subsection{Room Impulse Response Simulation}
+\label{sec:bg_rir_ism}
+
+The most straightforward way to simulate a \acrshort{RIR} is the \acrfull{ISM}
+\citep{allen1979image}. It rests on a simple geometric observation: a
+specular reflection off a flat wall is indistinguishable, at the receiver,
+from the direct sound of a \emph{mirror image} of the source, placed behind
+the wall at the same perpendicular distance (Figure~\ref{fig:ism}). Each
+boundary thus replaces a bounce by a virtual \emph{image source}, and the
+reflected path is recovered as the straight line from that image to the
+receiver. Reflections off several walls are handled by mirroring
+recursively --- an image reflected again across another wall is a
+second-order image, and so on --- so that an order-$N$ reflection
+corresponds to an image mirrored $N$ times; for a rectangular (shoebox)
+room these images form a regular lattice of mirrored copies of the room.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{ch02_sota/figures/ism_first_order.pdf}
+    \caption{The \acrshort{ISM}, illustrated to first order. Receiver $R$, source $S$, \emph{image source} $S'$. The reflected path
+    $S \rightarrow P \rightarrow R$ then coincides with the straight line from
+    $S'$ to $R$, so the reflection reduces to a delayed, attenuated copy of the
+    direct sound.}
+    \label{fig:ism}
+\end{figure}
+Applying the method yields, for
+every reflection $i$, the coordinates of its image source and its order
+$N_i$, which is all that is needed to render the response. The
+image-to-receiver distance $d_i$ fixes both the arrival time
+$\tau_i = d_i/c$ (with $c$ the speed of sound) and the attenuation due to
+spherical spreading, which decays the pressure as $1/d_i$. The energy lost
+at each bounce is set by the walls' absorption coefficient $\alpha$ (the
+absorbed fraction of incident energy), or equivalently by the amplitude
+reflection coefficient $\beta = \sqrt{1-\alpha}$; a path of order $N_i$ has
+therefore been attenuated by the product of the $\beta$ of the walls it
+visited, i.e.\ $\beta^{N_i}$ for uniform boundaries. The \acrshort{RIR} is
+then the sum of one delayed, attenuated impulse per image,
+\begin{equation}
+    h(t) = \sum_{i} \frac{\beta^{N_i}}{d_i}\,
+           \delta\!\left(t - \frac{d_i}{c}\right).
+    \label{eq:ism}
+\end{equation}
+
+In practice the absorption is rarely known from material data; one usually
+targets a desired reverberation time instead. The two are linked by
+Sabine's equation \citep{sabine2015collected}, $T_{60} = 0.161\,V/A$, with $V$ the room volume and
+$A=\sum_k S_k \alpha_k$ the total absorption (surface area times absorption,
+summed over boundaries). For uniform walls this inverts to
+\begin{equation}
+    \alpha = \frac{0.161\,V}{T_{60}\,S_\mathrm{tot}}, \qquad
+    \beta=\sqrt{1-\alpha},
+    \label{eq:sabine}
+\end{equation}
+so a single \emph{target} $T_{60}$ determines the $\beta$ used in
+Equation~\ref{eq:ism}.
+
+The \acrshort{ISM} is exact for the
+specular reflections of a rigid-walled shoebox, which makes it an efficient
+and ubiquitous way to render the direct sound and early reflections. Some of
+its idealisations can be relaxed within the method itself: the real,
+frequency- and angle-dependent wall impedance can be modelled by replacing
+the scalar $\beta$ with per-band reflection filters; source and receiver
+directivity can be applied per
+image; and air absorption can be added as a distance-dependent filter. A
+subtler artefact is that, with a real positive $\beta$ and impulses placed
+at integer samples, every reflection is positive, so the simulated
+\acrshort{RIR} is biased towards positive values, while measured
+responses are essentially zero-mean and symmetric about the time axis. This
+is sometimes corrected by rendering each arrival with a band-limited fractional-delay
+filter --- a windowed sinc, whose side lobes restore the negative
+excursions \citep{peterson1986simulating}.
+
+Finally, the regular-lattice construction is restricted to shoebox
+geometries, and the number of images grows cubically with order, so the
+method becomes impractical precisely where the late, diffuse reverberation
+begins. It is therefore sometimes truncated at low order and paired with a
+statistical model of the tail \citep{lehmann2009diffuse}.
+
+Other assumptions require a different paradigm altogether. The
+\acrshort{ISM} models only specular reflections, ignoring the diffuse
+\emph{scattering} of rough surfaces and the \emph{diffraction} around edges
+and obstacles; both call for ray- or beam-tracing with scattering
+coefficients, radiosity, or edge-diffraction models \citep{savioja2015overview}. Being a geometrical approximation, it also misses the modal behaviour and wave
+interference that dominate at low frequencies, which only wave-based solvers
+capture:
+
+\begin{itemize}
+\item \textbf{Ray tracing.} Rather than enumerating image sources, ray tracing
+shoots a large number of rays from the source and follows
+them as they bounce around the room, tallying those that reach a receiver
+volume. Its key advantage over the \acrshort{ISM} is that reflections don't need to be ideally specular: at each surface a ray can be scattered into a
+random direction according to the boundary's scattering coefficient, so the
+diffuse reflections that the \acrshort{ISM} ignores are captured through
+Monte-Carlo sampling. The cost is statistical: accuracy improves only as
+more rays are traced, and very late or weak paths are noisy.
+
+\item \textbf{Ray-radiosity.} Radiosity-based methods are instead
+\emph{surface}-based. The boundaries are subdivided into patches, and the
+acoustic energy exchanged between every pair of patches is computed under
+the assumption of (ideally diffuse) reflection, yielding the time-dependent
+energy decay across the room without tracking individual paths. They model
+diffuse reverberation efficiently but, by construction, do not represent
+specular reflections or phase.
+
+\item \textbf{Wave-based methods.} At the opposite end, wave-based solvers
+discretise and solve the acoustic wave equation directly --- through
+finite-difference time-domain, finite-element or boundary-element
+formulations --- and therefore reproduce wave phenomena that geometrical
+methods omit, such as modal behaviour, interference and diffraction. They
+are more accurate at low frequencies compared to \acrshort{ISM}, but their cost grows
+steeply with frequency, which
+restricts them in practice to the lower part of the spectrum.
+
+\item \textbf{Hybrid methods.} Since no single technique is accurate and
+affordable across the whole spectrum and the whole response, practical
+simulators are usually \emph{hybrid}, assigning each regime to the method
+that suits it best: wave-based solvers for the low frequencies, where modes
+dominate; and a path-based method such as the \acrshort{ISM} for the
+high-frequency early part, where specular reflections matter and timing is
+critical \citep{tang2022gwa}.
+
+\item \textbf{\acrshort{DNN}-based methods.} More recently, some methods leverage \acrshort{DNN}s either for accelerating the classical solvers --- as in the GPU-parallelised \acrshort{ISM} of \citet{diaz2021gpurir}, or to directly generate \acrshort{RIR}s conditioned on a full 3D scene mesh \citep{ratnarajah2022mesh2ir}, or conditioned on perceptual acoustic descriptors and adopting diffusion models
+\citep{arellano2025room}.
+\end{itemize}
+
+\subsection{Survey of publicly-available RIR datasets}
+\label{sec:bg_rir_datasets}
+
+A number of \acrshort{RIR} datasets are publicly available; Table~\ref{tab:rir_datasets}
+summarises them. Two axes are worth tracking throughout, as they define our
+research gap: the sampling rate and the number of \emph{distinct} rooms, since
+most datasets cover either very few rooms or only low sampling rates. We
+review the measured datasets first and then the simulated ones.
+
+\textbf{Real ---}~RWCP-SSD~\citep{nakamura2000acoustical} is one of the earliest resources, with 143
+microphone-array responses at 48\,kHz across 14 real offices and rooms for
+distant-speech research. The Aachen Impulse Response database
+(AIR)~\citep{jeub2009binaural} provides 344 binaural responses at 48\,kHz
+measured with a dummy head across just 5 rooms, one of them a church, and was
+originally motivated by hearing-aid and dereverberation studies. C4DM
+\citep{stewart2010database} offers 468 mono and first-order Ambisonic
+(\acrshort{FOA}) responses at a high 96\,kHz, but only in 3 large London
+spaces, while OpenAIR\footnote{\url{https://www.openair.hosted.york.ac.uk/}}
+is a community \acrshort{FOA} library spanning some 46 real, often heritage or
+``extreme'' environments (cathedrals, tunnels) at 48\,kHz, without a fixed
+protocol or response count.
+
+Several databases were conceived as speech-processing benchmarks, and are
+correspondingly small in rooms and sampling rate. Take, for example, the REVERB
+challenge database~\citep{kinoshita2013reverb}, which offers microphone-array responses in
+only 3 room sizes at 16\,kHz for dereverberation, \acrshort{ASR} and
+\acrshort{SE}; MIRD~\citep{hadad2014multichannel} captures 234
+eight-microphone-array responses at 48\,kHz in a single room, at three
+different $T_{60}$ values and several array spacings; and the ACE
+corpus~\citep{eaton2015ace} records 7 rooms at 48\,kHz with a range of devices
+(laptop, phone, and an em32 Eigenmike, hence up to higher-order Ambisonics)
+for blind $T_{60}$ and \acrshort{DRR} estimation. The MIT IR
+survey~\citep{traer2016statistics} instead maximises room diversity, with 271
+mono responses each measured in a distinct everyday space, but at 44.1\,kHz
+and a single response per room, while BUT ReverbDB~\citep{szoke2019building}
+adds retransmitted speech and noise with about 1.3k responses across 9 real
+rooms, at 16\,kHz.
+
+A more recent trend targets \emph{spatial} and densely sampled measurements,
+typically within a single room. TAU-SRIR~\citep{politis2020dataset} provides
+114 \acrshort{FOA} and tetrahedral-array responses at 24\,kHz across 9
+classrooms, gyms and halls, and underpins the DCASE sound-event localisation
+benchmarks. dEchorate~\citep{carlo2021dechorate} annotates the timings of
+early reflections and the tail, together with the 3D positions of the
+corresponding image sources, with about 1.8k responses at 48\,kHz in a single
+room; MeshRIR~\citep{koyama2021meshrir} densely samples one room on a
+source-and-receiver grid (4.4k responses at 48\,kHz) for sound-field
+reconstruction; Motus~\citep{gotz2021dataset} measures 3.3k higher-order
+Ambisonic responses at 48\,kHz, again in a single room, across 830 furniture
+configurations; and Arni\footnote{\url{https://doi.org/10.5281/zenodo.6985104}}
+records over 132k responses at 44.1\,kHz within one variable-acoustics room,
+spanning 5342 configurations of movable absorptive panels.
+
+The most recent measured datasets push count and automation further, but
+rarely the number of rooms. SoundCam~\citep{wang2023soundcam} records 5k
+responses at 48\,kHz across 3 rooms with a moving human present, for tracking
+people from room acoustics; MIRACLE~\citep{kujawski2024miracle} contributes a
+large 856k responses at 48\,kHz from a planar 64-microphone array on dense
+source grids, but in a single anechoic chamber (optionally with a reflecting
+panel); and GTU-RIR~\citep{pekmezci2024evaluation} collects around 15k
+responses at 44.1\,kHz over 11 rooms with a semi-automated rig.
+HOMULA-RIR~\citep{miotello2024homula} models a teleconference in a single
+seminar room using higher-order microphones and a linear array (52 responses
+at 48\,kHz), and MP-RIR~\citep{friede2024multi} samples one complex-shaped
+room on a dense 3D grid with a robot-automated rig (68.7k responses at
+48\,kHz). FLAIR~\citep{sundstrom2025bayesian} pairs 270 responses at 48\,kHz
+in a single room with laser-measured 3D point clouds of the geometry;
+SRIRACHA~\citep{pelling2025sriracha} provides 2.65M responses at 48\,kHz as an
+interpolation benchmark, yet within a single shoebox with varying absorption;
+and UPV\_RIR\_DB~\citep{garciagamborino2026upv} releases 166 multichannel
+responses at 48\,kHz across 3 rooms with hierarchical metadata and a per-pair
+spatial grid. Finally, OpenSLR28~\citep{ko2017study} is not a single campaign
+but the widely used augmentation \emph{bundle} that aggregates real responses
+from RWCP, REVERB and AIR with simulated responses and point-source noises,
+all distributed at 16\,kHz.
+
+\textbf{Synthetic ---}~Obtaining room diversity at scale by measuring is impractical, which motivates simulating synthetic \acrshort{RIR}s. BIRD~\citep{grondin2020bird} provides 100k stereo responses at 16\,kHz
+generated with the \acrshort{ISM} across as many shoebox rooms; the spacing
+between the two microphones of each A/B pair is drawn uniformly as
+$\sim \mathcal{U}(0.1, 0.3)\,\text{m}$, although the microphone directivity is
+left unspecified. SoundSpaces~\citep{chen2022soundspaces} renders about 16M
+responses at 16\,kHz for the Matterport3D meshes and 44.1\,kHz for the Replica subset, over 101 scanned indoor scenes with a bidirectional
+path-tracing simulator (continuous rendering in version~2.0); GWA~\citep{tang2022gwa} computes around 2M
+mono responses at 48\,kHz over some 18.9k furnished rooms, using a hybrid
+simulator that couples a finite-difference time-domain wave solver (low
+frequencies) with ray tracing (high frequencies) and semantic
+acoustic-material assignment. Lastly, ReverbFX~\citep{richter2025reverbfx}
+departs from physical rooms altogether, deriving 1.85k stereo responses at
+48\,kHz from professional reverb effect plugins (convolution-based and
+algorithmic) to study singing-voice dereverberation under artificial
+reverberation.
+
+Table~\ref{tab:rir_datasets} reveals a consistent trade-off along our
+two axes. Measured datasets are mostly single-room campaigns
+(dEchorate, MeshRIR, Motus, Arni, MIRACLE, HOMULA-RIR, MP-RIR, FLAIR and
+SRIRACHA), and even the broadest rarely exceed a dozen rooms (14 for
+RWCP-SSD, 11 for GTU-RIR, 9 for BUT ReverbDB and TAU-SRIR); only the MIT
+survey spans many rooms (271). Synthetic datasets, by contrast, can cover hundreds or thousands of rooms, but
+at the cost of lower sampling rates. BIRD covers 100k shoebox rooms and the Matterport3D subset of
+SoundSpaces 85 scanned houses, both at 16\,kHz. The higher-rate options are
+in turn restricted either in scene count --- the Replica subset of
+SoundSpaces reaches 44.1\,kHz but spans only 18 scenes --- except for GWA
+attains 48\,kHz over some 18.9k rooms. The augmentation bundle most commonly used
+for speech enhancement, OpenSLR28 --- the default choice in the DNS
+challenges --- is likewise dated and limited to 16\,kHz.
+
+These limitations frame the gaps addressed in the following chapters: no
+dataset targets \emph{hearing aids} (Chapter~\ref{ch03_hearing}); no
+purpose-built, higher-fidelity synthetic \acrshort{RIR}s exist for
+\acrshort{SE} beyond GWA and the dated 16\,kHz bundles
+(Chapter~\ref{ch04_mbrirs}); and no \emph{concert-hall} or live-music-venue
+dataset is available at the scale and sampling rate required for source
+separation of live recordings (Chapter~\ref{ch05_mss}).
+
+\begin{table}[p]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\caption{Overview of publicly available \acrshort{RIR} datasets, grouped into
+measured and simulated. Sampling rate is in $kHz$; $fs$ denotes sampling rate.}
+\label{tab:rir_datasets}
+\begin{tabular}{@{}llrrrll@{}}
+\toprule
+ &  & \tiny{[kHz]} & \tiny{\#} & \tiny{\#}&  & \\
+ &   \tiny{year}          & fs & \tiny{IRs} & \tiny{rooms} & \tiny{format / mic type} & \tiny{other notes} \\
+\midrule
+\midrule
+\multicolumn{7}{@{}l}{\emph{Real}}\\
+\midrule
+RWCP-SSD        & '00 & 48    & 143    & 14   & mic array      & offices/real rooms \\
+AIR              & '09 & 48    & 344    & 5    & binaural          & dummy head\\
+C4DM         & '10 & 96    & 468    & 3    & FOA   & large spaces \\
+OpenAIR         & '10 & 48 & ---   & 46  & FOA    & heritage spaces \\
+REVERB       & '13 & 16    & 24     & 3    & mic array   & \acrshort{ASR} and \acrshort{SE} tasks \\
+MIRD        & '14 & 48    & 234    & 1    & mic array    & 3 different $T_{60}s$\\
+ACE           & '15 & 48    & ---    & 7    & HOA          & laptop, phone, em32 \\
+MIT IR Survey & '16 & 44.1  & 271    & 271  & mono              & everyday real spaces \\
+OpenSLR28  & '17 & 16 & --- & --- & mono & RWCP/REVERB/AIR + sim. \\
+BUT Reverb  & '19 & 16    & 1.3k   & 9    & mic array  & offices/real rooms \\
+TAU-SRIR      & '20 & 24    & 114    & 9    & FOA + mic array  & classrooms, gyms, halls \\
+dEchorate    & '21 & 48    & 1.8k   & 1    & mic array & early \& tail annotated \\
+MeshRIR       & '21 & 48    & 4.4k   & 1    & mic \& src array & sound field reconstruction \\
+Motus       & '21 & 48    & 3.3k   & 1    & HOA        & 830 furniture cfgs \\
+Arni        & '22 & 44.1  & 132k   & 1    & mono         & 5342 panel cfgs \\
+SoundCam       & '23 & 48    & 5k     & 3    & mono   & moving human present \\
+MIRACLE      & '23 & 48    & 856k   & 1    & mic array & panel in anechoic chamber \\
+GTU-RIR           & '24 & 44.1  & 15k   & 11  & mono      & semi-automated rig \\
+HOMULA-RIR     & '24 & 48  & 52    & 1    & HOA + mic array   & model of teleconference \\
+MP-RIR         & '24 & 48    & 68.7k  & 1    & mic array   & robot-automated rig \\
+FLAIR          & '25 & 48    & 270    & 1    & mono  &  laser-measured point clouds \\
+SRIRACHA             & '25 & 48    & 2.65M  & 1    & mono  & shoebox, varying absorption \\
+UPV\_RIR\_DB       & '26 & 48    & 166    & 3    & multichannel      & hierarchical metadata; per-pair grid \\
+\midrule
+\midrule
+\multicolumn{7}{@{}l}{\emph{Synthetic}}\\
+\midrule
+BIRD         & '20 & 16    & 100k   & 100k  & stereo     & \acrshort{ISM} shoebox A/B  spaced pair \\
+SoundSpaces   & '20 & 16  & 16M    & 101   & multi-format & scanned scenes; ray tracing \\
+GWA           & '22 & 48    & 2M     & 18.9k & mono         & drawn scenes; wave+ray \\
+ReverbFX     & '25 & 48 & 1.85k & --- & stereo & singing voice; plugins \\
+\bottomrule
+\end{tabular}
+\end{table}

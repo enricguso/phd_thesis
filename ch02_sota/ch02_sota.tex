@@ -17,7 +17,7 @@ with an overview of \acrshort{DNN}-based audio processing
 
 Note that in the chapters that follow we also review additional scientific background
 specific to each of the three tasks: \acrfull{HAs}
-in section~\ref{sec:sota_ha}, \acrfull{SE}  in Section~\ref{sec:sota_se},
+in Chapter~\ref{ch03_hearing}, \acrfull{SE}  in Section~\ref{sec:sota_se},
 and \acrfull{MSS} in Section~\ref{sec:sota_mss}.
 
 
@@ -124,7 +124,7 @@ hierarchy of feature maps of increasing abstraction. While the
 filters learned in the first layers of an image \acrshort{CNN} resemble
 Gabor functions tuned to particularly oriented edge detectors
 (Figure~\ref{fig:cnn}); in music, the analogous  filters
-tend to specialise instead on timbre or rythm respectively. Deeper layers compose these primitives into progressively complex detectors
+tend to specialise instead on timbre or rhythm. Deeper layers compose these primitives into progressively complex detectors
 for more concrete concepts --- particular colours or shapes
 in vision, or higher-level acoustic patterns in audio.
 
@@ -191,7 +191,7 @@ non-convex surface of a deep plain network gives way to a far smoother, near-con
 \begin{figure}[hb]
     \centering
     \includegraphics[width=.9\textwidth]{ch02_sota/figures/resnet.pdf}
-    \caption{Residual networks. Effect of skip connections on the loss landscape (illustrative):  \textbf{(a)}~a deep plain network exhibits a rugged  highly
+    \caption{Residual networks. Effect of skip connections on the loss landscape (illustrative):  \textbf{(a)}~a deep plain network exhibits a rugged highly
     non-convex $\mathcal{L}$ surface with many poor local minima, whereas \textbf{(b)}~the
     same network with skip connections has a near-convex
     landscape much easier to optimise, following the
@@ -245,7 +245,7 @@ sequence of samples or frames whose interpretation depends on context.
 This section reviews three complementary ways of modelling that temporal
 structure --- recurrence, autoregression, and dilated causal convolution.
 
-\textbf{\acrfull{RNN} ---} process a sequence one step
+\textbf{\acrfull{RNN} ---} processes a sequence one step
 at a time while carrying a hidden state $h_t$ that summarises
 everything seen so far. 
 
@@ -535,8 +535,8 @@ The next two chapters and the corresponding audio processing tasks --- \acrshort
 (Chapter~\ref{ch04_mbrirs}), \textbf{RO1} to \textbf{RO4} --- rely on spatial audio to build and
 reverberate their datasets. This is most evident in \textbf{RO1},
 where the evaluation benchmark for \acrshort{HAs} is created by reproducing
-complex acoustic scenes over a Ambisonics. We additionally apply spatial audio concepts like
-binaural-rendering and directional room-simulation accross
+complex acoustic scenes over Ambisonics. We additionally apply spatial audio concepts like
+binaural-rendering and directional room simulation across
 \textbf{RO2}--\textbf{RO4}. This section introduces the necessary background: first the
 general paradigms of spatial audio as a whole, and then a chronological account of
 Ambisonics development.
@@ -569,7 +569,7 @@ content from layout underlies modern immersive formats.
 
 \emph{Scene-based} audio sits between the two: it encodes the whole sound
 field around a point, independently of any loudspeaker layout, and decodes
-it to the available system at playback. Its prime examples are \emph{Ambisonics}: the
+it to the available system at playback. Its prime example is \emph{Ambisonics}: the
 sound field around a point is sampled into a series of directional
 components --- the \acrfull{SH} --- of increasing angular order. Ambisonics is a \emph{complete} theory in the sense that it supports the
 entire chain: a sound field can be
@@ -656,7 +656,7 @@ first-order directional component, so capturing the \emph{full} first-order
 field requires the omnidirectional pressure --- the Mid, when it is an
 omni --- together with \emph{three} orthogonal figure-of-eight components
 aligned with the front--back, left--right and up--down axes. These four
-signals are the $B-format$ channels $\mathbf{b} = [\,W, X, Y, Z\,]^\top$.
+signals are the \emph{B-format} channels $\mathbf{b} = [\,W, X, Y, Z\,]^\top$.
 
 Mathematically, this is the expansion of the sound field around a point
 into \acrfull{SH}, truncated at first order \citep{zotter2019ambisonics}.
@@ -683,7 +683,7 @@ interchangeably.
 \emph{Encoding.} A mono source $s$ arriving from azimuth $\theta$ and
 elevation $\varphi$ is panned into B-format by weighting it with the
 spherical harmonics evaluated at that direction. In the now-standard
-$ACN$ channel ordering with $SN3D$ normalisation,
+\emph{ACN} channel ordering with \emph{SN3D} normalisation,
 \begin{equation}
     \mathbf{b} = [\,W, Y, Z, X\,]^\top = s\,\mathbf{y}(\theta,\varphi),
     \qquad
@@ -821,7 +821,7 @@ delay in \acrshort{HRIR} databases by replacing the low band with a
 synthetic spherical model called \acrfull{LFE}, while
 \citet{bernschutz2014binaural} show that pairing high-order \acrshort{HRTF}s
 with lower-order soundfields causes severe losses in the 
-high frequencs in a frequency-dependant way; \citet{ben2017spectral} compensate the resulting
+high frequencies in a frequency-dependent way; \citet{ben2017spectral} compensate the resulting
 low-pass effect of \acrshort{SH} truncation with a global Spectral
 Equalisation (SpecEQ) filter. \citet{zaunschirm2018binaural} adapt the
 \acrshort{HRIR}s for direct low-order rendering by removing the
@@ -974,7 +974,7 @@ room these images form a regular lattice of mirrored copies of the room.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{ch02_sota/figures/ism_first_order.pdf}
+    \includegraphics[width=.85\columnwidth]{ch02_sota/figures/ism_first_order.pdf}
     \caption{The \acrshort{ISM}, illustrated to first order. Receiver $R$, source $S$, \emph{image source} $S'$. The reflected path
     $S \rightarrow P \rightarrow R$ then coincides with the straight line from
     $S'$ to $R$, so the reflection reduces to a delayed, attenuated copy of the
@@ -1077,8 +1077,7 @@ dominate; and a path-based method such as the \acrshort{ISM} for the
 high-frequency early part, where specular reflections matter and timing is
 critical \citep{tang2022gwa}.
 
-\item \textbf{\acrshort{DNN}-based methods.} More recently, some methods leverage \acrshort{DNN}s either for accelerating the classical solvers --- as in the GPU-parallelised \acrshort{ISM} of \citet{diaz2021gpurir}, or to directly generate \acrshort{RIR}s conditioned on a full 3D scene mesh \citep{ratnarajah2022mesh2ir}, or conditioned on perceptual acoustic descriptors and adopting diffusion models
-\citep{arellano2025room}.
+\item \textbf{\acrshort{DNN}-based methods.} More recently, \acrshort{DNN}s generate \acrshort{RIR}s directly, conditioned on a 3D scene mesh \citep{ratnarajah2022mesh2ir} or on perceptual descriptors via diffusion \citep{arellano2025room}. Classical solvers have also been accelerated on GPU \citep{diaz2021gpurir}.
 \end{itemize}
 
 \subsection{Survey of publicly-available RIR datasets}
@@ -1181,8 +1180,8 @@ RWCP-SSD, 11 for GTU-RIR, 9 for BUT ReverbDB and TAU-SRIR); only the MIT
 survey spans many rooms (271). Synthetic datasets, by contrast, can cover hundreds or thousands of rooms, but
 at the cost of lower sampling rates. BIRD covers 100k shoebox rooms and the Matterport3D subset of
 SoundSpaces 85 scanned houses, both at 16\,kHz. The higher-rate options are
-in turn restricted either in scene count --- the Replica subset of
-SoundSpaces reaches 44.1\,kHz but spans only 18 scenes --- except for GWA
+in turn restricted in scene count --- the Replica subset of
+SoundSpaces reaches 44.1\,kHz but spans only 18 scenes --- except for GWA which
 attains 48\,kHz over some 18.9k rooms. The augmentation bundle most commonly used
 for speech enhancement, OpenSLR28 --- the default choice in the DNS
 challenges --- is likewise dated and limited to 16\,kHz.
@@ -1200,7 +1199,7 @@ separation of live recordings (Chapter~\ref{ch05_mss}).
 \footnotesize
 \setlength{\tabcolsep}{4pt}
 \caption{Overview of publicly available \acrshort{RIR} datasets, grouped into
-measured and simulated. Sampling rate is in $kHz$; $fs$ denotes sampling rate.}
+measured and simulated. Sampling rate is in kHz; $fs$ denotes sampling rate.}
 \label{tab:rir_datasets}
 \begin{tabular}{@{}llrrrll@{}}
 \toprule
@@ -1215,7 +1214,7 @@ AIR              & '09 & 48    & 344    & 5    & binaural          & dummy head\
 C4DM         & '10 & 96    & 468    & 3    & FOA   & large spaces \\
 OpenAIR         & '10 & 48 & ---   & 46  & FOA    & heritage spaces \\
 REVERB       & '13 & 16    & 24     & 3    & mic array   & \acrshort{ASR} and \acrshort{SE} tasks \\
-MIRD        & '14 & 48    & 234    & 1    & mic array    & 3 different $T_{60}s$\\
+MIRD        & '14 & 48    & 234    & 1    & mic array    & 3 different $T_{60}$ values$\\
 ACE           & '15 & 48    & ---    & 7    & HOA          & laptop, phone, em32 \\
 MIT IR Survey & '16 & 44.1  & 271    & 271  & mono              & everyday real spaces \\
 OpenSLR28  & '17 & 16 & --- & --- & mono & RWCP/REVERB/AIR + sim. \\
@@ -1232,7 +1231,7 @@ HOMULA-RIR     & '24 & 48  & 52    & 1    & HOA + mic array   & model of telecon
 MP-RIR         & '24 & 48    & 68.7k  & 1    & mic array   & robot-automated rig \\
 FLAIR          & '25 & 48    & 270    & 1    & mono  &  laser-measured point clouds \\
 SRIRACHA             & '25 & 48    & 2.65M  & 1    & mono  & shoebox, varying absorption \\
-UPV\_RIR\_DB       & '26 & 48    & 166    & 3    & multichannel      & hierarchical metadata; per-pair grid \\
+UPV RIR DB       & '26 & 48    & 166    & 3    & multichannel      & hierarchical metadata\\
 \midrule
 \midrule
 \multicolumn{7}{@{}l}{\emph{Synthetic}}\\

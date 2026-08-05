@@ -3,7 +3,7 @@
 \chapter{Introduction}
 \label{ch01_intro}
 
-%Audio processing is a subfield of signal processing with application areas that can range from speech processing to music synthesis. Traditionally, audio processing research has consisted of finding analytical solutions to signal problems. However, in the last decade with the advent of \acrshort{DNN}s, the field has shifted from an analytical to a data-driven approach, bringing unprecedented performance in numerous audio-related tasks such as retrieving specific elements from an audio mixture (source separation) and removing noise (denoising) or reverberation (dereverberation) to improve quality and/or intelligibility of speech signals.
+%Audio processing is a subfield of signal processing with application areas that can range from speech processing to music synthesis. Traditionally, audio processing research has consisted of finding analytical solutions to signal problems. However, in the last decade with the advent of \acrshortpl{DNN}, the field has shifted from an analytical to a data-driven approach, bringing unprecedented performance in numerous audio-related tasks such as retrieving specific elements from an audio mixture (source separation) and removing noise (denoising) or reverberation (dereverberation) to improve quality and/or intelligibility of speech signals.
 
 % =====================================================================
 % Chapter 1 — Introduction
@@ -24,7 +24,7 @@ explicit modelling to data-driven learning, bringing unprecedented performance, 
 
 These tasks (listed in Table \ref{tab:tasks}) can be grouped into three paradigms: those that \emph{categorize} audio content---such as tagging or key detection; those that \emph{infer} a structured output from the signal---such as source separation or \acrshort{SE}; and those that \emph{generate} new audio---such as speech synthesis or text-to-music. These paradigms correspond, respectively, to the machine learning problems of \emph{classification}, \emph{regression}, and more recently to the \emph{sampling} of generative models. Although the contributions of this thesis may prove useful across all three paradigms, it particularly focuses on a subset of the regression-oriented family of tasks, which we refer to as \emph{audio processing} tasks, in the sense that both the model's inputs and outputs are audio signals and to differentiate them from \emph{audio analysis} and \emph{audio generation} models. 
 
-In the present work, we focus on three of these representative tasks, the choice of which is also motivated by the industrial partners involved in the thesis, and each one from a distinct audio research field: \textbf{\textit{(i)}~\acrfull{SE}} from the speech field, \textbf{\textit{(ii)}~\acrfull{MSS}} from the \acrfull{MIR} field, and \textbf{\textit{(iii)}~\acrfull{HAs}} processing from the computational audiology field. 
+In the present work, we focus on three of these representative tasks, the choice of which is also motivated by the industrial partners involved in the thesis, and each one from a distinct audio research field: \textbf{\textit{(i)}~\acrfull{SE}} from the speech field, \textbf{\textit{(ii)}~\acrfull{MSS}} from the \acrfull{MIR} field, and \textbf{\textit{(iii)}~\acrfullpl{HA}} processing from the computational audiology field. 
 
 \begin{table}[t]
 \centering
@@ -38,7 +38,7 @@ In the present work, we focus on three of these representative tasks, the choice
 \makecell[l]{Machine \\listening} & \makecell[l]{DCASE \\ ICASSP \\ WASPAA} & \makecell[l]{Acoustic scene classification \\ Sound event detection \\ Audio moment retrieval \\ Sound localization} \\
 \hline
 % Fixed: Removed the trailing \\ after audiology
-\makecell[l]{Computational \\audiology} & \makecell[l]{VCCA \\ AES \\ EMBC \\ ICASSP\\WASPAA} & \makecell[l]{\acrshort{HAs} processing \\ Cochlear implant processing \\Noise reduction \\ Speech intelligibility prediction \\ Hearing loss simulation} \\
+\makecell[l]{Computational \\audiology} & \makecell[l]{VCCA \\ AES \\ EMBC \\ ICASSP\\WASPAA} & \makecell[l]{\acrshortpl{HA} processing \\ Cochlear implant processing \\Noise reduction \\ Speech intelligibility prediction \\ Hearing loss simulation} \\
 \hline
 \makecell[l]{\acrshort{MIR}} & \makecell[l]{ISMIR \\ SMC \\ICASSP\\WASPAA} & \makecell[l]{Beat tracking \\ Chord recognition \\ Source separation \\ Transcription \\ Text-to-song} \\
 \end{tabular}
@@ -61,7 +61,7 @@ generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
 process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
 
-The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in \acrfull{NLP} \citep{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as \acrshort{HAs}.
+The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in \acrfull{NLP} \citep{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as \acrshortpl{HA}.
 
 Likewise, the trajectory from analytical methods to learned, increasingly end-to-end models and with weaker supervision has been observed across the three fields we address. 
 
@@ -76,11 +76,11 @@ dominated by analytical decompositions such as non-negative matrix
 factorization \citep{virtanen2007nmf}, before being superseded by \acrshort{DNN}-based
 systems exemplified by open, reproducible baselines such as Open-Unmix \citep{stoter2019openunmix}. 
 
-\textbf{\textit{(iii)}~In the \emph{computational audiology} field}, traditional methods of \acrshort{HAs} improve the signal-to-noise ratio through directional microphones and adaptive beamforming
+\textbf{\textit{(iii)}~In the \emph{computational audiology} field}, traditional methods of \acrshortpl{HA} improve the signal-to-noise ratio through directional microphones and adaptive beamforming
 \citep{ricketts1999, gode2022}, techniques rooted in array signal processing
 and typically validated under controlled laboratory conditions. More recently,
-Deep Neural Networks (\acrshort{DNN}s) have been proposed as enhancement back-ends for
-\acrshort{HAs} for binaural separation \citep{han2020}, or as evaluation metrics \citep{chiang2024multi}, with recent interest in distillation to smaller models that are compatible with wearable constraints
+Deep Neural Networks (\acrshortpl{DNN}) have been proposed as enhancement back-ends for
+\acrshortpl{HA} for binaural separation \citep{han2020}, or as evaluation metrics \citep{chiang2024multi}, with recent interest in distillation to smaller models that are compatible with wearable constraints
 \citep{wang2023neural, andersen2021}.
 
 
@@ -248,7 +248,7 @@ Eurecat is a foundation whose mission is to promote research, technological deve
 Three Eurecat projects underpin the work presented in this thesis.
 
 \begin{itemize}{
-    \item \textbf{Eurecat-Microson} collaboration project, focusing on the development of a new benchmark for evaluating \acrshort{HAs} and speech denoising algorithms in realistic conditions.
+    \item \textbf{Eurecat-Microson} collaboration project, focusing on the development of a new benchmark for evaluating \acrshortpl{HA} and speech denoising algorithms in realistic conditions.
     
     \item \textbf{GuestXR} (Horizon 2020) project, aimed at creating an immersive online social space through extended reality, centred on a machine learning agent called ``The Guest'' designed to facilitate interaction between participants, mitigate conflicts and cyberbullying. Because supporting participants with and without hearing difficulties requires intelligible speech, our contribution addresses \acrshort{SE}.
 
@@ -270,9 +270,9 @@ organized as follows.
 \begin{itemize}
     \item \textbf{Chapter~\ref{ch02_sota}} introduces the scientific background used broadly throughout the thesis: deep-learning for audio, spatial-audio techniques and virtual-acoustics on which the contributions build, together with a summary of their corresponding publicly available datasets.
     
-    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshort{HAs} field and is the result of the collaboration with Microson: the developement of an ecologically-avlid \emph{evaluation} for \acrshort{HAs} (\textbf{RO1}), and whether \acrshort{DNN}s are a promising route to generalise better than traditional \acrshort{HAs} algorithms (\textbf{RO2}). Beyond their technical interest, both objectives foster accessibility, and thus inclusivity, for people with hearing loss.
+    \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshortpl{HA} field and is the result of the collaboration with Microson and within the GuestXR project: the developement of an ecologically-avlid \emph{evaluation} for \acrshortpl{HA} (\textbf{RO1}), and whether \acrshortpl{DNN} are a promising route to generalise better than traditional \acrshortpl{HA} algorithms (\textbf{RO2}). Beyond their technical interest, both objectives foster accessibility, and thus inclusivity, for people with hearing loss.
 
-    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, within the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}). While large, realistic \acrshort{RIR} datasets already exist privately within industry --- where major labs maintain their own simulation tools --- replicating them for open science and releasing them freely to every research lab carries value in itself.
+    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, again part of the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source or receiver directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}). While large, realistic \acrshort{RIR} datasets already exist privately within industry --- where major labs maintain their own simulation tools --- replicating them for open science and releasing them freely to every research lab carries value in itself.
 
     \item \textbf{Chapter~\ref{ch05_mss}} brings the same idea to \acrfull{MSS}, in line with the research interests of the MTG (UPF). We identify that \acrfull{SOTA} models designed for studio music do not work well on recordings captured by attendees (mobile-phone recordings from the audience). This raises several questions: can we generate synthetic data that transforms studio datasets into live datasets? Can a generative singing-voice conversion model produce synthetic audiences that sing along to the vocals of the studio songs (\textbf{RO5})? Can we curate additional audience-like noise from internet audio archives (\textbf{RO6})? And what about acoustics --- does adding impulse responses specifically measured in real, modern music venues improve upon using existing non-concert \acrshort{RIR}s (\textbf{RO7})?
 

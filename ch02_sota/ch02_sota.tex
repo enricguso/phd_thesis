@@ -4,10 +4,10 @@
 \label{ch02_sota}
 
 The contributions of this thesis draw on concepts and tools from different fields, and understanding them requires a working
-familiarity with a number of recurring building blocks: the \acrshort{DNN}s that drive modern audio processing, the spatial-audio techniques
+familiarity with a number of recurring building blocks: the \acrshortpl{DNN} that drive modern audio processing, the spatial-audio techniques
 used to reproduce sound fields, the virtual acoustics that
 let us simulate reverberation, and the state of the art of the
-three tasks we address --- \acrshort{SE}, \acrshort{HAs} processing,
+three tasks we address --- \acrshort{SE}, \acrshortpl{HA} processing,
 and \acrshort{MSS}. This chapter introduces that background in
 the order in which the remainder of the manuscript relies on it. We begin
 with an overview of \acrshort{DNN}-based audio processing
@@ -16,8 +16,8 @@ with an overview of \acrshort{DNN}-based audio processing
 (Section~\ref{sec:bg_rir}). 
 
 Note that in the chapters that follow we also review additional scientific background
-specific to each of the three tasks: \acrfull{HAs}
-in Chapter~\ref{ch03_hearing}, \acrfull{SE}  in Section~\ref{sec:sota_se},
+specific to each of the three tasks: \acrfullpl{HA}
+in Chapter~\ref{ch03_hearing}, \acrfull{SE} in Chapter~\ref{ch04_mbrirs},
 and \acrfull{MSS} in Section~\ref{sec:sota_mss}.
 
 
@@ -116,7 +116,7 @@ In audio, the two-dimensional input is not an image but a
 spatio-temporal representation of the signal, most commonly the
 \acrfull{STFT}. Early systems operated on the magnitude spectrogram
 alone, discarding the phase, although recent models process
-the complex spectrogram \citep{tong2024scnet, schroter2022deepfilternet} --- real and imaginary parts jointly.
+the complex spectrogram \citep{tong2024scnet, schroter2023deepfilternet3} --- real and imaginary parts jointly.
 
 Sliding a filter over the input yields a smaller \emph{feature map}, one
 per filter; stacking many filters per layer and many layers produces a
@@ -530,11 +530,11 @@ representation of sound fields, and then the measurement and simulation of
 \section{Spatial Audio and Ambisonics}
 \label{sec:bg_spatial}
 
-The next two chapters and the corresponding audio processing tasks --- \acrshort{HAs}
+The next two chapters and the corresponding audio processing tasks --- \acrshortpl{HA}
 (Chapter~\ref{ch03_hearing}) and \acrshort{SE}
 (Chapter~\ref{ch04_mbrirs}), \textbf{RO1} to \textbf{RO4} --- rely on spatial audio to build and
 reverberate their datasets. This is most evident in \textbf{RO1},
-where the evaluation benchmark for \acrshort{HAs} is created by reproducing
+where the evaluation benchmark for \acrshortpl{HA} is created by reproducing
 complex acoustic scenes over Ambisonics. We additionally apply spatial audio concepts like
 binaural-rendering and directional room simulation across
 \textbf{RO2}--\textbf{RO4}. This section introduces the necessary background: first the
@@ -597,7 +597,7 @@ listener's head and ears acquired with a depth sensor
 Finally, with the rise of \acrfull{XR}, binaural rendering of Ambisonics
 has become especially attractive: because the sound field is represented
 in the \acrshort{SH} domain, decoding it to the two ears reduces to
-multiplying the Ambisonic signals by a fixed matrix of \acrshort{HRTF}s,
+multiplying the Ambisonics signals by a fixed matrix of \acrshort{HRTF}s,
 and following the listener's head rotations is itself just another matrix
 multiplication.
 
@@ -673,7 +673,7 @@ interchangeably.
     \centering
     \includegraphics[width=0.92\textwidth,trim={.25cm .25cm .75cm 1.25cm},clip]{ch02_sota/figures/spherical_harmonics.pdf}
     \caption{The real spherical harmonics up to order $\ell = 3$, the basis
-    functions of the Ambisonic sound-field representation.  Orders $\ell \le 1$ 
+    functions of the Ambisonics sound-field representation.  Orders $\ell \le 1$ 
     form \acrshort{FOA}, i.e.\ the B-format; each additional order adds
     $2\ell + 1$ components of finer angular resolution, used by
     \acrshort{HOA}.}
@@ -712,8 +712,8 @@ yield the dipoles --- $\mathbf{b} = \mathbf{M}\,\mathbf{a}$, followed by a
 frequency correction for the finite capsule spacing. A-format is thus what
 the microphone records, whereas B-format is the layout-independent
 representation we work with. A-format is encountered only when physically
-recording with an Ambisonic microphone, and even then only as an internal
-intermediate; a large share of today's Ambisonic content is instead
+recording with an Ambisonics microphone, and even then only as an internal
+intermediate; a large share of today's Ambisonics content is instead
 \emph{encoded} synthetically --- panned, simulated, or rendered --- straight into B-format. We introduce
 it here mainly to make the step from \acrshort{MS} recording to Ambisonics
 concrete.
@@ -757,7 +757,7 @@ a complete theory (recording is not possible), and the apparent source size
 and coloration vary with position. \citet{pulkki1999uniform} mitigates the
 latter by spreading each source across a pair of auxiliary directions at
 $r_E \pm \alpha$. Although a distinct paradigm, \acrshort{VBAP} later
-re-enters the Ambisonic pipeline as the loudspeaker-panning stage of the
+re-enters the Ambisonics pipeline as the loudspeaker-panning stage of the
 AllRAD decoder (below).
 
 \textbf{Refining encoding and decoding.}
@@ -775,7 +775,7 @@ practical when real-time rotations must follow a head-tracking device.
 smooth panning of low orders for a larger sweet spot and sharper
 localisation, at the cost of as many loudspeakers as channels. 
 
-The Ambisonic signal becomes a vector $\mathbf{b}\in\mathbb{R}^{(N+1)^2}$
+The Ambisonics signal becomes a vector $\mathbf{b}\in\mathbb{R}^{(N+1)^2}$
 collecting all spherical harmonics up to order $N$, and encoding a source
 keeps the same form,
 \begin{equation}
@@ -845,14 +845,14 @@ higher-order version, and disregards phase at high frequencies as in
 Several further directions, left out of the timeline above because they lie
 outside the scope of this thesis, are nonetheless worth signposting: \acrshort{HOA} coding \citep{hold2023compression}, \acrshort{DNN}-based microphone-to-Ambisonics encoding \citep{heikkinen2025gen}, continuous representations of the sound
 field, or of the room impulse responses themselves, so that the response at
-unmeasured positions can be interpolated from only a sparse set of probes \citep{luo2022learning, masuyama2025physics, erdem2026sf, baek2025av} or spatial audio generation from vision, producing Ambisonic soundtracks directly from
+unmeasured positions can be interpolated from only a sparse set of probes \citep{luo2022learning, masuyama2025physics, erdem2026sf, baek2025av} or spatial audio generation from vision, producing Ambisonics soundtracks directly from
 360\textdegree{} video \citep{morgado2018self, liu2025omniaudio}. 
 
 \section{Room Impulse Responses}
 \label{sec:bg_rir}
 \acrshort{RIR}s are recurrent in this thesis:
 in Chapter~\ref{ch03_hearing}, to assemble the
-\acrshort{HRTF}s of \acrshort{HAs}; in Chapter~\ref{ch04_mbrirs} used to generate a \acrshort{SE} dataset; and in Chapter~\ref{ch05_mss} to measure a
+\acrshort{HRTF}s of \acrshortpl{HA}; in Chapter~\ref{ch04_mbrirs} used to generate a \acrshort{SE} dataset; and in Chapter~\ref{ch05_mss} to measure a
 dataset of concert-hall responses for live \acrshort{MSS}. We devote this section to defining and to reviewing \acrshort{RIR}s and how to simulate them.
 
 
@@ -1077,7 +1077,7 @@ dominate; and a path-based method such as the \acrshort{ISM} for the
 high-frequency early part, where specular reflections matter and timing is
 critical \citep{tang2022gwa}.
 
-\item \textbf{\acrshort{DNN}-based methods.} More recently, \acrshort{DNN}s generate \acrshort{RIR}s directly, conditioned on a 3D scene mesh \citep{ratnarajah2022mesh2ir} or on perceptual descriptors via diffusion \citep{arellano2025room}. Classical solvers have also been accelerated on GPU \citep{diaz2021gpurir}.
+\item \textbf{\acrshort{DNN}-based methods.} More recently, \acrshortpl{DNN} generate \acrshort{RIR}s directly, conditioned on a 3D scene mesh \citep{ratnarajah2022mesh2ir} or on perceptual descriptors via diffusion \citep{arellano2025room}. Classical solvers have also been accelerated on GPU \citep{diaz2021gpurir}.
 \end{itemize}
 
 \subsection{Survey of publicly-available RIR datasets}
@@ -1128,7 +1128,7 @@ corresponding image sources, with about 1.8k responses at 48\,kHz in a single
 room; MeshRIR~\citep{koyama2021meshrir} densely samples one room on a
 source-and-receiver grid (4.4k responses at 48\,kHz) for sound-field
 reconstruction; Motus~\citep{gotz2021dataset} measures 3.3k higher-order
-Ambisonic responses at 48\,kHz, again in a single room, across 830 furniture
+Ambisonics responses at 48\,kHz, again in a single room, across 830 furniture
 configurations; and Arni\footnote{\url{https://doi.org/10.5281/zenodo.6985104}}
 records over 132k responses at 44.1\,kHz within one variable-acoustics room,
 spanning 5342 configurations of movable absorptive panels.
@@ -1187,7 +1187,7 @@ for speech enhancement, OpenSLR28 --- the default choice in the DNS
 challenges --- is likewise dated and limited to 16\,kHz.
 
 These limitations frame the gaps addressed in the following chapters: no
-dataset targets \emph{hearing aids} (Chapter~\ref{ch03_hearing}); no
+dataset targets \acrlongpl{HA} (Chapter~\ref{ch03_hearing}); no
 purpose-built, higher-fidelity synthetic \acrshort{RIR}s exist for
 \acrshort{SE} beyond GWA and the dated 16\,kHz bundles
 (Chapter~\ref{ch04_mbrirs}); and no \emph{concert-hall} or live-music-venue
@@ -1214,7 +1214,7 @@ AIR              & '09 & 48    & 344    & 5    & binaural          & dummy head\
 C4DM         & '10 & 96    & 468    & 3    & FOA   & large spaces \\
 OpenAIR         & '10 & 48 & ---   & 46  & FOA    & heritage spaces \\
 REVERB       & '13 & 16    & 24     & 3    & mic array   & \acrshort{ASR} and \acrshort{SE} tasks \\
-MIRD        & '14 & 48    & 234    & 1    & mic array    & 3 different $T_{60}$ values$\\
+MIRD        & '14 & 48    & 234    & 1    & mic array    & 3 different $T_{60}$ values \\
 ACE           & '15 & 48    & ---    & 7    & HOA          & laptop, phone, em32 \\
 MIT IR Survey & '16 & 44.1  & 271    & 271  & mono              & everyday real spaces \\
 OpenSLR28  & '17 & 16 & --- & --- & mono & RWCP/REVERB/AIR + sim. \\

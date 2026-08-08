@@ -1,36 +1,68 @@
 %!TEX root = ../thesis_a4.tex
-% TODO change Genis' stuff to mine
 
-
-\chapter{Appendix A: Publications}
+\chapter{Publications}
 \label{sec:pubs}
 
-In this appendix entry we list the peer-reviewed publications that are part of this thesis. Under each paper citation, a brief description of the contributions made by the author of this thesis is also provided. The articles are presented in chronological order.
+This section lists all peer-reviewed publications resulting from the doctoral research undertaken during this thesis. The works are divided into two categories: main contributions directly within the scope of the thesis, followed by secondary collaborative works outside its core scope (ordered by degree of contribution).
+
+\section{Directly related to this thesis}
+\label{sec:pubs_first_author}
+
+\begin{mybox}{WASPAA 2023}
+    Enric Gusó, Joanna Luberadzka, Martí Baig, Umut Say\i n, \& Xavier Serra.
+    \emph{An Objective Evaluation of Hearing Aids and DNN-Based Binaural Speech Enhancement in Complex Acoustic Scenes}.
+    In: 2023 IEEE workshop on applications of signal processing to audio and acoustics (WASPAA), New Paltz, USA. 
+\end{mybox}
+\textbf{Contributions:} Training and evaluation of the models, generation of the binaural decoders, adaptation of the \acrshort{MASP} library, benchmark of the \acrshortpl{HA} recordings, writing of the manuscript, publication of the code and \acrshort{SOFA} files, and dissemination.
+
+\begin{mybox}{WASPAA 2025}
+    Enric Gusó, Joanna Luberadzka, Umut Say\i n, \& Xavier Serra.
+    \emph{MB-RIRs: a Synthetic Room Impulse Response Dataset with Frequency-Dependent Absorption Coefficients}.
+    In: 2025 IEEE workshop on applications of signal processing to audio and acoustics (WASPAA), Lake Tahoe, USA. 
+\end{mybox}
+\textbf{Contributions:} Adaptation of \acrshort{MASP} to multi-CPU processing. Implementation of source and receiver directivity in the \acrshort{ISM} algorithm. Generation of the dataset, deployment in an AWS environment for generation, training and evaluation of the models, writing of the manuscript, publication of the dataset and dissemination.
+
+\begin{mybox}{ISMIR 2026}
+    Enric Gusó \& Xavier Serra.
+    \emph{CrowdioSet and PaRIRset: Two Datasets Towards Live Music Source Separation}.
+    In: Proceedings of the 27th International Society for Music Information Retrieval Conference (ISMIR), Abu Dhabi, UAE. 
+\end{mybox}
+\textbf{Contributions:} Selection of the topic, data scraping and manually labeling the CrowdioSet dataset, recording and processing of the PaRIRset, training and evaluation of the \acrshort{RIR} ablations and the SCNet models, writing and revision of the manuscript, publication of the datasets, project webpage, dissemination.
+
+\section{Additional publications}
+\label{sec:pubs_co_author}
+
+\begin{mybox}{ICASSP 2022}
+    Enric Gusó, Jordi Pons, Santiago Pascual, Joan Serrà.
+    \emph{On Loss Functions and Evaluation Metrics for Music Source Separation}.
+    In 2022 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) (pp. 306-310). IEEE. 
+\end{mybox}
+\textbf{Contributions:} Dissemination during the first year of the PhD. Previously: selection of the topic, model training and evaluation, first draft of the manuscript.
+
+\begin{mybox}{WASPAA 2025}
+    Joanna Luberadzka, Enric Gusó, Umut Say\i n.
+    \emph{Conditioned Wave-U-Net for Acoustic Matching of Speech in Shared XR Environments}.
+    In: 2025 IEEE workshop on applications of signal processing to audio and acoustics (WASPAA), Lake Tahoe, USA. 
+\end{mybox}
+\textbf{Contributions:} Part of the evaluation methodology, code reviews, manuscript revision and dissemination.
+
+\begin{mybox}{IEEE VR 2025}
+    Joanna Luberadzka, Enric Gusó, Umut Say\i n \& Adan Garriga.
+    \emph{Using Virtual Reality to Raise Awareness of Communication Challenges Faced by Individuals with Hearing Loss}.
+    In: 2025 IEEE Conference on Virtual Reality and 3D User Interfaces Abstracts and Workshops (VRW), Saint Malo, France. 
+\end{mybox}
+\textbf{Contributions:} The \acrshort{SE} models.
+
+\begin{mybox}{Forum Acusticum 2025}
+    Martí Baig, Enric Gusó, Joanna Luberadzka \& Umut Say\i n.
+    \emph{Perceptual Evaluation of Deep Learning-Based Speech Enhancement for Hearing Aids}.
+    In: 11th Convention of the European Acoustics Association (Forum Acusticum Euronoise), Málaga, Spain.
+\end{mybox}
+\textbf{Contributions:} Extension of our WASPAA 2023 work to include a perceptual evaluation of the \acrshort{SE} models, and manuscript revision.
 
 
 
-%\section*{Journal articles}
-
-\section*{Conference papers}
-
-\subsection*{2021}
-
-fdsafdsafdsa
-
-\subsection*{2022}
-
-%\begin{mybox}{FRSM 2022}
-%    Genís Plaja-Roglans, Thomas Nuttall, Xavier Serra \& Marius Miron (2022).
-%    \emph{Continuing CompMusic: New Approaches in the computational analysis of Carnatic music}.
-%    In: Proc. of 27th Int. Symposium on Frontiers of Research in Speech and Music (FRSM), Online.\footnote{Also published in Advances in Intelligent Systems and Computing Journal}
-%\end{mybox}
-%\textbf{Contributions:} Writing and proof-reading, and performing the pitch extraction and vocal separation experiments. 
-
-
-
-
-
-\chapter{Appendix B: Other scientific outputs of this thesis}
+\chapter{Other scientific outputs of this thesis}
 %\textbf{From Chapter~\ref{ch02_sb}}
 \begin{itemize}
     \item ISMIR Tutorial: \url{https://mtg.github.io/IAM-tutorial-ismir22}
@@ -44,3 +76,116 @@ fdsafdsafdsa
     \item cosa 2
 \end{itemize}
 
+
+
+\chapter{PaRIRset venues and their \acrshort{PA} systems}
+\label{app:parirset}
+
+%TODO: fix caption, it renders in the wrong place!
+
+\begin{longtable}{@{}r p{3.3cm} p{2.5cm} c p{3.0cm}@{}}
+\phantomsection
+\caption{PaRIRset venues (part~1): location and \acrshort{PA} manufacturer. I/O denotes indoor or outdoor.}\label{tab:parirset_full_a}\\
+\toprule
+\# & Venue & City & I/O & Manufacturer \\
+\midrule\endfirsthead
+\multicolumn{5}{@{}l}{\footnotesize\itshape \tablename~\thetable\ (continued)}\\ \toprule
+\# & Venue & City & I/O & Manufacturer \\
+\midrule\endhead
+\midrule\multicolumn{5}{r@{}}{\footnotesize\itshape continued on next page}\\\endfoot
+\bottomrule\endlastfoot
+1 & Recinto Ferial & Olivenza & O & d\&b audiotechnik \\
+2 & Plaça de la palmera & Figueres & O & Nexo \\
+3 & Cafè del Teatre & Lleida & I & ElectroVoice \\
+4 & Las Armas & Saragossa & I & ElectroVoice \\
+5 & Paral·lel 62 & Barcelona & I & Meyer Sound \\
+6 & Moon & València & I & Lynx Pro-Audio \\
+7 & Magma & Alicante & I & Nexo \\
+8 & La Riviera & Madrid & I & L-Acoustics \\
+9 & Es Gremi & Palma de Mallorca & I & Kling\&Freitag \\
+10 & Zero & Tarragona & I & TW Audio \\
+11 & El Tren & Granada & I & Nexo \\
+12 & Apolo & Barcelona & I & d\&b audiotechnik \\
+13 & La Mirona & Girona & I & L-Acoustics \\
+14 & Acapulco & Gijón & I & HK Audio \\
+15 & REM & Murcia & I & Outline Audio \\
+16 & Escenario Santander & Santander & I & TW Audio \\
+17 & Trinchera & Málaga & I & ElectroVoice \\
+18 & Antzokia & Bilbo & I & Adamson \\
+19 & Dabadaba & Donosti & I & TW Audio \\
+20 & Hangar & Córdoba & I & EAW \\
+21 & Berlin Club & Almeria & I & Nexo \\
+22 & Sanagustin Kulturgunea & Azpeitia & I & ElectroVoice \\
+23 & Sala X & Sevilla & I & L-Acoustics \\
+24 & Auditori Municipal Maria Rosa Juncosa & Vilafranca del Penedès & I & d\&b audiotechnik \\
+25 & Sala Ramon Romagosa & Cornellà de Llobregat & I & QSC \\
+26 & Plaça del Castell & Sant Pere de Ribes & O & Nexo \\
+27 & Apolo & Barcelona & I & d\&b audiotechnik \\
+28 & Moon & València & I & Lynx Pro-Audio \\
+29 & Mamba! & Murcia & I & Nexo \\
+30 & Custom & Sevilla & I & L-Acoustics \\
+31 & Teatro Eslava & Madrid & I & Kv2 \\
+32 & Capitol & A Coruña & I & EAW \\
+33 & Teatro Albeniz & Gijon & I & d\&b audiotechnik \\
+34 & Jimmy Jazz & Gasteiz & I & TW Audio \\
+35 & Sala Oasis & Saragossa & I & Stage Accompany \\
+36 & Auditori Municipal Maria Rosa Juncosa & Vilafranca del Penedès & O & d\&b audiotechnik \\
+37 & Museu de la Terracota & La Bisbal & O & d\&b audiotechnik \\
+38 & Bodega Cooperativa de Falset & Falset & O & DAS \\
+39 & Fòrum Romà D'Empúries & L'Escala & O & L-Acoustics \\
+40 & Fòrum de Barcelona & Barcelona & O & L-Acoustics \\
+\end{longtable}
+
+\vspace{4cm}
+\begin{longtable}{@{}r p{2.9cm} p{2.9cm} p{2.6cm} p{1.9cm}@{}}
+\phantomsection
+\caption{PaRIRset venues (part~2): \acrshort{PA} system composition. Quantities are elements per side (main, frontfill) or total (subwoofers).}\label{tab:parirset_full_b}\\
+\toprule
+\# & Venue & Main~$\times$~qty & Sub~$\times$~qty & FF~$\times$~qty \\
+\midrule\endfirsthead
+\multicolumn{5}{@{}l}{\footnotesize\itshape \tablename~\thetable\ (continued)}\\ \toprule
+\# & Venue & Main~$\times$~qty & Sub~$\times$~qty & FF~$\times$~qty \\
+\midrule\endhead
+\midrule\multicolumn{5}{r@{}}{\footnotesize\itshape continued on next page}\\\endfoot
+\bottomrule\endlastfoot
+1 & Recinto Ferial & J12~$\times$24 & J-SUB~$\times$12 & J12~$\times$2 \\
+2 & Plaça de la palmera & M12~$\times$12 & STM S118~$\times$9 & -- \\
+3 & Cafè del Teatre & Xi1183-764~$\times$2 & RAMPA 2x18~$\times$1 & -- \\
+4 & Las Armas & X-Array XN~$\times$2 & XDS~$\times$1 & -- \\
+5 & Paral·lel 62 & M'Elodie~$\times$18 & HP600~$\times$4 & UPA-1P~$\times$2 \\
+6 & Moon & LX-V8~$\times$12 & LX-218S~$\times$4 & GR12~$\times$2 \\
+7 & Magma & Geo S1210~$\times$4 & RS15~$\times$2 & PS10~$\times$2 \\
+8 & La Riviera & V-DOSC~$\times$12 & -- & -- \\
+9 & Es Gremi & LINE 212-6~$\times$6 & SW215-D~$\times$4 & -- \\
+10 & Zero & T20i~$\times$2 & BS30~$\times$2 & M8~$\times$2 \\
+11 & El Tren & Alpha M4~$\times$4 & Alpha B1~$\times$4 & -- \\
+12 & Apolo & Vi8~$\times$6 & G-SUB~$\times$4 & Yi10P~$\times$2 \\
+13 & La Mirona & A15~$\times$8 & KS21~$\times$8 & JBL PRX 521Mi~$\times$x \\
+14 & Acapulco & Actor DX~$\times$2 & Actor DX~$\times$2 & Premium PR:O 12M~$\times$2 \\
+15 & REM & Doppia II 9050~$\times$4 & DBS 18-2i~$\times$4 & DVS 10P~$\times$2 \\
+16 & Escenario Santander & VERA 36~$\times$10 & B30~$\times$8 & -- \\
+17 & Trinchera & X-Array XN~$\times$4 & XDS~$\times$4 & Eliminator~$\times$2 \\
+18 & Antzokia & METRIX~$\times$8 & METRIX SUB~$\times$4 & Point 15~$\times$2 \\
+19 & Dabadaba & T20~$\times$2 & B18~$\times$4 & -- \\
+20 & Hangar & RSX208~$\times$8 & RSX218~$\times$2 & Red Line 12~$\times$2 \\
+21 & Berlin Club & PS15~$\times$8 & LS18~$\times$4 & -- \\
+22 & Sanagustin Kulturgunea & XLE 191~$\times$12 & X-SUB~$\times$4 & -- \\
+23 & Sala X & ARCS~$\times$10 & SB18~$\times$4 & 112P~$\times$2 \\
+24 & Auditori Municipal Maria Rosa Juncosa & Ti10L~$\times$10 & Yi-SUB~$\times$4 & E8~$\times$4 \\
+25 & Sala Ramon Romagosa & KW153~$\times$2 & -- & -- \\
+26 & Plaça del Castell & Geo S1210~$\times$6 & RS15~$\times$6 & PS10~$\times$2 \\
+27 & Apolo & KSL~$\times$6 & SL~$\times$4 & 24S~$\times$2 \\
+28 & Moon & LX-V8~$\times$12 & LX-218S~$\times$4 & GR12~$\times$2 \\
+29 & Mamba! & Geo S1210~$\times$12 & CD18~$\times$4 & PS10~$\times$3 \\
+30 & Custom & ARCS~$\times$6 & SB218~$\times$4 & RCF HDL 6-A~$\times$2 \\
+31 & Teatro Eslava & ESR215~$\times$2 & VHD2.18J~$\times$2 & ESD5~$\times$4 \\
+32 & Capitol & KF-730~$\times$12 & SB-1000z~$\times$4 & SM-200 IH~$\times$2 \\
+33 & Teatro Albeniz & V10P~$\times$2 & J-SUB~$\times$2 & -- \\
+34 & Jimmy Jazz & Vera20~$\times$4 & B17i~$\times$4 & C5~$\times$5 \\
+35 & Sala Oasis & C29~$\times$6 & B30~$\times$6 & -- \\
+36 & Auditori Municipal Maria Rosa Juncosa & E12~$\times$4 & Yi-SUB~$\times$4 & E8~$\times$2 \\
+37 & Museu de la Terracota & Q7~$\times$2 & Q-SUB~$\times$4 & -- \\
+38 & Bodega Cooperativa de Falset & Event 28a~$\times$6 & Event 218a~$\times$4 & Altea-408a~$\times$2 \\
+39 & Fòrum Romà D'Empúries & KARA II~$\times$18 & SB-28~$\times$8 & KIVA II~$\times$4 \\
+40 & Fòrum de Barcelona & K2~$\times$18 & -- & -- \\
+\end{longtable}

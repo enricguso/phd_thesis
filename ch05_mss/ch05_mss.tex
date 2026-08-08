@@ -1,20 +1,687 @@
 %! TeX root: ../thesis_a4.tex
 
-\chapter{Room Impulse Responses and noise for Live Music Source Separation}
-\chaptermark{RIRs and noise for Live MSS}
+\chapter{Extending Music Source Separation to Live Recordings with Audience Noise and RIRs}
+\chaptermark{Extending MSS to Live Recordings}
 \label{ch05_mss}
 
-Aqui hi anira una introduccio2 i provem les citacions \cite{plaja-carnatic_separation}.
+The two previous chapters improved the ecological validity of training data for
+speech; this final chapter brings the same idea to music, in line with the
+research interests of the \acrfull{MTG}, by proposing a new task: adapting
+existing \acrfull{MSS} datasets to a new use case, live recordings made from the
+audience.
 
-\section{SOTA MSS}
+\acrshort{MSS} --- decomposing a musical mixture into its constituent sources,
+conventionally \emph{vocals}, \emph{drums}, \emph{bass} and \emph{other} --- has
+advanced rapidly since the standardisation of the task
+\citep{rafii2019musdbhq, stoter2019openunmix}, with successive architectures
+\citep{rouard2023htdemucs, luo2023bsrnn, tong2024scnet} and community
+challenges \citep{fabbro2024sdx23, mitsufuji2022music} steadily improving
+separation quality. Yet almost all of this progress rests on a single
+assumption: that the sources mix \emph{linearly}, as they do in the studio. That
+assumption breaks down for \emph{live} music recorded from the audience --- the
+kind of phone recording anyone attending a concert might make --- where three
+factors reshape the signal before it reaches the microphone: the venue
+acoustics, the response of the \acrfull{PA} loudspeaker system, and the noise of
+the crowd itself. Applied to such recordings, studio-trained models degrade
+sharply, and the few prior works in live settings are confined either to a
+specific tradition \citep{plaja-carnatic_separation} or to music enhancement without
+separation \citep{kandpal2022musicenhancement}.
+
+The situation mirrors one already met in speech separation, where the WHAM!
+\citep{wichern2019wham} and WHAMR! \citep{maciejewski2020whamr} datasets bridged
+an analogous gap by augmenting the clean WSJ0-2mix corpus with ambient noise and
+reverberation. We follow the same rationale for music, we \emph{formulate} a new \acrfull{MIR} task, which we call
+\emph{Live} \acrshort{MSS} --- the separation of music recorded from within a
+live audience, where venue acoustics, the \acrshort{PA} system and crowd noise
+break the linear-mixing assumption of studio \acrshort{MSS}, as illustrated in
+Figure~\ref{fig:mss_paradigm}. Rather than relying on the scarce and
+hard-to-annotate real live recordings, we \emph{synthesise} live conditions on
+top of existing studio datasets --- exactly the ecological-validity-through-synthesis
+strategy of the rest of this thesis.
+
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[trim={1.2cm 0.6cm 0.5cm 0.3cm}, clip, width=0.7\columnwidth]{ch05_mss/figures/fig1.pdf}
+  \caption{We propose to extend (a) traditional \acrfull{MSS} to (b) \emph{Live}
+  \acrshort{MSS} by adding an \emph{audience} and reverberation before the
+  sources are mixed.}
+  \label{fig:mss_paradigm}
+\end{figure}
+
+
+Concretely, and targeting \emph{audience-side} recordings degraded by crowd
+noise and venue acoustics, this chapter contributes:
+\begin{itemize}
+    \item the formulation of \emph{Live} \acrshort{MSS} as a new \acrshort{MIR}
+    task, together with a reproducible recipe for synthesising its training and
+    evaluation data from studio corpora;
+    \item \textbf{CrowdioSet}, an \emph{audience} noise dataset: a curated
+    selection of real ambience and event recordings from Freesound
+    \citep{anastasopoulou2025freesound} (\textbf{RO6}), together with a
+    generative pipeline that produces synthetic \emph{sing-alongs} by
+    zero-shot singing-voice conversion of the vocals in existing datasets
+    (\textbf{RO5});
+    \item \textbf{PaRIRset}, a stereo \acrshort{RIR} dataset measured across
+    $40$ professional concert venues with a microphone array, the first captured
+    in real venues through their \acrshort{PA} systems (\textbf{RO7}); and
+    \item a \emph{Live} \acrshort{MSS} baseline, obtained by re-training the
+    open-source SCNet model \citep{tong2024scnet} on studio data augmented with
+    both datasets.
+\end{itemize}
+We release the datasets, code, model weights and audio examples
+publicly.\footnote{\url{https://github.com/enricguso/guso_ismir26}}
+
+The rest of the chapter is organised as follows. Section~\ref{sec:sota_mss}
+reviews the background specific to \acrshort{MSS}. Sections~\ref{sec:crowdioset}
+and~\ref{sec:parirset} present CrowdioSet and PaRIRset, Section~\ref{sec:mss_setup}
+the experimental setup, and Section~\ref{sec:mss_results} the results;
+Sections~\ref{sec:mss_limitations} and~\ref{sec:mss_conclusions} discuss
+limitations and conclude.
+
+\section{Music source separation}
 \label{sec:sota_mss}
 
-%\begin{itemize}
-%\end{itemize}
+Having motivated the task, we now review the models and data that define it.
+Modern separators fall into three broad families (Section~\ref{sec:bg_dl}):
+waveform-domain models such as the Demucs line \citep{rouard2023htdemucs},
+spectrogram-domain models such as the Band-Split RNN \citep{luo2023bsrnn}, and
+hybrid models that operate in both, such as SCNet \citep{tong2024scnet} --- the
+backbone we adopt in this chapter for its strong performance and open-source
+availability. 
 
-%\textbf{(i)} provide high-quality vocal pitch estimation, and \textbf{(ii)} enable cleaner and more efficient separation of the singing voice from mixtures. 
+
+Around this core, recent work has broadened the task in several
+directions: generative approaches to separation \citep{plaja2025generating},
+lightweight models for real-time or on-device use
+\citep{hung2025moises, venkatesh2024real}, revisited evaluation metrics that
+better track perception \citep{jaffe2025musical, sheridan2025perceptual}, and a
+move beyond the fixed \emph{vocals}/\emph{drums}/\emph{bass}/\emph{other}
+taxonomy towards universal \citep{postolache2023adversarial} and text-prompted
+separation \citep{shi2025samaudio}, the latter of which we include as a
+baseline. 
+
+For all this progress, the models are almost invariably trained and evaluated on
+\emph{studio} material, where the stems mix linearly and cleanly. Public corpora
+reflect this: MUSDB18-HQ \citep{rafii2019musdbhq} and the larger MOISESDB
+\citep{pereira2023moisesdb} both provide clean, close-miked studio stems, with no
+venue acoustics, no loudspeaker colouration and no audience. A parallel
+diagnosis motivates the recent Music Source Restoration task
+\citep{zang2025music}, which observes that \acrshort{MSS} treats a mixture as a
+plain sum of sources, ignoring the equalisation, compression and reverberation
+applied during music \emph{production}, and instead models it as a degraded sum
+of degraded sources to be recovered. Live music, and in particular the
+audience-side recordings that motivate this chapter, violates the linear-mixing
+assumption in a different way, through the acoustics and noise of the venue
+rather than the studio production chain. The few works that venture there remain
+narrow: \citet{plaja-carnatic_separation} addresses separation for Carnatic
+music, and \citet{kandpal2022musicenhancement} enhances degraded music without
+separating it, using general-purpose \acrshort{RIR}s. As noted in
+Chapter~\ref{ch02_sota}, no public dataset captures the acoustics of concert
+venues, nor the noise of a crowd --- the two gaps this chapter sets out to fill.
+Related efforts underline the value of doing so: the Cadenza challenges
+\citep{roa2025first} have shown that \acrshort{MSS} can assist \acrshortpl{HA} users,
+a use case that extends naturally to the live setting.
+
+\section{CrowdioSet: an audience noise dataset}
+\label{sec:crowdioset}
+
+The first ingredient of a live recording that a studio dataset lacks is the
+\emph{audience}. Through informal listening to concert recordings made from the
+crowd, we identified three categories of audience sound: \emph{ambiences} --- the
+room tone and background chatter that are almost always present; \emph{events}
+--- punctual reactions such as applause, cheering and shouts of approval or
+disapproval; and \emph{sing-alongs} --- passages where the crowd sings the lyrics
+together with the performer. CrowdioSet accordingly has two parts: a curated
+selection of real Freesound recordings covering \emph{ambiences} and
+\emph{events}, which is the core of our contribution and directly addresses
+\textbf{RO6}, and a preliminary generative pipeline for \emph{sing-alongs}
+(\textbf{RO5}), released as a first step towards the hardest of the three
+categories (Section~\ref{sec:mss_limitations}).
+
+\subsection{Ambiences and events}
+\label{ssec:mss_ambiences}
+
+We retrieved $11{,}375$ files from Freesound \citep{anastasopoulou2025freesound}
+with the queries \emph{crowd}, \emph{audience}, \emph{cheering}, \emph{applause},
+\emph{chatter} and \emph{protest}, restricted to clips shorter than eight minutes
+and to permissive licences (CC0, CC-BY 3.0/4.0, CC-BY-NC 3.0/4.0 and
+Sampling+~1.0), resampling each to $44.1\,\text{kHz}$ $16$-bit stereo. After
+manually discarding recordings that could not plausibly occur at a concert
+(traffic, nature or machinery), $4{,}819$ files remained, which we labelled as
+either \emph{ambiences} or \emph{events} as detailed in
+Table~\ref{tab:crowdioset_queries}, amounting to $105$ hours of audience noise.
+
+
+\begin{table}[htpb]
+  \centering
+  \footnotesize
+  \caption{CrowdioSet query distribution across the \emph{ambiences} and
+  \emph{events} categories ($105.12$ hours in total).}
+  \label{tab:crowdioset_queries}
+  \begin{tabular}{@{}lrrrr@{}}
+    \toprule
+     & \multicolumn{2}{c}{\emph{ambiences}} & \multicolumn{2}{c}{\emph{events}} \\
+    \cmidrule(lr){2-3}\cmidrule(l){4-5}
+     & \#files & hours & \#files & hours \\
+    \midrule
+    crowd    & $1{,}997$ & $73.26$ & $1{,}398$ & $10.40$ \\
+    audience & $262$     & $8.91$  & $690$     & $3.65$  \\
+    chatter  & $105$     & $4.01$  & $10$      & $0.04$  \\
+    cheering & $15$      & $0.72$  & $119$     & $1.10$  \\
+    applause & $0$       & $0.00$  & $182$     & $1.70$  \\
+    protest  & $30$      & $1.21$  & $11$      & $0.13$  \\
+    \midrule
+    Total    & $2{,}409$ & $88.11$ & $2{,}410$ & $17.02$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\vspace{1cm}
+Per-file attribution and licence metadata are released with the dataset, and
+because most files ($92\%$, of which $59\%$ are CC0) permit commercial use, the
+$8\%$ under non-commercial licences can be excluded without retraining from
+scratch. To align with the source-separation corpora, we reserve $50$ files per
+category for testing and $14$ for validation.
+
+\subsection{Synthetic sing-alongs}
+\label{ssec:mss_singalongs}
+
+Sing-alongs cannot be curated in the same way: isolated recordings of a crowd
+singing a known song, cleanly separated from the performance, essentially do not
+exist. We therefore \emph{synthesise} them from the \emph{vocals} stems already
+present in the source datasets, turning a single lead vocal into a plausible
+crowd singing along, through the pipeline of Figure~\ref{fig:mss_pipeline}. For
+each of the $N = 384$ \emph{vocals} stems in MUSDB18-HQ and MOISESDB we combine
+two techniques. The first is the Antares AVOX Choir plugin, a choir effect
+(vibrato, detuning and delay) in its $32$-voice configuration. The second, and
+the core of \textbf{RO5}, uses a pool of $I = 200$ vocal samples retrieved from
+Freesound (queries \emph{a cappella} and \emph{vocals}) to convert each vocals
+stem with the pre-trained zero-shot voice-conversion model HQ-SVC
+\citep{bai2026hq}: half of the conversions preserve the original $f_0$ contour
+(in tune, but timbrally similar to the lead) and half adapt it to the range of
+the zero-shot sample (timbrally diverse, but less in tune).
+
+A realistic crowd should be \emph{timbrally diverse} yet only \emph{loosely
+coupled} to the lead melody, so we rank the conversions by a score balancing
+these two criteria. For each candidate $v_i$ and the original stem $v_o$ we
+compute a chroma mean absolute error $d_i = \mathrm{MAE}(\Phi(v_i), \Phi(v_o))$,
+where $\Phi(\cdot)$ is the $12$-bin chromagram (a $2048$-sample Hann window,
+hop~$512$), and a singer-identity similarity
+$s_i = \cos(\Psi(v_i), \Psi(v_o))$, where $\Psi(\cdot)$ is the singer embedding
+of \citet{torres2023singer}. A small $d_i$ means the candidate agrees with the
+lead on pitch content, while a small $s_i$ means a \emph{distinct} vocal
+identity; standardising both across the $N \cdot I$ pool and sorting by
+$\arg\min(\tilde{d}_i + \tilde{s}_i)$ favours voices that are in tune yet
+timbrally different from the lead.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\columnwidth]{ch05_mss/figures/scnet_live.pdf}
+  \caption{Data generation pipeline: offline \emph{sing-along} synthesis for
+  every \emph{vocals} stem, combining the HQ-SVC voice-conversion model and the
+  AVOX Choir effect (green), and the online assembly of the \emph{audience}
+  stem from \emph{sing-alongs}, \emph{ambiences} and \emph{events} (blue).}
+  \label{fig:mss_pipeline}
+\end{figure}
+
+The best $64$ candidates are then humanised independently to break their
+unnatural synchrony. Using onset detection \citep{mcfee2025librosa} on $v_o$ to
+locate syllables, we perturb each syllable's gain by $\mathcal{U}(0.3, 1)$ and
+its timing by delays of $\mathcal{U}(0, 0.5)\,\text{s}$, delay each whole voice
+by a further $\mathcal{U}(0, 0.3)\,\text{s}$, and pan it with independent
+left/right gains $\mathcal{U}(0, 1)$ before summing all voices into a stereo mix.
+This HQ-SVC mix is finally balanced by ear with the AVOX Choir mix to form the
+\emph{sing-along}.
+
+Sing-alongs are provided for every MOISESDB song and for the MUSDB18-HQ training
+set. At training time the \emph{audience} stem is assembled \emph{on the fly}
+inside the data loader: starting from silence, each of the three components
+(sing-along, ambience, event) is added independently with probability
+$p_v = p_a = p_e = 0.5$ and a random gain $\mathcal{U}(0, 1)$. This stochastic
+assembly exposes the model to an effectively unlimited variety of audience
+conditions without storing pre-mixed material, while for the MUSDB18-HQ test and
+validation sets we instead provide fixed, pre-generated audience mixes to keep
+evaluation reproducible\footnote{\url{https://doi.org/10.57967/hf/9773}}.
+
+\section[PaRIRset RIRs]{PaRIRset: a concert-venue impulse response dataset}
+\label{sec:parirset}
+
+The other component absent from studio data is the venue acoustics. 
+Following \citet{kandpal2022musicenhancement}, one could reuse the \acrshort{RIR}
+collections common in \acrfull{SE} --- the ACE Challenge \citep{eaton2015ace}, the
+MIT IR Survey \citep{traer2016statistics} and the OpenSLR28 corpus
+\citep{ko2017study}, the same real \acrshortpl{RIR} we evaluated on in
+Chapter~\ref{ch04_mbrirs} --- but these are ill-suited to live music in two ways. First,
+the rooms they capture (offices, classrooms, lecture halls) bear little
+resemblance to concert venues. Second, and more fundamentally, modern live sound is delivered through a \acrfull{PA} system, typically formed by left and right main hangs of a line array, complemented by flown or ground-stacked subwoofers and point-source
+frontfill loudspeakers, as depicted in Figure~\ref{fig:mss_pa}.
+
+\begin{figure}[hbp]
+  \centering
+  \includegraphics[width=0.7\columnwidth,trim={4cm 4cm 4cm 4cm},clip]{ch05_mss/figures/pa_system_1.pdf}
+  \caption{Schematic of a typical concert \acrfull{PA} system. Two \emph{line
+  arrays}, flown left and right, cover the
+  audience; ground-stacked \emph{subwoofers} reinforce the low end; and 
+  \emph{frontfills} on the stage lip cover the first rows.}
+  \label{fig:mss_pa}
+\end{figure}
+
+Because no \acrshort{SE} dataset contains real \acrshortpl{RIR} from concert venues, we therefore measured our own set of responses, the \emph{Public Address Room Impulse Response Set}
+(PaRIRset) --- to our knowledge, the first dataset of real \acrshortpl{RIR}
+captured in professional concert venues through their \acrshort{PA} systems, and
+the contribution behind \textbf{RO7}.
+
+PaRIRset covers $40$ professional concert venues across a wide geographical area
+(Figure~\ref{fig:mss_map}) and, more importantly, a wide range of \acrshort{PA}
+systems. Table~\ref{tab:parirset_meta} summarises the collection: it spans $16$
+manufacturers (d\&b~audiotechnik, L-Acoustics, Nexo, TW~Audio and
+Electro-Voice, among others) and $35$ distinct main-array models, from compact
+two-element-per-side systems in small clubs to $24$-element arena arrays, with
+$0$ to $12$ subwoofers per venue and frontfills present in $24$ of them; $9$ of
+the $40$ venues were measured outdoors. The full per-venue detail --- location,
+indoor or outdoor, and the specific model and element count of every main, sub
+and frontfill --- is listed in Appendix~\ref{app:parirset}
+(Tables~\ref{tab:parirset_full_a} and~\ref{tab:parirset_full_b}). We release the
+raw mono and multichannel recordings at $48\,\text{kHz}$\footnote{\url{https://huggingface.co/datasets/enricguso/parirset_dev}}, together with the
+processed, augmented stereo \acrshortpl{RIR} used for training, downsampled to
+$44.1\,\text{kHz}$ to match the source-separation corpora\footnote{\url{https://doi.org/10.57967/hf/9774}}.
 
 
 
-\subsection{Subsection1}
-i aquí una subsecció.fdsaf
+\begin{table}[htbp]
+\centering\footnotesize
+\caption{Composition of PaRIRset ($40$ venues, measured between 2023 and 2025).}
+\label{tab:parirset_meta}
+\begin{tabular}{@{}lr@{}}
+  \toprule
+  Venues (indoor / outdoor)          & $40$ ($32$ / $8$) \\
+  Distinct cities                    & $31$ \\
+  \acrshort{PA} manufacturers        & $16$ \\
+  Distinct main / sub models         & $35$ / $33$ \\
+  Main array size (elements per side)& $2$--$24$ (median $6$) \\
+  Subwoofers per venue               & $0$--$12$ (median $4$) \\
+  Venues with frontfills             & $24$ of $40$ \\
+  \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[trim={1cm 2cm 0.5cm 3cm}, clip, width=0.95\columnwidth]{ch05_mss/figures/manufacturer_grouped_scatter.pdf}
+  \caption{PaRIRset venue locations, coloured by the manufacturer of each
+  venue's \acrshort{PA} system.}
+  \label{fig:mss_map}
+\end{figure}
+
+\subsection{Measurement methodology}
+\label{ssec:mss_measurement}
+
+Access to professional venues and their \acrshort{PA} systems is tightly
+constrained --- typically a short window during a soundcheck --- so we limited each
+measurement to a single exponential sine sweep per \acrshort{PA} side (left and
+right). The microphone was placed at the \acrfull{FOH} position, next to the
+mixing console, which is the reference listening spot in the room. As shown in
+Figure~\ref{fig:mss_setup}, we captured each sweep with a Zylia ZM-1 microphone
+array alongside a beyerdynamic MM1 measurement microphone through a Zoom AMS-24
+interface.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[trim={2cm 9.1cm 2cm 2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/sestup_picture.png}
+  \caption{PaRIRset recording setup at the \acrfull{FOH} position, next to the
+  sound engineer's console.}
+  \label{fig:mss_setup}
+\end{figure}
+
+The \acrshortpl{RIR} were obtained with the exponential-sine-sweep method
+\citep{farina2000simultaneous} (Section~\ref{sec:bg_rir_sweep}), with $f_1 =
+20\,\text{Hz}$, $f_2 = 20\,\text{kHz}$ and a sweep duration of $6\,\text{s}$.
+After deconvolution, two post-processing steps were applied. First, we reduced
+noise by windowing each \acrshort{RIR} where its envelope fell below the noise
+floor, keeping $100\,\text{ms}$ before the direct sound and applying
+$50\,\text{ms}$ fades at the start and before the noise-floor onset. Second,
+because the \acrshort{FOH} position is not always equidistant from the two
+\acrshort{PA} sides, the left and right \acrshortpl{RIR} were time-aligned by
+cross-correlation. Finally, taking the flat-response beyerdynamic MM1 as a
+reference, we corrected the colouration of the Zylia-derived responses with a
+second-order high-shelf filter ($f_0 = 3.5\,\text{kHz}$, gain $-4\,\text{dB}$,
+$Q = 0.5$).
+
+\subsection{RIR Augmentation}
+\label{ssec:mss_augmentation}
+
+Forty measurements are too few to train on directly, so we explored four
+augmentation strategies of increasing scope. $D_1$ operates on the beyerdynamic
+\acrshortpl{RIR} alone: splitting each response $h$ at
+$\arg\max(|h|) + 2\,\text{ms}$ into a direct part $d_h$ and a tail $t_h$, we
+generate variants by flipping polarity and rescaling the tail by gains
+$g = \{-6, -1.5, 0, 1.5, 3.5\}\,\text{dB}$, augmenting each measurement $20$-fold.
+$D_2$ adds the raw signals of the $19$ Zylia capsules ($\text{zylia}_{\text{caps}}$),
+each with a slightly different position; $D_3$ adds $19$ virtual microphones
+synthesised by the array's proprietary beamformer with random orientations and
+polar patterns ($\text{zylia}_{\text{beams}}$); and $D_4$ permutes the direct
+part $d_h$ of one venue with the tail $t_h$ of another (in what we call $\text{PA}_{\text{permute}}$).
+
+To assess them, we retrained an SCNet \citep{tong2024scnet} model from scratch on
+MUSDB18-HQ with default hyperparameters, convolving all sources and targets with
+the \acrshortpl{RIR} and adding one augmentation set at a time; we evaluated on
+$8$ held-out venues (augmented with $D_1$) forming the PaRIRset test set, and
+report the \acrfull{SDR} across all sources. The results in Figure~\ref{fig:mss_ablation} 
+yield three observations.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[trim={2.4cm 0.8cm 0.2cm 0.2cm}, clip, width=\columnwidth]{ch05_mss/figures/parirset_sdr.pdf}
+  \caption{Ablation of the PaRIRset augmentation strategies, adding one set at a
+  time. Significance from paired $t$-tests: \textasteriskcentered\ $p \leq 0.05$,
+  \textasteriskcentered\textasteriskcentered\ $p \leq 0.01$; error bars are
+  $95\%$ confidence intervals.}
+  \label{fig:mss_ablation}
+\end{figure}
+
+First,
+every configuration that includes \acrshortpl{RIR} significantly outperforms the
+no-reverberation baseline, confirming that exposing the model to acoustics is what matters most. 
+Second, the four strategies differ little from one another, which suggests that \emph{including} real venue
+responses matters more than the particular way they are augmented. Third, 
+$D_3$ (the beamformed virtual microphones) improves significantly over the
+already strong \acrshort{SE}-only baseline (paired $t$-test, $p = 0.027$) 
+supporting the premise behind \textbf{RO7}. A
+plausible reason for this is that its randomly oriented polar patterns inject directional
+diversity that the raw capsule signals of $D_2$ do not, though our evidence does
+not let us claim this conclusively. Conversely, $D_4$ ($\text{PA}_{\text{permute}}$)
+brought no gain and was discarded; recombining the direct sound of one venue with
+the tail of another appears not to create useful new variety.
+Henceforth, \emph{PaRIRset} denotes the combination of the \acrshort{SE}
+\acrshortpl{RIR}, $D_1$, $D_2$ and $D_3$, totalling approximately $2{,}200$ stereo
+\acrshortpl{RIR}.
+
+A final subtlety concerns the reverberation level. Convolving every source with a
+full-length response produced mixtures that were audibly too reverberant, because
+PaRIRset was measured in \emph{empty} venues during soundcheck, whereas a full
+audience shortens reverberation substantially \citep{beranek1960audience}. To
+approximate the occupied condition, we attenuate the tail of each \acrshort{RIR}
+--- that is, we scale every sample except the direct-sound peak at
+$\arg\max(|h|)$, leaving the direct sound untouched while reducing the
+reflections --- by a random $\mathcal{U}(0, 1)$ factor during training and by a
+fixed $-6\,\text{dB}$ for evaluation, which we found to produce a more realistic
+reverberation level by ear.
+
+\section{Experimental setup}
+\label{sec:mss_setup}
+
+Our clean sources come from two studio corpora. MUSDB18-HQ
+\citep{rafii2019musdbhq} is the standard \acrshort{MSS} benchmark: $150$
+full-length stereo tracks at $44.1\,\text{kHz}$ ($100$ for training, $50$ for
+testing), each provided as four isolated stems --- \emph{vocals}, \emph{drums},
+\emph{bass} and \emph{other}. From the $100$ training tracks we hold out the
+conventional $14$-track validation split.\footnote{Actions~--~One Minute Smile;
+Alexander Ross~--~Goodbye Bolero; ANiMAL~--~Rockshow; Clara Berry And
+Wooldog~--~Waltz For My Victims; Fergessen~--~Nos Palpitants; James May~--~On
+The Line; Johnny Lokke~--~Promises \& Lies; Leaf~--~Summerghost; Meaxic~--~Take
+A Step; Patrick Talbot~--~A Reason To Leave; Skelpolu~--~Human Mistakes; Traffic
+Experiment~--~Sirens; Triviul~--~Angelsaint; Young Griffo~--~Pennies.}
+MOISESDB \citep{pereira2023moisesdb} is a larger and more recent corpus of
+$240$ tracks, but with a finer, hierarchical stem taxonomy (vocals, bass, drums,
+guitar, piano, and further categories). To co-train it with MUSDB18-HQ we
+\emph{parse} it into the same four-stem taxonomy, mapping vocals, drums and bass
+directly and collapsing all remaining instruments into \emph{other}. Together
+with CrowdioSet for audience noise and PaRIRset for venue acoustics, these
+constitute the training material for a first \emph{Live} \acrshort{MSS}
+baseline. As in the PaRIRset ablation, we adopt SCNet \citep{tong2024scnet} as
+the backbone (Section~\ref{sec:sota_mss}): it is open-source and among the most
+competitive models on MUSDB18-HQ, and thus a realistic starting point.
+
+\subsection{Training details}
+\label{ssec:mss_training}
+
+All models are trained from scratch with SCNet's default hyperparameters, save
+for a few adjustments. When co-training on both MUSDB18-HQ and MOISESDB we lower the
+initial learning rate from $5\times10^{-4}$ to $4\times10^{-4}$, as prescribed
+by \citet{tong2024scnet}, and we remove the exponential moving average of the
+weights, which simplifies the pipeline at negligible cost: our co-trained
+baseline reaches $9.0\,\text{dB}$ \acrshort{SDR} on the MUSDB18-HQ test set,
+matching the $9.0\,\text{dB}$ reported for SCNet trained on MUSDB18-HQ alone and
+close to the $9.2\,\text{dB}$ of its co-training setting. Each model is trained
+for $200$ epochs on a single NVIDIA L40S \acrshort{GPU} (about seven days per
+model), with SCNet's default random time-shift augmentation of up to two
+seconds.
+
+To expose the model to as many source combinations as possible, we use batch
+sizes of $10$ or $8$ (with or without audience), split into two groups per batch
+so that sources can be remixed across songs within a batch
+\citep{jeon2024does}. We verified that this remixing does not hurt in our
+setting: it changed \acrshort{SDR} on noisy mixtures by a non-significant
+$+0.07\,\text{dB}$ (paired $t$-test, $p = 0.53$).
+
+The core of the experiment is a comparison of four training configurations,
+which differ only in the degradations applied to the same clean sources and
+which we name after them:
+\begin{itemize}
+    \item \textbf{clean}: MUSDB18-HQ + MOISESDB;
+    \item \textbf{rev}: (MUSDB18-HQ + MOISESDB) $\circledast$ PaRIRset;
+    \item \textbf{noisy}: MUSDB18-HQ + MOISESDB + CrowdioSet;
+    \item \textbf{noisyrev}: (MUSDB18-HQ + MOISESDB + CrowdioSet) $\circledast$ PaRIRset;
+\end{itemize}
+where $\circledast$ denotes convolution with a PaRIRset \acrshort{RIR}. Both the
+audience mixing and the reverberation are applied \emph{inside} the training
+loop, as described in Sections~\ref{sec:crowdioset} and~\ref{sec:parirset}, so
+that every epoch presents novel combinations of sources, audiences and rooms.
+Because the added degradations make optimisation progressively harder, we lower
+the initial learning rate accordingly across conditions, to $\{4, 3.5, 2, 2\}
+\times 10^{-4}$ for \textbf{clean}, \textbf{rev}, \textbf{noisy} and
+\textbf{noisyrev}, whose best validation checkpoints are reached at epochs
+$198$, $199$, $197$ and $144$. In the reverberant conditions our goal is to
+\emph{separate} the sources while \emph{preserving} reverberation: both the
+targets and the estimates remain reverberant, so the model is not asked to
+dereverberate.
+
+\subsection{Evaluation}
+\label{ssec:mss_evaluation}
+
+We evaluate on the MUSDB18-HQ test set --- keeping our results comparable with
+prior work --- augmented with the held-out \emph{audience} test stems and the
+PaRIRset test set. Reverberation is applied here \emph{deterministically}, so
+that every model sees the same conditions: $25\%$ of the samples with no
+reverberation, $25\%$ with the full \acrshort{RIR}, and the remaining $50\%$
+split equally between tails attenuated by $-6$ and $-12\,\text{dB}$. Each of the
+four models is evaluated under the same four conditions (\textbf{clean},
+\textbf{rev}, \textbf{noisy}, \textbf{noisyrev}), giving a full cross of training
+and test degradations.
+
+To place the audience-separation results in context, we add SAM Audio
+\citep{shi2025samaudio} as a baseline capable of isolating arbitrary sources
+from a text prompt. We use its large pre-trained variant in text-prompting mode,
+with a single re-ranking candidate and non-overlapping $20\,\text{s}$ windows to
+fit memory, querying \emph{vocals}, \emph{drums}, \emph{bass}, \emph{other} and
+\emph{crowd} (the last outperforming \emph{audience}).
+
+As in SCNet, our primary objective metric is the \acrfull{SDR} \citep{le2019sdr},
+computed against non-reverberant or reverberant references according to the
+evaluation condition. However, \acrshort{SDR} does not always track perceived
+quality \citep{guso2022loss, jaffe2025musical} --- and it is especially
+unforgiving of diffusion-based models such as SAM Audio, whose outputs are not
+sample-aligned and are therefore penalised regardless of how they sound --- so we
+complement it with a subjective AB listening test. To retain statistical power
+with a modest sample, we restrict the test to two tasks, \emph{vocals isolation}
+and \emph{audience isolation}, on $10$ real audience recordings sourced from
+social media and split into two groups of five. For vocals isolation,
+participants compared the vocals from our \textbf{noisy} model against those of
+the \textbf{clean} baseline; for audience isolation, the audience stem from the
+\textbf{noisy} model against SAM Audio; in both cases they chose which
+separation they preferred, if any. Twenty-six participants took part --- media
+researchers and professional musicians or sound engineers --- using the web-based
+AB interface of \citet{zhang_barry_sun_hines_2021}, with the presentation order
+of the two systems randomised.
+
+\section{Results and discussion}
+\label{sec:mss_results}
+What follows are the per-source \textbf{noisyrev} results, audience isolation for both \textbf{noisy} and \textbf{noisyrev}, average \acrshort{SDR} across all sources and on vocal isolation alone across all evaluation conditions, and the listening test results.
+
+\subsection{Objective results}
+\label{ssec:mss_res_obj}
+
+Table~\ref{tab:mss_persource} reports the per-source \acrshort{SDR} in the most
+demanding evaluation condition (\textbf{noisyrev}) and, in parentheses, in the
+\textbf{clean} one. The first observation concerns the SAM Audio baseline: it
+performs substantially worse than all our models under both conditions --- only
+$3.72\,\text{dB}$ on clean \emph{vocals}, against the $10.05\,\text{dB}$ of our
+\textbf{clean} model. We attribute this mainly to the mismatch between its
+open-vocabulary formulation and the fixed four-stem taxonomy of MUSDB18-HQ:
+SAM Audio tends either to extract a source or to fail outright, and its
+successful extractions still yield positive \acrshort{SDR}, which suggests the
+gap is not merely a sample-alignment artefact of its diffusion outputs. We
+nonetheless rely primarily on the subjective test below.
+
+\begin{table}[t]
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.3}
+\caption{Per-source objective results: mean \acrshort{SDR} $\pm$ standard
+deviation (dB) in the \textbf{noisyrev} evaluation condition and, in
+parentheses, in the \textbf{clean} one. Best per column in bold.
+$^\dagger$\acrshort{SDR} for the diffusion-based SAM Audio should be read with
+caution, as its outputs may be sample-misaligned.}
+\label{tab:mss_persource}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & vocals & drums & bass & other \\
+\midrule
+clean       & $1.46_{\pm 3.4}$ ($\mathbf{10.05}$) & $7.04_{\pm 3.6}$ ($10.62$) & $4.15_{\pm 3.5}$ ($\mathbf{8.97}$) & $1.43_{\pm 3.5}$ ($\mathbf{6.69}$) \\
+rev         & $1.10_{\pm 3.6}$ ($9.01$) & $\mathbf{8.23}_{\pm 3.1}$ ($9.86$) & $5.36_{\pm 3.7}$ ($7.77$) & $\mathbf{3.63}_{\pm 2.4}$ ($5.98$) \\
+noisy       & $\mathbf{3.26}_{\pm 2.9}$ ($9.97$) & $7.00_{\pm 3.3}$ ($\mathbf{10.68}$) & $3.91_{\pm 3.6}$ ($8.85$) & $1.79_{\pm 3.2}$ ($\mathbf{6.69}$) \\
+noisyrev    & $3.15_{\pm 3.1}$ ($9.07$) & $8.19_{\pm 3.3}$ ($9.98$) & $\mathbf{5.66}_{\pm 3.6}$ ($7.86$) & $3.55_{\pm 2.7}$ ($5.88$) \\
+SAM Audio$^\dagger$ & $-0.45_{\pm 1.9}$ ($3.72$) & $3.30_{\pm 2.6}$ ($5.63$) & $1.30_{\pm 3.0}$ ($5.14$) & $-1.82_{\pm 2.0}$ ($-1.74$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+Among our four models, no single variant dominates the \textbf{noisyrev}
+condition: \textbf{noisy} gives the best \emph{vocals} (\acrshort{SDR}
+$3.26\,\text{dB}$), \textbf{noisyrev} the best \emph{bass} ($5.66\,\text{dB}$),
+and \textbf{rev} the best \emph{drums} ($8.23\,\text{dB}$) and \emph{other}
+($3.63\,\text{dB}$). Two patterns stand out. First, reverberant training
+(\textbf{rev}, \textbf{noisyrev}) is especially helpful for the instrumental
+sources. Second, and more useful in practice, the \textbf{noisy} model retains
+near-baseline performance on clean inputs ($9.97$ vs.\ $10.05\,\text{dB}$ on
+vocals), so audience-noise augmentation alone does not meaningfully harm
+studio-quality separation. We therefore recommend the \textbf{noisy} model for
+vocal extraction when the recording conditions are unknown.
+
+Table~\ref{tab:mss_audience} reports audience isolation, of which only the
+audience-trained models are capable. Under reverberant evaluation \textbf{noisy}
+and \textbf{noisyrev} are nearly tied ($1.25$ vs.\ $1.56\,\text{dB}$), but on
+non-reverberant mixtures \textbf{noisy} is clearly superior ($2.85$ vs.\
+$1.55\,\text{dB}$); both beat SAM Audio by more than $3\,\text{dB}$, which despite 
+being an unreliable metric for diffusion-based models is 
+in line with the subjective evaluation results below. Together
+with its strong vocals, this supports selecting \textbf{noisy} for the
+subjective test.
+
+\begin{table}[t]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\caption{Audience isolation results (the three audience-capable models): mean
+\acrshort{SDR} $\pm$ standard deviation (dB). $^\dagger$\acrshort{SDR} for the diffusion-based SAM Audio should be read with
+caution, as its outputs may be sample-misaligned.}
+\label{tab:mss_audience}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & \multicolumn{2}{c}{audience isolation} \\
+\cmidrule(l){2-3}
+ & non-reverberant & reverberant \\
+\midrule
+noisy       & $\mathbf{2.85}_{\pm 1.3}$ & $1.25_{\pm 1.4}$ \\
+noisyrev    & $1.55_{\pm 1.0}$ & $\mathbf{1.56}_{\pm 0.9}$ \\
+SAM Audio$^\dagger$ & $-1.94_{\pm 3.0}$ & $-1.60_{\pm 2.7}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:mss_heatmap} extends the comparison to the full cross of the
+four models and four evaluation conditions. The upper heatmap (all sources
+combined) confirms the expected pattern: in each condition the best model is
+the one whose training degradations match it (with \textbf{noisyrev} marginally
+ahead in the \textbf{rev} column). 
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[trim={0.1cm 1.0cm 0.1cm 0.1cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/obj1_heatmap.pdf}
+  \caption{Mean \acrshort{SDR} (dB) for all sources combined (top) and
+  \emph{vocals} isolation (bottom). Rows correspond to \acrshort{MSS} models, columns correspond to
+  evaluation conditions. $^\dagger$\acrshort{SDR} for the diffusion-based SAM Audio should be read with
+caution, as its outputs may be sample-misaligned.}
+  \label{fig:mss_heatmap}
+\end{figure}
+
+Crucially, adding the audience source is
+nearly free on matched-clean data: \textbf{noisy} trails \textbf{clean} by only
+$0.03\,\text{dB}$ ($9.05$ vs.\ $9.08$) in clean evaluation, and \textbf{noisyrev}
+matches \textbf{rev} ($7.83$ vs.\ $7.82$) in reverberant evaluation. The lower
+heatmap (\emph{vocals} only) shows \textbf{noisy} to be the most robust across
+conditions: in the \textbf{noisyrev} column \textbf{noisyrev} beats
+\textbf{noisy} by only $0.39\,\text{dB}$, whereas \textbf{noisy} beats
+\textbf{noisyrev} by $1.57\,\text{dB}$ in the \textbf{noisy} column ---
+reinforcing our choice of \textbf{noisy} for the listening test.
+
+\subsection{Subjective results}
+\label{ssec:mss_res_subj}
+
+Figure~\ref{fig:mss_subjective} summarises the AB listening test. Counting ties
+as votes for the baseline and applying a one-sided binomial test ($H: P > 0.5$),
+listeners significantly preferred our \textbf{noisy} model in both tasks: for
+\emph{vocals} isolation, $105$ of $130$ votes ($p < 10^{-12}$); for
+\emph{audience} isolation, $119$ of $130$ votes ($p < 10^{-23}$). The subjective
+preference is thus far more decisive than the objective margins, consistent with
+the known limitations of \acrshort{SDR} on this kind of material, and confirms
+that the improvements are perceptually real.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[trim={1.1cm 0.1cm 0cm 0.1cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/fig2b_v3_category_votes_horizontal.pdf}
+  \caption{Subjective AB results comparing our \textbf{noisy} model against the
+  baselines: \textbf{clean} for \emph{vocals} separation and SAM Audio for
+  \emph{audience} separation.}
+  \label{fig:mss_subjective}
+\end{figure}
+
+\section{Limitations and future work}
+\label{sec:mss_limitations}
+
+Several limitations temper these results. We did not systematically search the
+online mixing parameters (the probabilities $p_v$, $p_a$, $p_e$ and the gains):
+the values used were chosen by informal listening and may be suboptimal. More
+fundamentally, listening to the model on real concert recordings shows that,
+while it separates \emph{ambiences} and \emph{events} effectively --- acting as a
+denoiser --- it rarely isolates the \emph{sing-along} reliably. We attribute this
+to the synthesis itself: the voice-conversion sing-alongs remain too similar to
+the original \emph{vocals} stem (some converted voices sing in exact unison,
+differing only in timbre), and the audio effects already present on those stems
+(reverb, delay) further blur the boundary between the lead vocal and its
+synthetic crowd. A future CrowdioSet could start from \emph{dry} vocals
+\citep{zang2025music}, use more expressive synthesis, and model the performers'
+reactions to the crowd. Finally, the early convergence of the \textbf{noisyrev}
+model (epoch $144$ against $\sim\!200$ for the others) hints that the combined
+noise-and-reverberation setting may need architectural changes or a fuller
+hyperparameter search to be exploited fully.
+
+\section{Conclusions}
+\label{sec:mss_conclusions}
+
+This chapter introduced \emph{Live} \acrshort{MSS} --- the separation of music
+recorded from within a live audience --- and made it trainable and measurable by
+synthesising its conditions on top of studio data. To that end it contributed
+two datasets: CrowdioSet, an audience-noise dataset combining curated real
+ambiences and events (\textbf{RO6}) with a generative sing-along pipeline
+(\textbf{RO5}), and PaRIRset, stereo impulse responses measured across $40$
+concert venues through their \acrshort{PA} systems (\textbf{RO7}). Experiments
+with SCNet show that training with CrowdioSet improves vocal and audience
+separation on live recordings while barely affecting clean studio performance,
+and that PaRIRset yields statistically significant gains over general-purpose
+\acrshort{RIR}s. A listening test confirms the objective findings, with a
+decisive preference for the audience-trained model. We release the datasets\footnote{\url{https://doi.org/10.57967/hf/9773}}\footnote{\url{https://doi.org/10.57967/hf/9774}}, the
+code and model weights\footnote{\url{https://github.com/enricguso/guso_ismir26}}, and audio examples\footnote{\url{https://enricguso.github.io/crowdioset_parirset}}
+publicly.
+
+%TODO: all conclusions should linnk a bit with the Ecological Validity idea, and state again the RObjectives

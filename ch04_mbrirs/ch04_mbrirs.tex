@@ -633,8 +633,9 @@ dataset.
 \section{Conclusions}
 \label{sec:mbrirs_conclusions}
 
-This chapter has asked which properties of a synthetic \acrshort{RIR} matter for
-the generalisation of monaural \acrshort{SE} models to real room acoustics, and
+This chapter has asked which properties of a synthetic \acrshort{RIR} improve
+the \emph{ecological validity} of the training data --- and thereby the
+generalisation of monaural \acrshort{SE} models to real room acoustics --- and
 has answered it by training a state-of-the-art, real-time model
 (DeepFilterNet3) on six \acrshort{RIR} datasets that differ in a single,
 controlled feature at a time.
@@ -655,9 +656,10 @@ smaller variety and quantity of rooms: the mesh-based SoundSpaces set, despite
 modelling complex geometries, did not outperform the far more numerous
 \acrshort{ISM} shoebox rooms, and was statistically indistinguishable from the
 baseline. The amount and variability of the \acrshortpl{RIR} thus prove as
-important as the complexity of each individual response --- a reminder that,
-consistently with the thesis as a whole, the coverage of the training data can
-matter as much as the fidelity of any single example.
+important as the complexity of each individual response: for the ecological
+validity of a \acrshort{RIR} dataset, \emph{coverage} of the space of real rooms
+weighs as heavily as the physical fidelity of any single response --- a theme
+that runs through this thesis.
 
 One limitation of this answer to \textbf{RO4} is that the mesh-based condition
 confounds two factors: SoundSpaces is at once geometrically realistic and
@@ -670,8 +672,10 @@ of rooms with a hybrid wave-based and ray-tracing simulator
 SoundSpaces would test whether mesh-based rendering helps once the loss of room
 variety is removed; we leave this comparison for future work.
 
-In conclusion, we recommend training \acrshort{SE} models on varied,
-$48\,\text{kHz}$ multiband \acrshortpl{RIR}, optionally adding source and
-receiver directivity depending on the use case. We release the two most useful
-datasets, MB and SRC+REC+MB, as \emph{MB-RIRs}, freely available as research
+In conclusion, improving the ecological validity of the training
+\acrshortpl{RIR} measurably improves \acrshort{SE} generalisation to real
+rooms. We recommend training on varied, $48\,\text{kHz}$ multiband
+\acrshortpl{RIR}, optionally adding source and receiver directivity depending on
+the use case, and we release the two most useful datasets, MB and SRC+REC+MB, as
+\emph{MB-RIRs}, freely available as research
 material.\footnote{\url{https://doi.org/10.5281/zenodo.15773093}}

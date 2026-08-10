@@ -672,30 +672,34 @@ sensible design, and a promising direction for the speech-enhancement work of
 the following chapter.
 
 \section{Conclusions}
+\label{sec:ha_conclusions}
 
-With this chapter we have addressed the first two research objectives of this dissertation:
+This chapter has approached \acrshortpl{HA} \acrshort{SE} as a problem of
+\emph{ecological validity}: conventional devices are certified under stationary,
+laboratory conditions, yet users struggle precisely where everyday listening is
+non-stationary and spatially complex. By reproducing such scenes over an
+Ambisonic loudspeaker array and capturing them on real devices, we evaluated
+five high-end commercial \acrshortpl{HA} under conditions closer to real use, and
+compared them against \acrshort{DNN}-based enhancement.
 
-\begin{itemize}
-    \item[\textbf{RO1}] Highlight the performance gap between current \acrshortpl{HA} signal enhancement under real-world speech in noise  complex acoustic situations.
-    \item[\textbf{RO2}] Investigate the potential of \acrshort{DNN}-based \acrshort{SE} to outperform conventional \acrshortpl{HA} processing.
-\end{itemize}
+Regarding \textbf{RO1}, this ecologically valid evaluation exposed a clear
+performance gap: the signal-enhancement algorithms of the five devices struggle
+in complex, real-world speech-in-noise scenes, in several cases degrading the
+signal relative to applying no enhancement at all. 
 
-
-We have shown that the signal-enhancement algorithms of five
-high-end commercial \acrshortpl{HA} struggle in ecologically valid, complex
-acoustic situations reproduced in the studio, to the point of occasionally
-degrading performance relative to applying no enhancement at all. It has also shown that \acrshort{DNN}-based \acrfull{SE}
-has the potential to outperform them substantially in denoising and objective
-intelligibility, and that the causal
-variant retains most
-of that advantage. Together, these findings encourage further work on the
-optimisation and pruning of such models for on-device deployment, and their
-subjective validation with hearing-impaired listeners.
+Regarding \textbf{RO2}, we have shown that \acrshort{DNN}-based \acrfull{SE} has the potential to outperform
+them substantially in denoising and objective intelligibility, and that the
+causal variant retains
+most of that advantage. Together, these findings encourage further work on the
+optimisation and pruning of such models for on-device deployment, and on their
+subjective validation with hearing-impaired listeners, like the follow-up study
+of Section~\ref{sec:ha_followup}.
 
 Beyond the evaluation itself, the chapter contributes the infrastructure that
-made it possible, released as research materials\footnote{\url{https://github.com/enricguso/guso_waspaa23}}: a set of \acrshort{HRTF}s
-measured on a \acrshort{KU100} wearing a \acrshort{RIC} \acrshortpl{HA}, the
-corresponding Ambisonics-to-binaural \acrshort{BiMagLS} decoder, a synthetic
-binaural training corpus for \acrshortpl{HA} \acrshort{SE}, and a reverberant
-speech-in-noise test set in Ambisonics and binaural together with the
-recordings of each device.
+made it possible, released as research
+materials\footnote{\url{https://github.com/enricguso/guso_waspaa23}}: a set of
+\acrshortpl{HRTF} measured on a \acrshort{KU100} wearing a \acrshort{RIC} \acrshort{HA}, 
+the corresponding Ambisonics-to-binaural \acrshort{BiMagLS} decoder, a
+synthetic binaural training corpus for \acrshort{HA} \acrshort{SE}, and a
+reverberant speech-in-noise test set in Ambisonics and binaural formats, together
+with the recordings of each device.

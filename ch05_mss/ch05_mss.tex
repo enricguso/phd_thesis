@@ -372,7 +372,7 @@ yield three observations.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[trim={2.4cm 0.8cm 0.2cm 0.2cm}, clip, width=\columnwidth]{ch05_mss/figures/parirset_sdr.pdf}
+  \includegraphics[trim={2.4cm 0.8cm 0.2cm 0.2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/parirset_sdr.pdf}
   \caption{Ablation of the PaRIRset augmentation strategies, adding one set at a
   time. Significance from paired $t$-tests: \textasteriskcentered\ $p \leq 0.05$,
   \textasteriskcentered\textasteriskcentered\ $p \leq 0.01$; error bars are
@@ -450,10 +450,46 @@ seconds.
 
 To expose the model to as many source combinations as possible, we use batch
 sizes of $10$ or $8$ (with or without audience), split into two groups per batch
-so that sources can be remixed across songs within a batch
-\citep{jeon2024does}. We verified that this remixing does not hurt in our
-setting: it changed \acrshort{SDR} on noisy mixtures by a non-significant
-$+0.07\,\text{dB}$ (paired $t$-test, $p = 0.53$).
+so that sources can be remixed across songs within a batch \citep{jeon2024does}.
+This cross-song remixing is standard practice in \acrshort{MSS}, but its benefit
+is not universal: \citet{jeon2024does} show that it stems from the increased
+diversity of otherwise \emph{inconsistent} mixtures, and that for highly
+consistent sources it can help far less --- in vocal-harmony separation, where
+sources are especially correlated, they note that random mixing was even found
+``detrimental on a small dataset''. This is a concern in our setting,
+because our synthetic \emph{sing-alongs} are, by construction, strongly
+correlated with one another and with the lead vocal (some converted voices sing
+in near-unison, differing only in timbre), so remixing the \emph{audience}
+source across songs might not help, or might even hurt it. We therefore trained
+the model both with and without remixing and compared them
+(Table~\ref{tab:mss_remix}). Remixing left the \emph{audience} source
+essentially unchanged ($+0.07\,\text{dB}$ \acrshort{SDR}, paired $t$-test
+$p = 0.07$) while improving the musical sources overall, so we retained it for all subsequent experiments.
+
+\begin{table}[htbp]
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\caption{Effects of cross-song source remixing, trained and evaluated on the
+MUSDB18-HQ+MOISESDB set with audience: mean \acrshort{SDR} (dB) per source
+over the $50$ test songs, with and without remixing. Remixing does not
+significantly affect the \emph{audience} source (paired $t$-test, $p = 0.07$),
+while it improves the musical sources ($p \approx 10^{-3}$ overall).}
+\label{tab:mss_remix}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Source & Remixing & No remixing & $\Delta$ \\
+\midrule
+vocals   & $7.50$ & $7.49$ & $+0.02$ \\
+drums    & $9.98$ & $9.76$ & $+0.22$ \\
+bass     & $8.41$ & $7.90$ & $+0.51$ \\
+other    & $5.95$ & $5.74$ & $+0.22$ \\
+audience & $2.85$ & $2.79$ & $+0.07$ \\
+\midrule
+overall  & $6.94$ & $6.74$ & $+0.20$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+%$+0.07\,\text{dB}$ (paired $t$-test, $p = 0.53$).
 
 The core of the experiment is a comparison of four training configurations,
 which differ only in the degradations applied to the same clean sources and
@@ -661,27 +697,45 @@ differing only in timbre), and the audio effects already present on those stems
 (reverb, delay) further blur the boundary between the lead vocal and its
 synthetic crowd. A future CrowdioSet could start from \emph{dry} vocals
 \citep{zang2025music}, use more expressive synthesis, and model the performers'
-reactions to the crowd. Finally, the early convergence of the \textbf{noisyrev}
+reactions to the crowd besides the crowd's reaction to the performance. Finally, the early convergence of the \textbf{noisyrev}
 model (epoch $144$ against $\sim\!200$ for the others) hints that the combined
 noise-and-reverberation setting may need architectural changes or a fuller
 hyperparameter search to be exploited fully.
 
+
 \section{Conclusions}
 \label{sec:mss_conclusions}
 
-This chapter introduced \emph{Live} \acrshort{MSS} --- the separation of music
-recorded from within a live audience --- and made it trainable and measurable by
-synthesising its conditions on top of studio data. To that end it contributed
-two datasets: CrowdioSet, an audience-noise dataset combining curated real
-ambiences and events (\textbf{RO6}) with a generative sing-along pipeline
-(\textbf{RO5}), and PaRIRset, stereo impulse responses measured across $40$
-concert venues through their \acrshort{PA} systems (\textbf{RO7}). Experiments
-with SCNet show that training with CrowdioSet improves vocal and audience
-separation on live recordings while barely affecting clean studio performance,
-and that PaRIRset yields statistically significant gains over general-purpose
-\acrshort{RIR}s. A listening test confirms the objective findings, with a
-decisive preference for the audience-trained model. We release the datasets\footnote{\url{https://doi.org/10.57967/hf/9773}}\footnote{\url{https://doi.org/10.57967/hf/9774}}, the
-code and model weights\footnote{\url{https://github.com/enricguso/guso_ismir26}}, and audio examples\footnote{\url{https://enricguso.github.io/crowdioset_parirset}}
-publicly.
+This chapter introduced the \emph{Live} \acrshort{MSS} task --- the separation of music
+recorded from within a live audience --- and, in line with the rest of the thesis, tackled
+it as a problem of \emph{ecological validity}: studio-trained separators fail on
+audience recordings because their training data omits the venue acoustics, the
+\acrshort{PA} colouration and the crowd noise that such recordings inevitably
+contain. Rather than only collecting scarce and unlabelled real live material, we
+closed this gap by \emph{synthesising} those conditions on top of existing
+studio datasets.
 
-%TODO: all conclusions should linnk a bit with the Ecological Validity idea, and state again the RObjectives
+Concretely, we addressed the three research objectives set out for this chapter:
+\begin{itemize}
+    \item \textbf{RO5} --- generating synthetic audiences that sing along --- was
+    preliminarly addressed through the voice-conversion pipeline of CrowdioSet, which turns
+    the vocals of existing datasets into humanised, timbrally diverse crowd
+    sing-alongs;
+    \item \textbf{RO6} --- curating audience noise from freely available
+    recordings --- was addressed by assembling the ambiences and events of
+    CrowdioSet from Freesound, with documented licences and reproducible splits;
+    and
+    \item \textbf{RO7} --- capturing impulse responses in real concert venues ---
+    was addressed with PaRIRset, the first set of stereo \acrshortpl{RIR}
+    measured across $40$ concert venues through their \acrshort{PA} systems.
+\end{itemize}
+
+Experiments with SCNet show that training with CrowdioSet improves vocal and
+audience separation on live recordings while barely affecting clean studio
+performance, and that PaRIRset yields statistically significant gains over the
+general-purpose \acrshortpl{RIR} used in \acrshort{SE}
+(Chapter~\ref{ch04_mbrirs}). A listening test confirms the objective findings. As with the previous
+chapters, the improvement comes not from a new architecture but from training
+data that better reflects the conditions of real use. We release the datasets\footnote{\url{https://doi.org/10.57967/hf/9773}}\footnote{\url{https://doi.org/10.57967/hf/9774}}, the
+code and model weights\footnote{\url{https://github.com/enricguso/guso_ismir26}} and
+audio examples publicly.\footnote{\url{https://enricguso.github.io/crowdioset_parirset}}

@@ -62,18 +62,30 @@ This section lists all peer-reviewed publications resulting from the doctoral re
 
 
 
-\chapter{Other scientific outputs of this thesis}
-%\textbf{From Chapter~\ref{ch02_sb}}
+\chapter{Materials generated during this thesis}
+
+\textbf{From Chapter~\ref{ch03_hearing}}
+In \url{https://github.com/enricguso/guso_waspaa23} we release:
 \begin{itemize}
-    \item ISMIR Tutorial: \url{https://mtg.github.io/IAM-tutorial-ismir22}
+    \item \acrshort{SOFA} file of the \acrshort{KU100} dummy head;
+    \item  \acrshort{SOFA} file of the \acrshort{KU100} wearing the \acrshort{RIC} \acrshortpl{HA};    
+    \item \acrshort{BiMagLS} and \acrshort{MagLS} Ambisonics to binaural decoders;
+    \item Code \& model weights.
 \end{itemize}
-%\textbf{Contributions:} Leading the work, contribution on the presentation, coding and maintaining the published webbook. During ISMIR 2022, the author of this thesis presented one of the three main sections of the tutorial.
 
-
-\textbf{From Chapter~\ref{ch01_intro}}
+\textbf{From Chapter~\ref{ch04_mbrirs}}
 \begin{itemize}
-    \item cosa 1
-    \item cosa 2
+    \item Dataset: \url{https://doi.org/10.5281/zenodo.15773093}
+    \item Code \& model weights \url{https://github.com/enricguso/guso_waspaa25} 
+\end{itemize}
+
+\textbf{From Chapter~\ref{ch05_mss}}
+\begin{itemize}
+    \item Original \acrshort{RIR} recordings and processing scripts: \url{https://huggingface.co/datasets/enricguso/parirset_dev}
+    \item PaRIRset Dataset: \url{https://doi.org/10.57967/hf/9774}
+    \item CrowdioSet Dataset: \url{https://doi.org/10.57967/hf/9773}
+    \item Code \& model weights \url{https://github.com/enricguso/guso_ismir26} 
+    \item Samples \& project website \url{https://enricguso.github.io/crowdioset_parirset/} 
 \end{itemize}
 
 
@@ -81,10 +93,10 @@ This section lists all peer-reviewed publications resulting from the doctoral re
 \chapter{PaRIRset venues and their \acrshort{PA} systems}
 \label{app:parirset}
 
-%TODO: fix caption, it renders in the wrong place!
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
 
 \begin{longtable}{@{}r p{3.3cm} p{2.5cm} c p{3.0cm}@{}}
-\phantomsection
 \caption{PaRIRset venues (part~1): location and \acrshort{PA} manufacturer. I/O denotes indoor or outdoor.}\label{tab:parirset_full_a}\\
 \toprule
 \# & Venue & City & I/O & Manufacturer \\
@@ -138,7 +150,6 @@ This section lists all peer-reviewed publications resulting from the doctoral re
 
 \vspace{4cm}
 \begin{longtable}{@{}r p{2.9cm} p{2.9cm} p{2.6cm} p{1.9cm}@{}}
-\phantomsection
 \caption{PaRIRset venues (part~2): \acrshort{PA} system composition. Quantities are elements per side (main, frontfill) or total (subwoofers).}\label{tab:parirset_full_b}\\
 \toprule
 \# & Venue & Main~$\times$~qty & Sub~$\times$~qty & FF~$\times$~qty \\

@@ -28,6 +28,33 @@
     pdfsubject=PhD~Thesis,
     pdfkeywords=ecological validity~music information retrieval~deep learning
 ]{hyperref} % produeix enllacos clicables
+
+% Manually write correct PDF page labels (roman for front matter incl. title
+% page, arabic for main matter), since hyperref's automatic pdfpagelabels
+% always mislabels the first two physical pages as arabic regardless of the
+% true \pagenumbering state. The main matter transition is located
+% dynamically via a shipout counter, so this stays correct as pages are
+% added/removed; call \AGmainmatterlabel right after \mainmatter in
+% thesis_a4.tex to mark the transition point.
+\usepackage{atbegshi}
+\makeatletter
+\newcount\AG@abspage
+\newif\ifAG@inmainmatter
+\newif\ifAG@labelswritten
+\AtBeginShipout{%
+  \global\advance\AG@abspage by 1
+  \ifAG@inmainmatter
+    \ifAG@labelswritten\else
+      \immediate\pdfcatalog{%
+        /PageLabels<</Nums[0<</S/r>> \the\numexpr\AG@abspage-1\relax<</S/D>>]>>
+      }%
+      \global\AG@labelswrittentrue
+    \fi
+  \fi
+}
+\newcommand{\AGmainmatterlabel}{\global\AG@inmainmattertrue}
+\makeatother
+
 \usepackage[authoryear]{natbib} % per poder fer citacions Author-any
 \usepackage{fancyvrb}
 \usepackage{units}

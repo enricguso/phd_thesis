@@ -56,7 +56,7 @@ domain knowledge have progressively given way to architectures that learn their 
 \citep{zeghidour2021soundstream,defossez2022high} while exposing a tokenised
 substrate over which language-model architectures can operate directly
 \citep{borsos2023audiolm}. Continuous latent spaces have remained equally
-productive, most notably the encoder-decoder structure of the \acrfull{VAE} that underpins latent-diffusion
+productive, most notably the encoder-decoder structure of the Variational Auto Encoder (VAE) that underpins latent-diffusion
 generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
 process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).

@@ -118,7 +118,7 @@ We now revisit each of the three fields we have addressed, discussing how its \a
 
 Since the evaluation of Chapter~\ref{ch03_hearing} was published, the Clarity
 Challenge series has established itself as the main forum for
-\acrshort{DNN}-based \acrshor†{HA} enhancement, and its findings echo ours.
+\acrshort{DNN}-based \acrshort{HA} enhancement, and its findings echo ours.
 Evaluated, like our study, with \acrshort{HASPI} and \acrshort{HASQI}
 \citep{cox2023clarity}, its editions reached the same two conclusions we drew:
 conventional \acrshort{HA} processing struggles in complex, noisy scenes, and
@@ -160,9 +160,100 @@ filter design for low-power devices \citep{rawandale2024improving} to
 broader surveys of the area \citep{jespersen2023hearing, kanev2024speech, cao2025aecrn}, which
 suggests our study has helped inform the work that followed.
 
-%TODO: which of our bets have been borne out, where industry has converged on
-%the same questions, and which limitations have become apparent only in
-%hindsight.
+\subsection{Speech enhancement}
+\label{ssec:conc_se}
+
+The premise of Chapter~\ref{ch04_mbrirs} --- that the realism of synthetic
+\acrshortpl{RIR}, and frequency-dependent absorption in particular, improves
+generalisation to real rooms --- has since been taken up, and largely confirmed,
+by industry. The mesh-based responses we used come from SoundSpaces
+\citep{chen2022soundspaces}, a simulator developed at Meta; and Treble
+Technologies has released a commercial wave-based simulation \acrshort{SDK}
+together with large, physically accurate \acrshort{RIR} datasets built on exactly
+the same rationale \citep{mullins2025treble10}. Most tellingly, a Treble study
+reproduced our experiment at a larger scale and in the multichannel far-field
+setting: training the same enhancement model on \acrshortpl{RIR} of increasing
+simulation fidelity, they report up to a $38\%$ relative reduction in word error
+rate on \emph{measured} data for the high-fidelity set
+\citep{gotz2026improving}. Both works cite \acrshort{MB-RIRs}, placing it in
+the lineage of increasing \acrshort{RIR} realism alongside GWA
+\citep{tang2022gwa} and other efforts.
+
+Seen in this light, our contribution was less a wholly novel simulator than an
+ecologically valid \acrshort{RIR} set made openly available, so that
+compute-constrained groups could benefit from the same idea that industry was
+pursuing behind commercial \acrshortpl{SDK}. Made freely downloadable,
+\acrshort{MB-RIRs} has since become the most downloaded resource in the GuestXR
+project's Zenodo repository, which we take as a sign that open data of this kind
+meets a real need. The comparison with Treble is also instructive about our own
+limitations: their focus on far-field, multichannel conditions is not incidental
+--- it is there, rather than in our near-field monaural setup, that the gap
+between simulation methods is widest, which may be why the source- and
+receiver-directivity benefits we looked for turned out inconclusive
+(\textbf{RO3}). The effect we sought was likely clearest precisely where we did
+not look.
+
+A related point concerns \textbf{RO4}. We found that abundant \acrshort{ISM}
+rooms outperformed fewer mesh-based ones, but the mesh-based set available to us
+(SoundSpaces) was also the least varied, confounding realism with diversity. The
+natural way to disentangle the two is a mesh-based set that is itself large and
+varied, such as GWA \citep{tang2022gwa}, which we did not evaluate, as at the
+time it sat outside our usual audio venues, having been presented in the
+computer-graphics community. Rather than a mere oversight, the growing interest
+in GWA reinforces our reading that such datasets are valuable: the Treble
+challenge mixes Treble and GWA rooms \citep{lin2025generative}, and the
+multichannel study lists GWA beside \acrshort{MB-RIRs} \citep{gotz2026improving}.
+We see the most promising direction not as choosing between paradigms but as
+\emph{combining} them --- for instance, the roughly $20{,}000$ mesh-based rooms of
+GWA together with the $60{,}000$ \acrshort{ISM} rooms of \acrshort{MB-RIRs} ---
+pairing geometric realism with sheer variety, and we encourage the community to
+explore it.
+
+More broadly, room-acoustic data has become a remarkably active research area
+since our work. On the simulation and measurement side, new resources keep
+appearing: Meta released a $1{,}000$-room corpus for scene-wide acoustic
+parameter estimation \citep{falconperez2025scenewide}, open ray-tracing toolkits
+such as GSound-SIR \citep{zang2025gsound} lower the barrier to spatial
+\acrshort{RIR} synthesis, and measured databases now capture more challenging
+conditions, including moving microphones along a controlled trajectory
+\citep{damiano2025trajectorir}. In parallel, a complementary line attacks the
+problem from the estimation side, inferring \acrshortpl{RIR} or their parameters
+blindly from reverberant speech \citep{gotz2026matching, wang2026recrir}.
+Together with the industrial efforts above, this activity confirms that the
+realism and coverage of room-acoustic data --- the very concern of
+Chapter~\ref{ch04_mbrirs} --- is now widely recognised as a problem worth
+addressing.
+
+\subsection{Music source separation}
+\label{ssec:conc_mss}
+
+Being the most recent of the three studies, our work on live \acrshort{MSS}
+(Chapter~\ref{ch05_mss}) has the least state of the art to catch up with. What
+has been research during this thesis is largely orthogonal to our contribution, which concerns
+\emph{data} rather than architecture. On the modelling side, band-split
+\acrshort{RoPE} transformers have consolidated their lead on studio benchmarks
+\citep{lu2024bsroformer}, and lightweight variants now bring comparable quality
+to real-time and embedded settings --- the low-latency line we distinguished from
+our own use of \emph{live} in Section~\ref{sec:sota_mss}. Because our proposal is
+a training and evaluation recipe rather than a network, these advances are
+complementary: any of these separators could be trained on CrowdioSet and
+PaRIRset in place of the \acrshort{SCNet} backbone we used.
+
+More closely related in spirit is the emergence of Music Source Restoration
+\citep{zang2025music}, run as an \acrshort{ICASSP}~2026 challenge, which likewise
+rejects the linear-mixing assumption --- there, to undo studio production
+artefacts rather than to add live-venue degradations. The two settings are
+complementary halves of the same idea: that the gap between clean stems and the
+signals encountered in the wild must be modelled explicitly, whether that gap
+comes from a mastering chain or from a concert \acrshort{PA} and its audience.
+Beyond this conceptual parallel, their dataset would also be of direct practical
+use to us: as noted in Chapter~\ref{ch05_mss}, the \emph{dry} vocal stems it
+provides would be an ideal starting point for recreating our \emph{sing-alongs},
+which our current pipeline synthesises from already-processed vocals. Finally,
+generative approaches to separation have begun to appear, synthesising rather
+than masking the target source \citep{plaja2025generating}; as discussed in
+Section~\ref{sec:conc_future}, we see this as a promising route to the more
+realistic sing-alongs that our own pipeline still struggles to isolate.
 
 \section{Broader relevance of ecological validity}
 \label{sec:conc_relevance}

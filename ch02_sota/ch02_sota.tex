@@ -28,7 +28,7 @@ and \acrfull{MSS} in Section~\ref{sec:sota_mss}.
 
 
 
-\section{Deep Learning for Audio}
+\section{Deep learning for audio}
 \label{sec:bg_dl}
 %! TeX root: ../thesis_a4.tex
 
@@ -75,10 +75,10 @@ distance, such as the mean absolute error $ \mathcal{L}_{\mathrm{MAE}}(o, y) = \
 
 The weights are then adjusted to reduce this loss by
 \emph{back-propagation}, which computes the gradient of the loss with
-respect to every parameter, followed by \acrfull{SGD}, which takes a small
+respect to every parameter, followed by Stochastic Gradient Descent (SGD), which takes a small
 step against that gradient: $\theta \leftarrow \theta - \eta\, \nabla_\theta \mathcal{L}(o, y) $, where $\eta$ is the learning rate. Because evaluating the expectation in Equation~\ref{eq:erm} over the whole dataset at once is impractical, in
-practice \acrshort{SGD} approximates it on small random subsets of the
-data, the \emph{mini-batches}: each iteration of \acrshort{SGD} is
+practice SGD approximates it on small random subsets of the
+data, the \emph{mini-batches}: each iteration of SGD is
 computed on a fresh mini-batch, and the loop is repeated until the loss
 converges. This cycle --- forward pass, loss, back-propagation,
 parameter update --- is the engine behind every model in this thesis. Crucially, all of the above presupposes that for every input $x$ we have
@@ -103,7 +103,7 @@ decade later, became the workhorse of computer vision.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{ch02_sota/figures/cnn_kernel.pdf}
-    \caption{Convolutional filters in a \acrshort{CNN}. \textbf{(a)}~A
+    \caption{Convolutional filters in a \acrfull{CNN}. \textbf{(a)}~A
     $3\times3$ filter (kernel) slid across a $4\times4$ input image or feature map (blue) to produce a $2\times2$ output feature map (green); at each of
     the four positions the filter covers a local region of the input
     (highlighted) and produces a single output value. \textbf{(b)}~Illustrative examples of filters learned: the grayscale filters (top) resemble oriented Gabor functions acting as edge detectors, while the colour
@@ -114,7 +114,7 @@ decade later, became the workhorse of computer vision.
 
 In audio, the two-dimensional input is not an image but a
 spatio-temporal representation of the signal, most commonly the
-\acrfull{STFT}. Early systems operated on the magnitude spectrogram
+Short-Time Fourier Transform. Early systems operated on the magnitude spectrogram
 alone, discarding the phase, although recent models process
 the complex spectrogram \citep{tong2024scnet, schroter2023deepfilternet3} --- real and imaginary parts jointly.
 
@@ -326,7 +326,7 @@ sample.
 
 \textbf{Temporal convolutional networks ---} A third strategy keeps the
 convolutional machinery of Section~\ref{sec:bg_dl_advent} but adapts it to
-sequences. \acrfull{TCN}s are one-dimensional \acrshort{CNN}s built from
+sequences. Temporal Concolutional Networks (TCNs) are one-dimensional \acrshort{CNN}s built from
 \emph{dilated causal} convolutions stacked in residual blocks: \emph{causal}, because each output depends only on present and past inputs --- suiting
 streaming and real-time use; and \emph{dilated}, because inserting gaps
 between the kernel taps expands the receptive field \emph{exponentially}
@@ -447,7 +447,7 @@ masked-language modelling does for text; HuBERT~\citep{hsu2021hubert}, for
 instance, masks spans of the audio latent and predicts pre-clustered
 targets at the masked positions. A third is \emph{autoregression}: predicting the next frame or token from the past is itself a supervisory
 signal, which is why the autoregressive models of
-Section~\ref{sec:bg_dl_temporal} (WaveNet, \acrshort{GPT}-style decoders)
+Section~\ref{sec:bg_dl_temporal} (WaveNet, GPT-style decoders)
 are, in effect, trained in a self-supervised manner. A further,
 orthogonal ingredient is the \emph{contrastive} objective, which neither
 reconstructs nor predicts a value but learns \emph{by comparison}: the
@@ -527,7 +527,7 @@ therefore turns from the model to the data: first the capture and spatial
 representation of sound fields, and then the measurement and simulation of
 \acrshort{RIR}s.
 
-\section{Spatial Audio and Ambisonics}
+\section{Spatial audio and Ambisonics}
 \label{sec:bg_spatial}
 
 The next two chapters and the corresponding audio processing tasks --- \acrshortpl{HA}
@@ -588,13 +588,13 @@ weaker than the near ear, by an amount that depends on its direction. Beyond the
 add their own direction-dependent spectral filtering --- the peaks and
 notches that, in particular, disambiguate elevation --- and, since these
 depend on each person's anatomy, they vary substantially from one listener
-to another. This complete filter is precisely the \acrshort{HRTF}, and is exactly what we exploit for building the datasets for \textbf{RO2}. Because measuring \acrshort{HRTF}s individually is
+to another. This complete filter is precisely the \acrfull{HRTF}, and is exactly what we exploit for building the datasets for \textbf{RO2}. Because measuring \acrshort{HRTF}s individually is
 impractical, considerable effort goes into \emph{personalising}
 them, for instance by predicting them from a 3D scan of the
 listener's head and ears acquired with a depth sensor
 \citep{miccini2020hrtf}. 
 
-Finally, with the rise of \acrfull{XR}, binaural rendering of Ambisonics
+Finally, with the rise of Extended Reality (XR), binaural rendering of Ambisonics
 has become especially attractive: because the sound field is represented
 in the \acrshort{SH} domain, decoding it to the two ears reduces to
 multiplying the Ambisonics signals by a fixed matrix of \acrshort{HRTF}s,
@@ -766,7 +766,7 @@ encoded and, especially, decoded --- including to binaural. In
 \citet{jot1999comparative}, techniques for combining binaural audio and
 Ambisonics are discussed: a basic binaural render is obtained by decoding
 Ambisonics to a virtual, ideally placed loudspeaker layout and convolving
-each virtual loudspeaker with its \acrshort{HRIR} pair --- especially
+each virtual loudspeaker with its \acrfull{HRIR} pair --- especially
 practical when real-time rotations must follow a head-tracking device.
 
 
@@ -848,7 +848,7 @@ field, or of the room impulse responses themselves, so that the response at
 unmeasured positions can be interpolated from only a sparse set of probes \citep{luo2022learning, masuyama2025physics, erdem2026sf, baek2025av} or spatial audio generation from vision, producing Ambisonics soundtracks directly from
 360\textdegree{} video \citep{morgado2018self, liu2025omniaudio}. 
 
-\section{Room Impulse Responses}
+\section{Room impulse responses}
 \label{sec:bg_rir}
 \acrshort{RIR}s are recurrent in this thesis:
 in Chapter~\ref{ch03_hearing}, to assemble the
@@ -857,7 +857,7 @@ dataset of concert-hall responses for live \acrshort{MSS}. We devote this sectio
 
 
 Sound propagation from a source to a receiver in a room is, to a good
-approximation, a \acrfull{LTI} system. Its \acrfull{RIR} $h(t)$ is the
+approximation, a linear time-invariant system. Its \acrfull{RIR} $h(t)$ is the
 signal captured at the receiver when the source emits an ideal impulse ---
 the Dirac delta $\delta(t)$ --- and it characterises that source--receiver
 path completely: the signal $y(t)$ recorded for any emitted signal $s(t)$
@@ -896,7 +896,7 @@ the reverberation time $T_{60}$, the time its energy takes to decay by
 In principle, a \acrshort{RIR} could be obtained by exciting the room acoustically with a
 physical impulse --- like a pistol shot or a bursting balloon --- and recording
 the result, but such sources are poorly repeatable, difficult to equalise
-and offer a limited \acrshort{SNR}. 
+and offer a limited \acrfull{SNR}. 
 
 In practice, the emitted signal $s(t)$ of
 Equation~\ref{eq:rir_convolution} is an excitation reproduced by the
@@ -913,7 +913,7 @@ near-omnidirectional coverage.
 
 A \acrshort{RIR} can also be estimated
 from \emph{continuous noise} excitation, as routinely done in live sound
-with dual-channel \acrshort{FFT} analysers that recover the transfer
+with dual-channel Fast Fourier Transform (FFT) analysers that recover the transfer
 function between the noise feeding the loudspeakers and a measurement
 microphone in the room. The now-standard alternative, however, is the
 Exponential Swept-Sine method of \citet{farina2000simultaneous}, in which the room is
@@ -956,7 +956,7 @@ the room. The late reverberation, by contrast, is diffuse and statistically
 similar throughout the room.
 
 
-\subsection{Room Impulse Response Simulation}
+\subsection{Room impulse response simulation}
 \label{sec:bg_rir_ism}
 
 The most straightforward way to simulate a \acrshort{RIR} is the \acrfull{ISM}
@@ -1111,7 +1111,7 @@ eight-microphone-array responses at 48\,kHz in a single room, at three
 different $T_{60}$ values and several array spacings; and the ACE
 corpus~\citep{eaton2015ace} records 7 rooms at 48\,kHz with a range of devices
 (laptop, phone, and an em32 Eigenmike, hence up to higher-order Ambisonics)
-for blind $T_{60}$ and \acrshort{DRR} estimation. The MIT IR
+for blind $T_{60}$ and Direct-to-Reverberant Ratio (DRR) estimation. The MIT IR
 survey~\citep{traer2016statistics} instead maximises room diversity, with 271
 mono responses each measured in a distinct everyday space, but at 44.1\,kHz
 and a single response per room, while BUT ReverbDB~\citep{szoke2019building}

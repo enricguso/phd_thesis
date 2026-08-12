@@ -1,4 +1,26 @@
 %!TEX root = ../thesis_a4.tex
+\chapter{Artificial intelligence usage statement}
+\label{app:ai}
+
+In the interest of transparency, this appendix declares the use of artificial
+intelligence tools in the preparation of this dissertation.
+
+For the peer-reviewed articles on which the results chapters are based, no
+generative AI was used in their writing, with the exception of the
+last one, where it was used solely to polish the text. In assembling the present
+manuscript, however, generative AI (Claude Opus~4.8) was used to
+complement and expand those articles into the extended prose of the
+corresponding chapters.
+
+No AI tool wrote any of the code released as research materials with
+this thesis (Appendix~\ref{app:materials}). Generative AI was also
+used as an aid in producing Figures~\ref{fig:wsj0_2mix_sota},
+\ref{fig:convtasnet_xdataset} and~\ref{fig:lebedev}, whose underlying data we
+verified manually.
+
+In all cases, the tools were used under our supervision and as an aid rather
+than a source: the authors take full responsibility for the content of this
+dissertation, including any part assisted by these tools.
 
 \chapter{Publications}
 \label{sec:pubs}
@@ -60,34 +82,50 @@ This section lists all peer-reviewed publications resulting from the doctoral re
 \end{mybox}
 \textbf{Contributions:} Extension of our WASPAA 2023 work to include a perceptual evaluation of the \acrshort{SE} models, and manuscript revision.
 
-
-
 \chapter{Materials generated during this thesis}
+\label{app:materials}
 
-\textbf{From Chapter~\ref{ch03_hearing}}
-In \url{https://github.com/enricguso/guso_waspaa23} we release:
+All datasets, models and code produced during this thesis are publicly
+available, as detailed below. Unless noted otherwise, resources are released
+under the CC0~1.0 public-domain dedication.
+
+\paragraph{From Chapter~\ref{ch03_hearing}}
+Released at \url{https://github.com/enricguso/guso_waspaa23}:
 \begin{itemize}
     \item \acrshort{SOFA} file of the \acrshort{KU100} dummy head;
-    \item  \acrshort{SOFA} file of the \acrshort{KU100} wearing the \acrshort{RIC} \acrshortpl{HA};    
-    \item \acrshort{BiMagLS} and \acrshort{MagLS} Ambisonics to binaural decoders;
-    \item Code \& model weights.
+    \item \acrshort{SOFA} file of the \acrshort{KU100} wearing the
+    \acrshort{RIC} \acrshortpl{HA};
+    \item \acrshort{BiMagLS} and \acrshort{MagLS} Ambisonics-to-binaural
+    decoders;
+    \item code (MIT License) and model weights.
 \end{itemize}
 
-\textbf{From Chapter~\ref{ch04_mbrirs}}
+\paragraph{From Chapter~\ref{ch04_mbrirs}}
 \begin{itemize}
-    \item Dataset: \url{https://doi.org/10.5281/zenodo.15773093}
-    \item Code \& model weights \url{https://github.com/enricguso/guso_waspaa25} 
+    \item MB-RIRs dataset (CC0~1.0):
+    \url{https://doi.org/10.5281/zenodo.15773093};
+    \item code  (MIT License) and model weights:
+    \url{https://github.com/enricguso/guso_waspaa25}.
 \end{itemize}
 
-\textbf{From Chapter~\ref{ch05_mss}}
+\paragraph{From Chapter~\ref{ch05_mss}}
 \begin{itemize}
-    \item Original \acrshort{RIR} recordings and processing scripts: \url{https://huggingface.co/datasets/enricguso/parirset_dev}
-    \item PaRIRset Dataset: \url{https://doi.org/10.57967/hf/9774}
-    \item CrowdioSet Dataset: \url{https://doi.org/10.57967/hf/9773}
-    \item Code \& model weights \url{https://github.com/enricguso/guso_ismir26} 
-    \item Samples \& project website \url{https://enricguso.github.io/crowdioset_parirset/} 
+    \item Original \acrshort{RIR} recordings and processing scripts:
+    \url{https://huggingface.co/datasets/enricguso/parirset_dev};
+    \item PaRIRset dataset (\acrshort{CC0}~1.0):
+    \url{https://doi.org/10.57967/hf/9774};
+    \item CrowdioSet dataset:
+    \url{https://doi.org/10.57967/hf/9773}. Its ambience and event recordings
+    are sourced from Freesound and \emph{retain their original per-file
+    licences} ($58.8\%$ CC0, $33.2\%$ CC-BY, $8.0\%$ CC-BY-NC, and a
+    small Sampling+~1.0 subset), documented individually in the accompanying
+    \texttt{crowdioset\_metadata.csv}; the synthetic sing-alongs inherit the
+    terms of their source datasets and generation tools;
+    \item code (MIT License) and model weights:
+    \url{https://github.com/enricguso/guso_ismir26};
+    \item samples and project website:
+    \url{https://enricguso.github.io/crowdioset_parirset/}.
 \end{itemize}
-
 
 
 \chapter{PaRIRset venues and their \acrshort{PA} systems}
@@ -200,3 +238,6 @@ In \url{https://github.com/enricguso/guso_waspaa23} we release:
 39 & Fòrum Romà D'Empúries & KARA II~$\times$18 & SB-28~$\times$8 & KIVA II~$\times$4 \\
 40 & Fòrum de Barcelona & K2~$\times$18 & -- & -- \\
 \end{longtable}
+
+
+% TODO: AI STATEMENT!!! Explicar que hem fet servir Claude Sonnet 5

@@ -1,6 +1,6 @@
 %! TeX root: ../thesis_a4.tex
 
-\chapter{Extending Music Source Separation to Live Recordings with Audience Noise and RIRs}
+\chapter{Extending Music Source Separation to Live Recordings with Audience Noise and Concert-Venue Impulse Responses}
 \chaptermark{Extending MSS to Live Recordings}
 \label{ch05_mss}
 
@@ -30,8 +30,8 @@ separation \citep{kandpal2022musicenhancement}.
 The situation mirrors one already met in speech separation, where the WHAM!
 \citep{wichern2019wham} and WHAMR! \citep{maciejewski2020whamr} datasets bridged
 an analogous gap by augmenting the clean WSJ0-2mix corpus with ambient noise and
-reverberation. We follow the same rationale for music, we \emph{formulate} a new \acrfull{MIR} task, which we call
-\emph{Live} \acrshort{MSS} --- the separation of music recorded from within a
+reverberation. We follow the same rationale for music: we \emph{formulate} a new \acrfull{MIR}
+task, which we call \emph{Live} \acrshort{MSS} --- the separation of music recorded from within a
 live audience, where venue acoustics, the \acrshort{PA} system and crowd noise
 break the linear-mixing assumption of studio \acrshort{MSS}, as illustrated in
 Figure~\ref{fig:mss_paradigm}. Rather than relying on the scarce and
@@ -39,16 +39,31 @@ hard-to-annotate real live recordings, we \emph{synthesise} live conditions on
 top of existing studio datasets --- exactly the ecological-validity-through-synthesis
 strategy of the rest of this thesis.
 
+Importantly, our use of \emph{live} refers to the \emph{acoustic conditions} of
+music captured from within a live audience --- venue reverberation,
+\acrshort{PA} colouration and crowd noise --- and \emph{not} to latency. It is
+therefore unrelated to the parallel line of work on \emph{real-time}, low-latency
+\acrshort{MSS} for streaming and on-stage use \citep{venkatesh2024real}, where
+\emph{live} instead denotes low-latency processing: our task concerns
+\emph{where} the recording was made, not \emph{how fast} it is separated, and
+applies whether separation is performed online or offline.
+
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[trim={1.2cm 0.6cm 0.5cm 0.3cm}, clip, width=0.7\columnwidth]{ch05_mss/figures/fig1.pdf}
-  \caption{We propose to extend (a) traditional \acrfull{MSS} to (b) \emph{Live}
-  \acrshort{MSS} by adding an \emph{audience} and reverberation before the
-  sources are mixed.}
+  \includegraphics[trim={1.2cm 0.6cm 0.5cm 0.3cm}, clip, width=0.75\columnwidth]{ch05_mss/figures/fig1.pdf}
+  \caption{We propose to extend (a) traditional four-source \acrfull{MSS}, in which
+  \emph{vocals}, \emph{drums}, \emph{bass} and \emph{other} are assumed to mix
+  linearly, to (b) \emph{Live} \acrshort{MSS} for recordings from the audience. Two ingredients are added to
+  approximate an audience-side recording: an extra \emph{audience} source,
+  capturing crowd noise and sing-alongs, and a convolution of every source with a
+  concert-venue \acrshort{RIR}, which introduces the room reverberation and
+  \acrshort{PA} colouration absent from studio mixtures. Both are applied before
+  the sources are summed into the mixture that the model receives.}
   \label{fig:mss_paradigm}
 \end{figure}
 
+\vspace{1cm}
 
 Concretely, and targeting \emph{audience-side} recordings degraded by crowd
 noise and venue acoustics, this chapter contributes:
@@ -70,7 +85,7 @@ noise and venue acoustics, this chapter contributes:
     both datasets.
 \end{itemize}
 We release the datasets, code, model weights and audio examples
-publicly.\footnote{\url{https://github.com/enricguso/guso_ismir26}}
+publicly.
 
 The rest of the chapter is organised as follows. Section~\ref{sec:sota_mss}
 reviews the background specific to \acrshort{MSS}. Sections~\ref{sec:crowdioset}
@@ -218,10 +233,14 @@ timbrally different from the lead.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\columnwidth]{ch05_mss/figures/scnet_live.pdf}
-  \caption{Data generation pipeline: offline \emph{sing-along} synthesis for
-  every \emph{vocals} stem, combining the HQ-SVC voice-conversion model and the
-  AVOX Choir effect (green), and the online assembly of the \emph{audience}
-  stem from \emph{sing-alongs}, \emph{ambiences} and \emph{events} (blue).}
+  \caption{Data generation pipeline for the \emph{audience} source. The offline
+  stage (green) synthesises a \emph{sing-along} for every \emph{vocals} stem, by
+  combining zero-shot singing-voice conversions from the HQ-SVC model with the
+  $32$-voice AVOX Choir effect, and is run once before training. The online stage
+  (blue), executed inside the data loader at every iteration, assembles the
+  \emph{audience} stem by drawing and gain-scaling the pre-computed
+  \emph{sing-alongs} together with the curated \emph{ambiences} and \emph{events}
+  of CrowdioSet, so that each training example sees a fresh audience.}
   \label{fig:mss_pipeline}
 \end{figure}
 
@@ -257,12 +276,12 @@ the rooms they capture (offices, classrooms, lecture halls) bear little
 resemblance to concert venues. Second, and more fundamentally, modern live sound is delivered through a \acrfull{PA} system, typically formed by left and right main hangs of a line array, complemented by flown or ground-stacked subwoofers and point-source
 frontfill loudspeakers, as depicted in Figure~\ref{fig:mss_pa}.
 
-\begin{figure}[hbp]
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.7\columnwidth,trim={4cm 4cm 4cm 4cm},clip]{ch05_mss/figures/pa_system_1.pdf}
+  \includegraphics[width=0.95\columnwidth,trim={4cm 0cm 2cm 4cm},clip]{ch05_mss/figures/pa_system_1.pdf}
   \caption{Schematic of a typical concert \acrfull{PA} system. Two \emph{line
   arrays}, flown left and right, cover the
-  audience; ground-stacked \emph{subwoofers} reinforce the low end; and 
+  audience where the \emph{front of house} position normally is; ground-stacked \emph{subwoofers} reinforce the low end; and 
   \emph{frontfills} on the stage lip cover the first rows.}
   \label{fig:mss_pa}
 \end{figure}
@@ -324,15 +343,9 @@ right). The microphone was placed at the \acrfull{FOH} position, next to the
 mixing console, which is the reference listening spot in the room. As shown in
 Figure~\ref{fig:mss_setup}, we captured each sweep with a Zylia ZM-1 microphone
 array alongside a beyerdynamic MM1 measurement microphone through a Zoom AMS-24
-interface.
+interface. 
 
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[trim={2cm 9.1cm 2cm 2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/sestup_picture.png}
-  \caption{PaRIRset recording setup at the \acrfull{FOH} position, next to the
-  sound engineer's console.}
-  \label{fig:mss_setup}
-\end{figure}
+
 
 The \acrshortpl{RIR} were obtained with the exponential-sine-sweep method
 \citep{farina2000simultaneous} (Section~\ref{sec:bg_rir_sweep}), with $f_1 =
@@ -347,6 +360,30 @@ cross-correlation. Finally, taking the flat-response beyerdynamic MM1 as a
 reference, we corrected the colouration of the Zylia-derived responses with a
 second-order high-shelf filter ($f_0 = 3.5\,\text{kHz}$, gain $-4\,\text{dB}$,
 $Q = 0.5$).
+
+A subtlety of this per-side procedure is worth clarifying. In a typical
+\acrshort{PA}, only the main hangs are strictly left and right; the subwoofers
+and frontfills are usually fed from a matrix of the two channels (most often a
+mono $\text{L}+\text{R}$ sum). Measuring the left side therefore does not
+isolate the left main hang alone: the captured response also contains the
+contribution of any system driven by that channel through the matrix. At the
+\acrshort{FOH} position this is acceptable, and in fact desirable. The
+frontfills, aimed at the first rows and far from \acrshort{FOH}, contribute
+negligibly there, so they do not meaningfully colour the measurement; the
+subwoofers, on the other hand, do reach \acrshort{FOH} and their low-frequency
+energy is genuinely part of what a listener --- and an audience recording ---
+receives at that position. Capturing the mains together with the subs, as our
+sweeps do, thus yields a stereo pair of responses that reflects the full
+low-to-high-frequency field actually present at \acrshort{FOH}, which is exactly
+what we want to convolve our sources with.
+
+\begin{figure}[hbp]
+  \centering
+  \includegraphics[trim={2cm 9.1cm 2cm 2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/sestup_picture.png}
+  \caption{PaRIRset recording setup at the \acrfull{FOH} position, next to the
+  sound engineer's console.}
+  \label{fig:mss_setup}
+\end{figure}
 
 \subsection{RIR Augmentation}
 \label{ssec:mss_augmentation}
@@ -372,7 +409,7 @@ yield three observations.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[trim={2.4cm 0.8cm 0.2cm 0.2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/parirset_sdr.pdf}
+  \includegraphics[trim={2.4cm 0.8cm 0.2cm 0.2cm}, clip, width=0.9\columnwidth]{ch05_mss/figures/parirset_sdr.pdf}
   \caption{Ablation of the PaRIRset augmentation strategies, adding one set at a
   time. Significance from paired $t$-tests: \textasteriskcentered\ $p \leq 0.05$,
   \textasteriskcentered\textasteriskcentered\ $p \leq 0.01$; error bars are
@@ -396,6 +433,7 @@ the tail of another appears not to create useful new variety.
 Henceforth, \emph{PaRIRset} denotes the combination of the \acrshort{SE}
 \acrshortpl{RIR}, $D_1$, $D_2$ and $D_3$, totalling approximately $2{,}200$ stereo
 \acrshortpl{RIR}.
+
 
 A final subtlety concerns the reverberation level. Convolving every source with a
 full-length response produced mixtures that were audibly too reverberant, because
@@ -551,9 +589,10 @@ researchers and professional musicians or sound engineers --- using the web-base
 AB interface of \citet{zhang_barry_sun_hines_2021}, with the presentation order
 of the two systems randomised.
 
+
 \section{Results and discussion}
 \label{sec:mss_results}
-What follows are the per-source \textbf{noisyrev} results, audience isolation for both \textbf{noisy} and \textbf{noisyrev}, average \acrshort{SDR} across all sources and on vocal isolation alone across all evaluation conditions, and the listening test results.
+What follows are the per-source results on  \textbf{noisyrev} and  \textbf{clean} conditions, audience isolation for both \textbf{noisy} and \textbf{noisyrev} conditions, average \acrshort{SDR} across all sources and on vocal isolation alone considering all evaluation conditions, and the listening test results.
 
 \subsection{Objective results}
 \label{ssec:mss_res_obj}
@@ -570,7 +609,7 @@ successful extractions still yield positive \acrshort{SDR}, which suggests the
 gap is not merely a sample-alignment artefact of its diffusion outputs. We
 nonetheless rely primarily on the subjective test below.
 
-\begin{table}[t]
+\begin{table}[htbp]
 \centering\footnotesize
 \setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.3}
 \caption{Per-source objective results: mean \acrshort{SDR} $\pm$ standard
@@ -739,3 +778,4 @@ chapters, the improvement comes not from a new architecture but from training
 data that better reflects the conditions of real use. We release the datasets\footnote{\url{https://doi.org/10.57967/hf/9773}}\footnote{\url{https://doi.org/10.57967/hf/9774}}, the
 code and model weights\footnote{\url{https://github.com/enricguso/guso_ismir26}} and
 audio examples publicly.\footnote{\url{https://enricguso.github.io/crowdioset_parirset}}
+

@@ -1,9 +1,179 @@
 %! TeX root: ../thesis_a4.tex
 
-\chapter[Conclusion and future perspectives]{Conclusion and\\future perspectives}
+\chapter[General Conclusions and Future Perspectives]{Conclusion and\\future perspectives}
+\chaptermark{Conclusions}
 \label{ch98_conclusions}
-Aqui una mica de conclusions.
 
+\vspace{3cm}
 
-\section{Final thoughts}
-%The rapid advancements in \acrshort{DL} are constantly shaping the landscape of music technology, reframing computational musicology pipelines. However, challenges such as data scarcity and the need for high-quality and repertoire-specific features remain significant hurdles to overcome. Leveraging \acrshort{AI} systems toward a scalable analysis and processing of music repertoires is a complex task that requires careful consideration of each particular case and its unique traits. This thesis is an example of how the practical and theoretical particularities can motivate an extensive and diverse set of research efforts for music repertoires that are underrepresented in the \acrshort{MIR} community. %–-considering also how specific and well-defined is the scope of our work.
+This dissertation has pursued a single idea across three application fields:
+that the \emph{ecological validity} of the data used to train and evaluate \acrshortpl{DNN} (i.e. how faithfully it reflects the conditions of real use) is
+as decisive as the models themselves, and sometimes a more accessible lever for
+improving them. Chapter~\ref{ch03_hearing} applied this idea to the
+\emph{evaluation} of \acrshortpl{HA}, Chapter~\ref{ch04_mbrirs} to the
+\emph{training} data of monaural \acrshort{SE}, and
+Chapter~\ref{ch05_mss} to both evaluation and training, in the newly framed task of Live Music Source
+Separation. 
+
+This chapter summarizes the contributions across the three research fields and the
+seven Research Objectives (RO) they addressed
+(Section~\ref{sec:outline}). Because in the \acrshort{MIR} field a lot can change during the course of four years, we then update the changes in the \acrshort{SOTA} for each published work to discuss how the field has moved since:
+which of our intuitions proved well-grounded, where industry has converged on the same
+questions, and which limitations have become apparent only in hindsight
+(Section~\ref{sec:conc_recent}). Widening the scope further, we reflect on the
+broader relevance of ecological validity beyond the three tasks studied here (Section~\ref{sec:conc_relevance}) and, finally, we outline the directions we find most promising going forward, towards
+deployable, interactive tools built on ecologically valid synthetic data
+(Section~\ref{sec:conc_future}), and close with some final thoughts.
+
+\section{Summary of contributions}
+\label{sec:conc_contributions}
+This thesis set out to improve the \emph{ecological validity} of the synthetic
+datasets used to train and evaluate \acrshortpl{DNN} for audio processing,
+across three application fields. A common constraint shaped how we pursued it:
+as a small, compute-constrained academic group, we could not compete on model
+scale or compute, so we competed on \emph{data} instead --- building material
+that better reflects real use --- and released every dataset, decoder, model and
+recording, so that the resulting improvements are available to any laboratory.
+All seven research objectives were addressed; as the summaries below make clear,
+this does not mean all were answered affirmatively --- a negative or inconclusive
+result resolves an objective as much as a positive one.
+
+\paragraph{\acrfullpl{HA} (Chapter~\ref{ch03_hearing}).}
+Our main contribution here is a \emph{methodology} for ecologically valid
+evaluation of \acrshort{HA} \acrfull{SE}: we reproduce complex speech-in-noise
+scenes over a loudspeaker array using Ambisonics and \acrshort{VBAP}, capture
+them on real devices, and compare the devices' own processing against
+\acrshort{DNN}-based enhancement under conditions closer to real use than the
+stationary laboratory tests devices are usually certified with.
+\begin{itemize}
+    \item[\textbf{RO1}] \emph{Expose the performance gap between conventional
+    \acrshort{HA} enhancement and \acrshort{DNN}-based approaches in
+    ecologically valid, complex acoustic scenes.} $\rightarrow$ \textit{Addressed}
+    $\rightarrow$ the evaluation revealed a clear gap, with conventional
+    enhancement occasionally performing worse than no processing at all.
+    \item[\textbf{RO2}] \emph{Investigate the potential of \acrshort{DNN}-based
+    \acrshort{SE} to outperform conventional \acrshort{HA} processing.}
+    $\rightarrow$ \textit{Addressed affirmatively} $\rightarrow$ \acrshortpl{DNN}
+    substantially improved denoising and objective intelligibility, and the
+    causal variant retained most of that advantage.
+\end{itemize}
+Beyond these findings, the lasting contribution is the evaluation methodology
+itself, and the case it makes for pursuing \acrshort{DNN}-based \acrshort{HA}
+enhancement: to support further work in this direction we released a
+\acrshort{HA} \acrshort{HRTF} set, 10th-order Ambisonics-to-binaural
+\acrshort{BiMagLS} decoders, a synthetic binaural training corpus and a
+reverberant test set with the recordings of each device.
+
+\paragraph{Monaural \acrfull{SE} (Chapter~\ref{ch04_mbrirs}).}
+Within the GuestXR project, we asked which properties of a synthetic
+\acrshort{RIR} drive generalisation to real rooms, training one model per
+dataset on six controlled \acrshort{RIR} sets.
+\begin{itemize}
+    \item[\textbf{RO3}] \emph{Determine whether frequency-dependent absorption
+    and source or receiver directivity improve generalisation to real
+    acoustics.} $\rightarrow$ \textit{Addressed with a mixed result}
+    $\rightarrow$ frequency-dependent absorption brings the clearest benefit,
+    whereas the evidence on source and receiver directivity was inconclusive.
+    \item[\textbf{RO4}] \emph{Determine whether fewer but geometrically more
+    realistic mesh-based \acrshortpl{RIR} are preferable to abundant \acrfull{ISM}
+    ones.} $\rightarrow$ \textit{Addressed with a negative result} $\rightarrow$
+    mesh-based realism did not compensate for a smaller variety and quantity of
+    rooms, though a mesh-based set that is also varied would be needed to fully
+    disentangle the two (Chapter~\ref{ch04_mbrirs}).
+\end{itemize}
+We released the resulting MB-RIRs dataset, among the most downloaded resources
+of the GuestXR project repository.
+
+\paragraph{Live \acrfull{MSS} (Chapter~\ref{ch05_mss}).}
+More in line with the research of the \acrshort{MTG}, we formulated \emph{Live}
+\acrshort{MSS} (i.e.\ separating music recorded from within a live audience) and
+made it trainable by synthesising live conditions on top of studio data.
+\begin{itemize}
+    \item[\textbf{RO5}] \emph{Generate synthetic audiences that sing along,
+    through singing-voice conversion.} $\rightarrow$ \textit{Addressed as a first
+    step} $\rightarrow$ the voice-conversion pipeline produces usable
+    sing-alongs, though reliably isolating them remains difficult and is left as
+    a limitation.
+    \item[\textbf{RO6}] \emph{Curate audience noise from freely available
+    recordings.} $\rightarrow$ \textit{Addressed affirmatively} $\rightarrow$ the
+    curated ambiences and events of CrowdioSet improve separation on live
+    recordings while barely affecting clean studio performance.
+    \item[\textbf{RO7}] \emph{Determine whether impulse responses measured in
+    real concert venues improve over general-purpose ones.} $\rightarrow$
+    \textit{Addressed affirmatively} $\rightarrow$ PaRIRset yielded statistically
+    significant gains over the \acrshort{SE} \acrshortpl{RIR} of
+    Chapter~\ref{ch04_mbrirs}.
+\end{itemize}
+
+For convenience, all the datasets, models, decoders and recordings released
+throughout this thesis are collected, with their repositories and licences, in
+Appendix~\ref{app:materials}.
+
+\section{Recent developments and closing discussion}
+\label{sec:conc_recent}
+We now revisit each of the three fields we have addressed, discussing how its \acrshort{SOTA} has evolved since our work was published.
+
+\subsection{Hearing aids}
+\label{ssec:conc_ha}
+
+Since the evaluation of Chapter~\ref{ch03_hearing} was published, the Clarity
+Challenge series has established itself as the main forum for
+\acrshort{DNN}-based \acrshor†{HA} enhancement, and its findings echo ours.
+Evaluated, like our study, with \acrshort{HASPI} and \acrshort{HASQI}
+\citep{cox2023clarity}, its editions reached the same two conclusions we drew:
+conventional \acrshort{HA} processing struggles in complex, noisy scenes, and
+\acrshort{DNN}-based enhancement has the potential to improve on it. Two details
+are worth noting. First, \acrshort{HASQI} was added alongside \acrshort{HASPI}
+precisely because some systems raised intelligibility at the expense of
+naturalness \citep{cox2023clarity} --- the same tension our follow-up test
+surfaced between \emph{strong} and \emph{mild} enhancement
+(Section~\ref{sec:ha_followup}). Second, and most relevant to this thesis, that
+challenge paired a simulated evaluation set with one based on real-room
+measurements, and found that systems improving on the simulated data degraded
+sharply on the measured recordings \citep{cox2023clarity} --- an independent,
+large-scale instance of the ecological-validity gap that motivated our
+loudspeaker-based evaluation.
+
+Our own contribution --- a dataset centred on binaural \acrshortpl{RIR} for
+\acrshortpl{HA} \acrshort{SE} --- was mirrored, the same year, by BinauRec
+\citep{delebecque2023binaurec}, which likewise studies the influence of
+\acrshortpl{RIR} on binaural speech enhancement, and, the following year, by an
+extension to the multichannel case \citep{westhausen2024binaural}. That the same
+idea was pursued independently and elsewhere suggests the topic was a timely one.
+
+A second, clear trend is the tightening focus on the real-time and low-latency
+constraints of hearing devices, which we identified as the main obstacle to
+deployment. Multi-stage systems now meet the sub-$5\,\text{ms}$ latency budget
+while improving \acrshort{HASPI} and \acrshort{HASQI} over the challenge baseline
+\citep{multistage2023lowlatency}, and this push has continued towards
+\emph{sub-millisecond} latency on hearables \citep{dementyev2024submillisecond}.
+In the same spirit as our own remark that model size remains a bottleneck for
+hearing aids, some works have gone as far as transmitting only a low-bit-rate
+binaural link between the two devices to afford the enhancement
+\citep{westhausen2023lowbitrate}.
+
+Overall, the questions our study raised --- how to evaluate \acrshort{HA}
+enhancement under ecologically valid conditions, and how to make
+\acrshort{DNN}-based processing deployable on-device --- remain central to the
+field. Our work has since been taken up in directions ranging from optimised
+filter design for low-power devices \citep{rawandale2024improving} to
+broader surveys of the area \citep{jespersen2023hearing, kanev2024speech, cao2025aecrn}, which
+suggests our study has helped inform the work that followed.
+
+%TODO: which of our bets have been borne out, where industry has converged on
+%the same questions, and which limitations have become apparent only in
+%hindsight.
+
+\section{Broader relevance of ecological validity}
+\label{sec:conc_relevance}
+
+%TODO: reflect on the broader relevance of ecological validity beyond the
+%tasks studied here --- e.g. automatic mixing and music transcription, where
+%the very definition of ``good'' data is contested.
+
+\section{Future directions and final thoughts}
+\label{sec:conc_future}
+
+%TODO: directions we find most promising going forward, towards deployable,
+%interactive tools built on ecologically valid synthetic data; close with
+%final thoughts.

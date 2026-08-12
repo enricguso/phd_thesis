@@ -16,7 +16,7 @@
 
 Audio processing is the subfield of signal processing concerned with the
 analysis, modification, and generation of sound signals. Historically, its
-applications have grown around several research communities, some of which this thesis touches upon: the \emph{speech} field, devoted to understanding, transcribing and enhancing spoken language; the \emph{machine listening} field, which studies how to extract information about the acoustic environment; the \emph{computational audiology} field, which studies how to compensate for hearing loss and improve listening in adverse conditions; the \emph{music} field, where the retrieval and manipulation of musical content is studied under the umbrella of \acrshort{MIR}; and the \emph{acoustic signal processing} field, which encompasses the full range of audio tasks, among others. The work in this thesis sits at the intersection of these communities, several of whose most representative tasks are listed in Table~\ref{tab:tasks}.
+applications have grown around several research communities, some of which this thesis touches upon: the \emph{speech} field, devoted to understanding, transcribing and enhancing spoken language; the \emph{machine listening} field, which studies how to extract information about the acoustic environment; the \emph{computational audiology} field, which studies how to compensate for hearing loss and improve listening in adverse conditions; the \emph{music} field, where the retrieval and manipulation of musical content is studied under the umbrella of \acrfull{MIR}; and the \emph{acoustic signal processing} field, which encompasses the full range of audio tasks, among others. The work in this thesis sits at the intersection of these communities, several of whose most representative tasks are listed in Table~\ref{tab:tasks}.
 
 Until the last decade, these communities have relied on analytical, hand-engineered solutions grounded in acoustics, psychoacoustics and
 statistical signal processing. However, the advent of deep learning \citep{lecun2015deep} has reshaped all of them, shifting the dominant paradigm from
@@ -61,11 +61,11 @@ generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
 process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
 
-The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in \acrfull{NLP} \citep{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as \acrshortpl{HA}.
+The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in Natural Language Processing (NLP) \citep{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as \acrfullpl{HA}.
 
 Likewise, the trajectory from analytical methods to learned, increasingly end-to-end models and with weaker supervision has been observed across the three fields we address. 
 
-\textbf{\textit{(i)}~In the \emph{speech} field}, classical \acrshort{ASR} pipelines were traditionally built on Mel-Frequency Cepstral Coefficients \citep{davis1980mfcc} feeding statistical
+\textbf{\textit{(i)}~In the \emph{speech} field}, classical \acrfull{ASR} pipelines were traditionally built on Mel-Frequency Cepstral Coefficients \citep{davis1980mfcc} feeding statistical
 acoustic models \citep{rabiner1989tutorial}, an approach later overtaken by \acrshort{DNN} acoustic modelling
 \citep{hinton2012} and, more recently, by large end-to-end models such as
 Whisper, trained on hundreds of thousands of hours of weakly supervised audio
@@ -111,7 +111,7 @@ relentlessly that successive systems have \emph{saturated} them. By saturation w
       \caption{Progress on clean two-speaker speech separation over the last decade,
       evaluated on the WSJ0-2mix test set. Each marker is a published model: grey
       markers are individual systems, and blue markers trace the
-      \emph{frontier} of performance --- the \acrshort{SOTA} \acrshort{SI-SDRi} at each
+      \emph{frontier} of performance --- the \acrshort{SOTA} \acrshort{SI-SDR}i at each
       point in time (left y-axis), with the current \acrshort{SOTA} highlighted. The
       orange and green lines (right y-axis) report the computational cost and model
       size of the frontier models for which such data was available, expressed in
@@ -122,7 +122,7 @@ relentlessly that successive systems have \emph{saturated} them. By saturation w
     \label{fig:wsj0_2mix_sota}
 \end{figure}
 \vspace{1cm}
-Speech separation performance is commonly measured by the \acrfull{SI-SDR} proposed by \cite{le2019sdr}, which quantifies the similarity between the separation estimate and a reference ground truth source signal, usually reported as improvement upon the mixture (denoted with the \textit{i} in \acrshort{SI-SDRi}). Traditionally, the speech community has used the WSJ0-2mix dataset \citep{hershey2016deepclustering} to assess progress on clean speech separation and to compare with previous existing literature. \acrshort{SOTA} performance over time shows that progress is increasingly hard, and although the saturation seemed more pronounced at the beginning of this thesis (around 2022, where performance progress had largely stalled), the performance leaps that have been made in \cite{rixen2022sfsrnet} and \cite{shin2024separate} grow smaller every time. Note also how the computational cost, here measured in terms of the number of matrix multiplications per second, is also increasing. As a rule of thumb, an \acrshort{SI-SDRi} >20dB is often taken for near-perfect separation, which was already achieved in 2022.  
+Speech separation performance is commonly measured by the \acrfull{SI-SDR} proposed by \cite{le2019sdr}, which quantifies the similarity between the separation estimate and a reference ground truth source signal, usually reported as improvement upon the mixture (denoted with the \textit{i} in \acrshort{SI-SDR}i). Traditionally, the speech community has used the WSJ0-2mix dataset \citep{hershey2016deepclustering} to assess progress on clean speech separation and to compare with previous existing literature. \acrshort{SOTA} performance over time shows that progress is increasingly hard, and although the saturation seemed more pronounced at the beginning of this thesis (around 2022, where performance progress had largely stalled), the performance leaps that have been made in \cite{rixen2022sfsrnet} and \cite{shin2024separate} grow smaller every time. Note also how the computational cost, here measured in terms of the number of matrix multiplications per second, is also increasing. As a rule of thumb, an \acrshort{SI-SDR}i >20dB is often taken for near-perfect separation, which was already achieved in 2022.  
 
 However, this apparent progress can be misleading: when the same models are
 evaluated across datasets (cross-dataset evaluation), performance often degrades
@@ -232,11 +232,17 @@ $p_S(x)$ and $p_T(x)$---not by carefully shaping $p_S(x)$, but by making it larg
 enough to cover everything.
 
 This strategy is remarkably effective, but it is precisely the one that the
-constraints of this thesis rule out; the parameter counts and inference
-budgets inherent to web-scale training are incompatible with the real-time,
-on-device deployment targets that motivate our work. When scaling the model and the data is not an option,
-the quality and representativeness of a fixed-size training set become the primary
-lever---which returns us to ecological validity.
+constraints of this thesis rule out; the parameter counts and inference budgets
+inherent to web-scale training are incompatible with the real-time, on-device
+deployment targets that motivate our work. When scaling the model and the data
+is not an option, the quality and representativeness of a fixed-size training
+set become the primary lever --- which returns us to ecological validity. This
+constraint also shapes the very \emph{choice} of problems studied in this
+thesis. Every experiment reported here was run on a single \acrfull{GPU}, so we
+have deliberately favoured tasks where progress comes from improving the
+\emph{data} rather than from scaling the model: the design of ecologically valid
+evaluations and the construction of better training datasets, where a small
+group can still make a measurable difference.
 
 \section{Industrial PhD}
 \label{sec:industrial}
@@ -272,7 +278,7 @@ organized as follows.
     
     \item \textbf{Chapter~\ref{ch03_hearing}} addresses the \acrshortpl{HA} field and is the result of the collaboration with Microson and within the GuestXR project: the developement of an ecologically-avlid \emph{evaluation} for \acrshortpl{HA} (\textbf{RO1}), and whether \acrshortpl{DNN} are a promising route to generalise better than traditional \acrshortpl{HA} algorithms (\textbf{RO2}). Beyond their technical interest, both objectives foster accessibility, and thus inclusivity, for people with hearing loss.
 
-    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, again part of the GuestXR project. It investigates whether \acrshort{RIR}s generated with frequency-dependent absorption coefficients and source or receiver directivity improve the generalisation of monaural \acrshort{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}). While large, realistic \acrshort{RIR} datasets already exist privately within industry --- where major labs maintain their own simulation tools --- replicating them for open science and releasing them freely to every research lab carries value in itself.
+    \item \textbf{Chapter~\ref{ch04_mbrirs}} carries the idea to more general models, again part of the GuestXR project. It investigates whether \acrfull{RIR}s generated with frequency-dependent absorption coefficients and source or receiver directivity improve the generalisation of monaural \acrfull{SE} models to real data (\textbf{RO3}), and, in pursuit of the same ecological validity, whether using fewer but more realistic mesh-based \acrshort{RIR}s improves performance (\textbf{RO4}). While large, realistic \acrshort{RIR} datasets already exist privately within industry --- where major labs maintain their own simulation tools --- replicating them for open science and releasing them freely to every research lab carries value in itself.
 
     \item \textbf{Chapter~\ref{ch05_mss}} brings the same idea to \acrfull{MSS}, in line with the research interests of the MTG (UPF). We identify that \acrfull{SOTA} models designed for studio music do not work well on recordings captured by attendees (mobile-phone recordings from the audience). This raises several questions: can we generate synthetic data that transforms studio datasets into live datasets? Can a generative singing-voice conversion model produce synthetic audiences that sing along to the vocals of the studio songs (\textbf{RO5})? Can we curate additional audience-like noise from internet audio archives (\textbf{RO6})? And what about acoustics --- does adding impulse responses specifically measured in real, modern music venues improve upon using existing non-concert \acrshort{RIR}s (\textbf{RO7})?
 

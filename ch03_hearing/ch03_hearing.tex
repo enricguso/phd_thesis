@@ -1,19 +1,18 @@
-\chapter{An objective evaluation of Hearing Aids and DNN-based binaural Speech Enhancement}
+\chapter{An Objective Evaluation of Hearing Aids and DNN-based binaural Speech Enhancement}
 \chaptermark{Evaluation of Hearing Aids}
 \label{ch03_hearing}
 In broad terms, \acrshortpl{HA} are body-worn devices that capture the
 acoustic scene with one or more microphones, processes it --- amplifying and compressing it according to the user's audiogram, and increasingly applying noise reduction and directional processing --- and deliver the result to the
-ear through a small loudspeaker, conventionally called the \emph{receiver}. Devices are commonly grouped by form factor. \acrfull{ITE} \acrshortpl{HA} house the entire electronics in a custom shell that sits in the concha or ear canal; they are discreet but constrained in size, battery life and microphone spacing. \acrfull{BTE} \acrshortpl{HA} instead place the electronics in a unit worn behind the pinna, which routes the amplified sound to the ear through a tube ending in an earmould; the larger housing affords more processing power and a wider spacing between microphones, at the cost of visibility. The
+ear through a small loudspeaker, conventionally called the \emph{receiver}. Devices are commonly grouped by form factor. In-The-Ear (ITE) \acrshortpl{HA} house the entire electronics in a custom shell that sits in the concha or ear canal; they are discreet but constrained in size, battery life and microphone spacing. \acrfull{BTE} \acrshortpl{HA} instead place the electronics in a unit worn behind the pinna, which routes the amplified sound to the ear through a tube ending in an earmould; the larger housing affords more processing power and a wider spacing between microphones, at the cost of visibility. The
 \acrfull{RIC} style, now the most widespread, is a variant of the \acrshort{BTE} in which the receiver is removed from the housing and placed directly in the ear canal, connected to the behind-the-ear unit by a thin wire and sealed by a soft dome (Figure~\ref{fig:lewi_ric}). This separation keeps the \acrshort{BTE} unit small while moving the loudspeaker close to the eardrum, reducing the risk of acoustic feedback and improving sound quality --- which, together with its discreetness, explains its popularity and its choice for the present study.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\columnwidth]{ch03_hearing/figures/phonak_ric.pdf}
+  \includegraphics[width=0.5\columnwidth,trim={6.8cm 11cm 5cm 11cm},clip]{ch03_hearing/figures/audifon.pdf}
   \caption{Schematic of the \emph{audifon lewi R}, a \acrfull{RIC} \acrshortpl{HA}, the form factor used in
   this study. The behind-the-ear unit houses the microphones, battery and processor; a thin
   wire carries the signal to the \emph{receiver}, the miniature loudspeaker
-  placed inside the ear canal, which is sealed and held in place by a soft
-  silicone \emph{power dome}.}
+  placed inside the ear canal.}
   \label{fig:lewi_ric}
 \end{figure}
 
@@ -56,7 +55,7 @@ latter struggle, is therefore an open question and the object of
 This chapter, carried out as part of the GuestXR project in collaboration with Microson (Amplifon Group),
 addresses both objectives with a single evaluation setup. \textbf{We
 record five high-end commercial \acrshortpl{HA} exposed to complex
-speech-in-noise scenes, reproduced over an Ambisonics loudspeaker array and captured on a \acrshort{KU100} dummy head,
+speech-in-noise scenes, reproduced over an Ambisonics loudspeaker array and captured on a \acrfull{KU100} dummy head,
 and we compare their built-in enhancement against the same recordings
 post-processed by two state-of-the-art \acrshortpl{DNN}}. 
 
@@ -69,7 +68,7 @@ Ambisonics-to-binaural decoder tailored to \acrshortpl{HA}, a synthetic
 binaural training corpus, and a reverberant speech-in-noise test set with the
 corresponding recordings of each device.
 
-\section{Hearing Aids Measurement Setup}
+\section{Hearing aids measurement setup}
 \label{sec:ha_setup}
 
 We first describe the measurement and evaluation infrastructure, deferring the
@@ -116,7 +115,7 @@ To ensure that the sound reaching each device closely resembled real life, all
 scenes were represented and reproduced as Ambisonics sound fields
 (Section~\ref{sec:bg_spatial}). We built three acoustic scenes of speech in
 noise, corresponding to three common environments: \emph{party},
-\emph{restaurant} and \emph{office}. The noise came from the \acrfull{ARTE} database \citep{weisser2019ambisonic},
+\emph{restaurant} and \emph{office}. The noise came from the Ambisonic Recordings of Typical Environments (ARTE) database \citep{weisser2019ambisonic},
 whose recordings were captured in real environments with a 62-channel
 microphone array and distributed as 31-channel \emph{mixed-order} Ambisonics.
 
@@ -126,7 +125,7 @@ most sources and human localisation are concentrated near the horizontal:
 full-sphere resolution is kept only up to a low order, and the
 additional horizontal detail is carried by the sectorial harmonics
 ($m=\pm\ell$, the outermost components of the harmonic pyramid in
-Figure~\ref{fig:spherical_harmonics}) alone. \acrshort{ARTE} keeps the full
+Figure~\ref{fig:spherical_harmonics}) alone. ARTE keeps the full
 3D field up to 4th order (25 channels) and adds horizontal-only components up to 7th order (6 further channels), for 31 in total. We
 zero-padded these into a full 10th-order set, placing each component in its
 ACN slot and filling the remaining, unmeasured harmonics with
@@ -145,8 +144,8 @@ $28\times17\times4.2\,\text{m}$ and $5\times2\times2.5\,\text{m}$ for the
 \emph{party}, \emph{restaurant} and \emph{office} scenes respectively, and the
 target was placed $1\,\text{m}$ from the head at either $0^{\circ}$ or
 $30^{\circ}$ to the right. The reverberation times were set by informal
-listening against the \acrshort{ARTE} recordings, choosing $T_{60}$ values
-around $60\%$ of those reported for \acrshort{ARTE} to account for the
+listening against the ARTE recordings, choosing $T_{60}$ values
+around $60\%$ of those reported for ARTE to account for the
 absorption of furniture and people. The result is a set of clean (anechoic)
 and reverberant speech and noise fields, all in Ambisonics.
 
@@ -182,10 +181,9 @@ loudspeaker signals were normalised to equal energy to ease calibration.
 
 \subsection{Dummy-head recordings}
 \label{sec:ha_recordings}
-
 A Neumann \acrshort{KU100} dummy head was placed at the centre of the array.
 Each scene was
-calibrated to $70\,\text{dB}$ \acrshort{SPL} at the ear position, next to the dummy head, using a
+calibrated to $70\,\text{dB}$ \acrfull{SPL} at the ear position, next to the dummy head, using a
 Beyerdynamic MM1 omnidirectional measurement microphone
 (Figure~\ref{fig:ha_dummyhead}). We recorded five high-end \acrfull{RIC}
 \acrshortpl{HA} available on the market at the time of writing --- the GN ONE
@@ -316,7 +314,7 @@ auditory model, they require a calibration relating digital amplitude to
 presentation level; both reference and estimate were scaled so that their root
 mean square matched the $70\,\text{dB}$ \acrshort{SPL} at which the scenes were
 reproduced (Section~\ref{sec:ha_recordings}), rather than the $65\,\text{dB}$
-\acrshort{SPL} assumed by default for a unit-\acrshort{RMS} signal.
+\acrshort{SPL} assumed by default for a signal with Root Mean Square of one (unit-RMS).
 The scale-invariant \acrshort{SI-SDR} is defined, for a target $y$ and an
 estimate $\tilde{y}$, as
 \begin{equation}
@@ -360,7 +358,7 @@ and $\Delta\mathrm{HASQI}$, $\Delta\mathrm{HASPI}$ and $\Delta\mathrm{MBSTOI}$
 are defined analogously. A positive benefit means the enhancement improves on
 doing nothing; a negative one means it degrades the signal.
 
-\section{DNN-based binaural Speech Enhancement models}
+\section{DNN-based binaural speech enhancement models}
 \label{sec:ha_dnn}
 
 The recording procedure described so far already enables to evaluate 
@@ -532,7 +530,7 @@ One further correction was applied. Decoding through our own measured
 of the \emph{audifon lewi R} device coupled to the \acrshort{KU100} ear canal
 --- an artefact of our measurement rather than a property of \acrshortpl{HA}. We compensated the response of the \acrshort{RIC} coupling by taking the direction-independent frequency response between the
 \acrshort{HRTF}s of the bare \acrshort{KU100} and those of the \acrshort{KU100}
-wearing the \acrshortpl{HA}, approximating it with an \acrshort{IIR} filter, and
+wearing the \acrshortpl{HA}, approximating it with an Infinite Impulse Response (IIR) filter, and
 applying that filter to every utterance in the dataset.
 
 \subsection{Training setup}
@@ -641,7 +639,7 @@ The evaluation presented here has since been complemented by a perceptual study,
 and carried out by Mart\'i Baig as part of his Master's thesis. Being his
 contribution, it lies beyond the scope of this dissertation, and we summarise
 it here only for completeness. Using the same recordings and models, it ran
-a \acrshort{MUSHRA}-like listening test with two groups of twenty participants
+a \acrfull{MUSHRA}-like listening test with two groups of twenty participants
 --- \acrshortpl{HA} users with moderate-to-severe hearing loss and normal-hearing
 listeners --- rating the six processing conditions (\emph{bypass},
 \emph{enabled}, and the causal and non-causal \acrshortpl{DNN}) across the six

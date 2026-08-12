@@ -415,25 +415,25 @@ results were very similar, so for brevity we report only the conventional model.
 
 The metrics we report fall into four families. \emph{Signal-fidelity} measures
 compare the estimated waveform with the reference on a sample level: the
-\acrfull{SI-SDR} (Section~\ref{sec:ha_metrics}) and the plain \acrshort{SDR}, in
+\acrfull{SI-SDR} (Section~\ref{sec:ha_metrics}) and the plain \acrfull{SDR}, in
 decibels. \emph{Spectral} measures compare their time--frequency
-representations: the \acrfull{LSD} and the \acrfull{MCD}, both distances for
+representations: the Log-Spectral Distance (LSD) and the Mel-Frequency Cepstral Distance (MSD), both distances for
 which lower is better. \emph{Perceptual} measures predict human judgements of
 quality and intelligibility from an auditory model: wideband \acrfull{PESQ}
 (roughly $[1, 4.5]$) and \acrfull{STOI} ($[0, 1]$). Finally, \emph{semantic}
 measures, less common in \acrshort{SE}, gauge whether linguistic and speaker
 content survive enhancement: a phonetic similarity, a speaker-embedding cosine
-similarity, and a \acrshort{BERT}-based textual similarity between transcripts.
+similarity, and a Bidirectional Encoder Representations from Transformers (BERT)-based textual similarity between transcripts.
 
 Because some of these rely on a clean reference and others do not, we group them
 into \emph{intrusive} metrics --- computed against the reference $y$ --- and
 \emph{non-intrusive} ones, computed from the estimate alone. The latter are
 increasingly estimated by neural networks trained to mimic human ratings: we
-use \acrshort{DNSMOS} \citep{reddy2021dnsmos} and \acrshort{NISQA}
-\citep{mittag2021nisqa}, which predict \acrfull{MOS} scores, and the
-\acrshort{SQUIM} estimators \citep{kumar2023torchaudio}, which predict
+use Deep Noise Suppression Mean Opinion Score (DNSMOS, \citet{reddy2021dnsmos}) and Non-Intrusive Speech Quality Assessment (NISQA)
+\citep{mittag2021nisqa}, which predict Mean Opinion Scores (MOS), and the
+Speech Quality and Intelligibility Measures (SQUIM) estimators \citep{kumar2023torchaudio}, which predict
 reference-free versions of \acrshort{SI-SDR}, \acrshort{PESQ}, \acrshort{STOI}
-and \acrshort{MOS} directly from the noisy signal (denoted with the subscript
+and MOS directly from the noisy signal (denoted with the subscript
 $_{\text{squim}}$). Most of these follow the metric set of the URGENT challenge
 \citep{zhang2024urgent}.
 

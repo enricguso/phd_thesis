@@ -255,16 +255,139 @@ than masking the target source \citep{plaja2025generating}; as discussed in
 Section~\ref{sec:conc_future}, we see this as a promising route to the more
 realistic sing-alongs that our own pipeline still struggles to isolate.
 
-\section{Broader relevance of ecological validity}
+\section{The broader relevance of ecological validity}
 \label{sec:conc_relevance}
 
-%TODO: reflect on the broader relevance of ecological validity beyond the
-%tasks studied here --- e.g. automatic mixing and music transcription, where
-%the very definition of ``good'' data is contested.
+The concern that runs through this thesis --- the importance of ecological
+validity --- is not specific to the three tasks we studied. It resurfaces, often
+unremarked, wherever a field quietly substitutes convenient data for
+representative data. Two examples from music information retrieval make the point.
+
+Automatic music mixing is the first. The field has seen remarkable progress:
+recent systems repurpose out-of-domain data to overcome the scarcity of dry/wet
+pairs \citep{martinez2022automatic}, model the one-to-many nature of mixing with
+generative approaches \citep{moliner2026automatic}, and learn transferable mixing
+styles directly from separated stems \citep{cheng2026stemfx}, with listening
+tests that increasingly approach human-level quality. These are genuine
+breakthroughs. Yet across this work it is rarely made explicit \emph{which}
+human, mixing \emph{which} music. In practice, the reference for a
+``professional mix'' is very often MUSDB18-HQ \citep{rafii2019musdbhq}: a corpus
+assembled for source \emph{separation}, whose mixtures were never selected for
+being exemplary. Training or evaluating automatic mixing on it thereby equates
+``professional'' with a body of mostly amateur or semi-professional rock and pop
+recordings by a handful of engineers --- a bias acknowledged even by the community
+that popularised the dataset, which notes its focus on Western pop and its
+limited pool of mixing engineers \citep{fabbro2024sound}. A model that matches
+such references has learned to reproduce competent demos, not the mixing
+decisions behind commercially successful records.
+
+\vspace{0.5cm}
+
+The second example is music identification, where the stakes are directly
+economic: audio fingerprinting underpins the monitoring of public performances
+for royalty distribution. Classical fingerprints are designed to recognise the
+exact studio master and do not generalise to live renditions, where venue
+reverberation, a \acrshort{PA} system and crowd noise reshape the signal.
+\citet{araz2025enhancing} tackle this head-on, improving neural fingerprint
+robustness by training with realistic room acoustics and evaluating on real
+microphone recordings made across bars, nightclubs and concert halls --- and, in
+doing so, uncovering evaluation flaws in a prior system that had flattered its
+reported performance. Yet even this careful work inherits the limitation at the
+heart of our Chapter~\ref{ch05_mss}: its room acoustics come from general-purpose
+\acrshort{RIR} datasets such as OpenAIR \citep{murphy2010openair}, measured in
+halls and churches \emph{without} a live \acrshort{PA} system. Such responses
+capture a room's reverberation but not the colouration of the line arrays and
+subwoofers through which concert audiences actually hear music, nor the crowd
+that accompanies it --- precisely the gap PaRIRset and CrowdioSet were built to
+fill. Tellingly, the authors themselves note that at festival distances it is the
+low frequencies from the speakers that survive the crowd noise, yet the acoustics
+they train on contain no such system.
+
+The parallel with our own domains is exact. Just as training speech enhancement
+on oversimplified \acrshortpl{RIR} teaches a model to undo a reverberation that
+does not occur in real rooms (Chapter~\ref{ch04_mbrirs}), training an automatic
+mixer on incidental mixtures teaches it to imitate a target that no listener
+would call a great mix, and training a fingerprinter without a \acrshort{PA}
+teaches it to recognise a concert it will never actually hear. The failure is not
+in the models but in the implicit claim that the available data stands in for the
+real objective. It is the cooking-school version of learning to cook by averaging
+the recipes of whichever restaurants happen to be nearby: one may become fluent,
+and still never learn to cook well.
+
+None of this is a criticism of these methods, several of which are genuinely
+sophisticated; it is an encouragement to spend as much care on the ecological
+validity of evaluation data as on the models themselves. Stating which
+distribution the data is meant to represent, and how far it actually does, would
+sharpen these claims, exactly as it sharpened the questions we asked about
+hearing aids, reverberation and live music. It is, we believe, the most
+transferable recommendation of this thesis.
+
 
 \section{Future directions and final thoughts}
 \label{sec:conc_future}
 
-%TODO: directions we find most promising going forward, towards deployable,
-%interactive tools built on ecologically valid synthetic data; close with
-%final thoughts.
+In light of the discussion above, several next steps follow naturally.
+
+\paragraph{Growing PaRIRset, CrowdioSet and its sing-alongs.}
+CrowdioSet has proven surprisingly effective for the modest effort we invested in
+it, which makes it the natural place to build. The obvious first step is to
+enlarge it and, above all, to improve the synthetic sing-alongs, whose isolation
+remains its weakest point (\textbf{RO5}). Starting from clean \emph{dry} vocal
+stems, such as those released for Music Source Restoration
+\citep{zang2025music}, would remove the processing our current pipeline inherits
+from already-mixed vocals. So far we have been unable to generate convincing
+sing-alongs with general-purpose generative audio models such as Stable Audio
+\citep{evans2024stable}; should these mature, they would offer a route to far
+more varied and realistic crowds. Combined with tiny, deployable architectures,
+richer versions of these datasets could support on-device denoising for the
+hearing impaired, connecting the live-music work of Chapter~\ref{ch05_mss} back
+to the hearing aids of Chapter~\ref{ch03_hearing}. Likewise, should PaRIRset gain
+traction and find use in other tasks, we intend to keep measuring further venues
+and to release a larger second version in the future.
+
+\paragraph{Synthetic pre-training with PaRIRset as real-data reward.}
+A recent and, to us, compelling recipe comes from MuScriptor
+\citep{rouard2026muscriptor}, a multi-instrument transcription model trained in
+three stages: pre-training on abundant \emph{synthetic} data, fine-tuning on
+\emph{real} recordings, and a final reinforcement-learning stage that aligns the
+model using only a small, manually verified set of high-quality examples. Its
+guiding principle --- ``data, not architecture'' --- is exactly ours. We see a
+direct application to \acrshort{RIR}-based training: a speech-enhancement or
+separation model could be pre-trained on abundant synthetic responses ---
+combining the mesh-based rooms of GWA \citep{tang2022gwa} with the \acrshort{ISM}
+rooms of \acrshort{MB-RIRs} (Chapter~\ref{ch04_mbrirs}) --- and then refined with
+a reinforcement-learning stage rewarded on the smaller set of \emph{real} concert
+measurements in PaRIRset. This would let a large synthetic corpus supply
+coverage while a handful of real measurements supply the final, ecologically
+valid calibration --- turning the synthetic-versus-real trade-off of this thesis
+into a pipeline rather than a choice.
+
+\paragraph{A discarded chapter: ecologically valid audio doubling.}
+The initial plan for this thesis included a fourth study, on \emph{automatic
+audio doubling}, which we ultimately set aside but which this recipe could
+revive. When recording an album, musicians commonly play the same part --- a
+rhythm guitar, say --- two or more times and pan the takes left and right, to
+obtain a wider, larger-than-life sound. The traditional Digital Signal Processing (DSP) methods that imitate
+this effect simply add short, flipped-polarity delays; because the copy is identical to
+the original, their high correlation produces the hollow colouration of comb
+filtering. When a human plays the part twice, the small imperfections between
+takes lower that correlation and yield a far more natural result. During the
+planning stage we saw that sampling audio-conditioned diffusion models was a
+promising way to model this phenomenon in an ecologically valid manner ---
+learning the distribution of a musician's imperfections rather than a fixed
+delay. The obstacle was data: we could assemble only about two hours of paired
+doubled takes, far too little to train a model that generalises. The MuScriptor
+recipe above resolves exactly this: synthesise abundant doublings for
+pre-training, then align the model with our small real set through reinforcement
+learning. Unlike most generative tools now reaching the market, such a system
+would \emph{assist} musicians rather than replace them, helping them widen a
+performance they themselves played.
+
+We began this thesis by arguing that, when scaling is out of reach, the fidelity
+of the data becomes a productive vector for improvement. We have shown this in
+three application fields --- hearing aids, speech enhancement and music source
+separation --- and it may prove useful in others we did not set out to study. The
+work presented here, however, has been largely incremental, and concerned with
+offline, non-real-time algorithms; what we are ultimately drawn to is turning
+these datasets and findings into deployable, interactive tools --- systems a
+practitioner can use, rather than benchmarks alone.

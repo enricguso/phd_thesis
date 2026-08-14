@@ -4,7 +4,7 @@
 \chaptermark{Synthetic RIRs for SE}
 \label{ch04_mbrirs}
 
-The previous chapter highlighted, for the specific case of \acrshortpl{HA}, the importance of the data a model is trained and evaluated on. This chapter carries the same idea to general-purpose \acrshort{SE}, again within the context of the GuestXR project, and again keeping the focus on one particular ingredient of its training data: the \acrfullpl{RIR} used to simulate reverberation. As we saw in Chapter~\ref{ch03_hearing}, while \acrshortpl{HA} are beginning to adopt \acrshortpl{DNN}, they do so under tight latency and power constraints. For normal-hearing listeners in settings such as videoconferencing, where those constraints are far looser, \acrshort{DNN}-based \acrshort{SE} has instead thrived, to the point that neural noise suppression now runs in virtually every videoconferencing application. This success has been driven in no small part by ever larger and more diverse training sets, such as those of the \acrfull{DNS} challenges \citep{dns5}.
+The previous chapter highlights, for the specific case of \acrshortpl{HA}, the importance of the data a model is trained and evaluated on. This chapter carries the same idea to general-purpose \acrshort{SE}, again within the context of the GuestXR project, and again keeping the focus on one particular ingredient of its training data: the \acrfullpl{RIR} used to simulate reverberation. As we saw in Chapter~\ref{ch03_hearing}, while \acrshortpl{HA} are beginning to adopt \acrshortpl{DNN}, they do so under tight latency and power constraints. For normal-hearing listeners in settings such as videoconferencing, where those constraints are far looser, \acrshort{DNN}-based \acrshort{SE} has instead thrived, to the point that neural noise suppression now runs in virtually every videoconferencing application. This success has been driven in no small part by ever larger and more diverse training sets, such as those of the \acrfull{DNS} challenges \citep{dns5}.
 
 Scaling the amount and variety of data has produced models that generalise better and narrow the cross-dataset performance gaps discussed in
 Chapter~\ref{ch02_sota} \citep{richter2023speech, kadiouglu2020empirical}, and
@@ -29,7 +29,7 @@ towards \emph{universality} and \emph{robustness}, bringing together
 denoising, dereverberation, declipping, bandwidth extension and other
 distortions in a single task, spanning a wide range of sampling rates, and, tightly related to our approach, evaluating on real recorded \acrshortpl{RIR}
 rather than only synthetic ones, which highlights the importance of ecological validity. However, the URGENT challenge still
-trains on the ten-year-old \acrshortpl{RIR} from \acrshort{DNS}5. In a similar line of work, generative augmentation of existing
+trains on the ten-year-old \acrshortpl{RIR} from \acrshort{DNS}5. Generative augmentation of existing
 \acrshortpl{RIR} has been explored in \citet{lin2025generative}.
 
 As we introduced in Chapter~\ref{ch02_sota}, some recent \acrshort{RIR} datasets use path tracing over 3D meshes of realistic geometries, mainly for tasks beyond
@@ -43,7 +43,7 @@ yet scarce mesh-based \acrshortpl{RIR} are preferable to abundant but simpler
 shoebox ones is still not well understood (\textbf{RO4}).
 
 To tackle both \textbf{RO3} and \textbf{RO4}, 
-we evaluate six models trained on the same speech and noise datasets but on six different \acrshort{RIR} datasets (two baselines, three of our own making and one set of SoundSpaces), with the intention of answering whether models benefit from using RIRs with frequency dependent (multiband) absorption coefficients, whether modeling the receiver directivity or the source directivity helps to generalize in monaural models, and whether mesh-based modeling might be helpful or more suitable than \acrshort{ISM}~\citep{bezzam2020study}. To this end, we propose an evaluation of the following RIR datasets, which are summarized in Table \ref{tab:ch4_datasets}:
+we evaluate six models trained on the same speech and noise datasets but on six different \acrshort{RIR} datasets (two baselines, three of our own making and one set of SoundSpaces), with the intention of answering whether models benefit from using RIRs with frequency dependent (multiband) absorption coefficients, whether modeling the receiver directivity or the source directivity helps to generalize in monaural models, and whether mesh-based modeling might be helpful or more suitable than \acrshort{ISM}~\citep{bezzam2020study}. To this end, we propose an evaluation of the following RIRs:
 
 \begin{itemize}
     \item  \textbf{DNS5}: the \acrfull{SOTA} baseline from \citet{ko2017study}.
@@ -57,7 +57,7 @@ we evaluate six models trained on the same speech and noise datasets but on six 
 
 
 Keeping the speech, the noise and the room geometries fixed,
-we train one \acrshort{SE} model on each and evaluate it on \emph{real} \acrshortpl{RIR}, both objectively and through a listening test. We find that
+we train one \acrshort{SE} model on each one of the RIR datasets (which are summarized in Table \ref{tab:ch4_datasets}) and evaluate it on \emph{real} \acrshortpl{RIR}, both objectively and through a listening test. We find that
 frequency-dependent absorption is always a beneficial feature, and we
 release the resulting multiband \acrshort{RIR} dataset, \emph{MB-RIRs}, as well as the multiband with source and receiver directivities, \emph{SRC+REC+MB-RIRs}, as freely available research
 materials\footnote{\url{https://doi.org/10.5281/zenodo.15773093}}.
@@ -82,6 +82,8 @@ SSPA        & 48\,kHz & multi  & \cmark & \xmark & mesh-based \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\vspace{1cm}
 
 \section{Training datasets}
 \label{sec:mbrirs_datasets}
@@ -117,8 +119,8 @@ original $16\,\text{kHz}$ rendering, and its shoebox responses use a
 \subsection{Single-band absorption coefficients RIRs (SB)}
 \label{ssec:mbrirs_sb}
 
-The \acrshort{DNS}5 baseline conflates two limitations at once: it is
-band-limited (rendered at $16\,\text{kHz}$) and single-band in absorption. To
+The \acrshort{DNS}5 baseline has two limitations at the same time: it is
+band-limited (rendered at $16\,\text{kHz}$) and uses single-band absorption coefficients. To
 isolate the first, and to obtain a controlled counterpart to our own datasets,
 we re-create an approximation of it at $48\,\text{kHz}$ while keeping the single
 absorption coefficient. We generate $60$k shoebox \acrshortpl{RIR} with the
@@ -195,7 +197,7 @@ the spectrum, as real materials do.
   datasets share the same geometric configurations. The dotted line is the
   single-band path (SB); the continuous line adds the per-band absorption and
   filterbank of MB; the short-dashed line adds receiver directivity (REC+MB)
-  and the long-dashed line the source directivity (SRC+REC+MB).}
+  and the long-dashed line adds the source directivity (SRC+REC+MB).}
   \label{fig:mbrirs_pipeline}
 \end{figure}
 
@@ -213,8 +215,7 @@ yields
     \boldsymbol{\alpha} &= \{1.72,\, 1.62,\, 1.93,\, 2.56,\, 4.17,\, 2.49\}, \\
     \boldsymbol{\beta}  &= \{0.39,\, 0.24,\, 0.14,\, 0.10,\, 0.09,\, 0.18\},
 \end{align}
-so that drawing one sample from each band gives a physically plausible,
-frequency-dependent reverberation profile. As Figure~\ref{fig:mbrirs_t60dist} shows, samples drawn from these fitted
+so that drawing one sample from each band gives a physically plausible reverberation profile. As Figure~\ref{fig:mbrirs_t60dist} shows, samples drawn from these fitted
 distributions closely match the measured $\boldsymbol{T_{60}}$ values in every
 band. From it, the per-band absorption
 coefficients of the six walls follow from Sabine's formula
@@ -232,6 +233,7 @@ coefficients of the six walls follow from Sabine's formula
   \label{fig:mbrirs_t60dist}
 \end{figure}
 
+\vspace{1cm}
 
 Because our \acrshort{ISM} renderer assumes a single absorption per surface, we render
 one \acrshort{RIR} per band and recombine them afterwards. For each band $n$ we run an independent
@@ -316,7 +318,7 @@ this yields the \textbf{SRC+REC+MB} dataset.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\columnwidth,trim={5cm 6.8cm 5cm 4cm},clip]{ch04_mbrirs/figures/speech_directivity.pdf}
+  \includegraphics[width=.9\columnwidth,trim={3cm 0cm 3cm 1.5cm},clip]{ch04_mbrirs/figures/speech_directivity.pdf}
   \caption{Average human-speech radiation pattern $D_{\phi,\theta}$, per octave
   band from $125\,\text{Hz}$ to $4\,\text{kHz}$ \citep{leishman2021high}. Each
   sphere shows the radiated level (in dB, relative to the frontal direction
@@ -425,11 +427,13 @@ measures, less common in \acrshort{SE}, gauge whether linguistic and speaker
 content survive enhancement: a phonetic similarity, a speaker-embedding cosine
 similarity, and a Bidirectional Encoder Representations from Transformers (BERT)-based textual similarity between transcripts.
 
+\vspace{0.5cm}
+
 Because some of these rely on a clean reference and others do not, we group them
 into \emph{intrusive} metrics --- computed against the reference $y$ --- and
 \emph{non-intrusive} ones, computed from the estimate alone. The latter are
 increasingly estimated by neural networks trained to mimic human ratings: we
-use Deep Noise Suppression Mean Opinion Score (DNSMOS, \citet{reddy2021dnsmos}) and Non-Intrusive Speech Quality Assessment (NISQA)
+use Deep Noise Suppression Mean Opinion Score (DNSMOS, \citealp{reddy2021dnsmos}) and Non-Intrusive Speech Quality Assessment (NISQA)
 \citep{mittag2021nisqa}, which predict Mean Opinion Scores (MOS), and the
 Speech Quality and Intelligibility Measures (SQUIM) estimators \citep{kumar2023torchaudio}, which predict
 reference-free versions of \acrshort{SI-SDR}, \acrshort{PESQ}, \acrshort{STOI}
@@ -618,7 +622,7 @@ we cannot claim a clear improvement.
 \subsection{Summary}
 \label{ssec:mbrirs_res_summary}
 
-Taken together, the results recommend training \acrshort{SE} models on varied,
+The results recommend training \acrshort{SE} models on varied,
 high-sampling-rate multiband \acrshortpl{RIR}, optionally adding source and
 receiver directivity depending on the use case. This answers \textbf{RO3} in the
 affirmative for frequency-dependent absorption --- which benefits modern

@@ -102,19 +102,18 @@ decade later, became the workhorse of computer vision.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{ch02_sota/figures/cnn_kernel.pdf}
-    \caption{Convolutional filters in a \acrfull{CNN}. \textbf{(a)}~A
+    \includegraphics[width=\textwidth]{ch02_sota/figures/cnn_kernel.pdf}
+    \caption{Convolutional filters in a \acrshort{CNN}. \textbf{(a)}~A
     $3\times3$ filter (kernel) slid across a $4\times4$ input image or feature map (blue) to produce a $2\times2$ output feature map (green); at each of
-    the four positions the filter covers a local region of the input
-    (highlighted) and produces a single output value. \textbf{(b)}~Illustrative examples of filters learned: the grayscale filters (top) resemble oriented Gabor functions acting as edge detectors, while the colour
-    filters (bottom) capture colour-opponent and low-frequency patterns.}
+    the four positions the filter covers a local region of the input and produces a single output value. \textbf{(b)}~Illustrative examples of filters learned: the grayscale filters (top) resemble oriented Gabor functions acting as edge detectors, while the colour
+    filters (bottom) capture colour or other patterns.}
     \label{fig:cnn}
 \end{figure}
 
 
 In audio, the two-dimensional input is not an image but a
 spatio-temporal representation of the signal, most commonly the
-Short-Time Fourier Transform. Early systems operated on the magnitude spectrogram
+Short-Time Fourier Transform. Early systems operated on the magnitude
 alone, discarding the phase, although recent models process
 the complex spectrogram \citep{tong2024scnet, schroter2023deepfilternet3} --- real and imaginary parts jointly.
 
@@ -146,21 +145,11 @@ flattened into a single vector $
 known as the \emph{embedding}: a compact, learned representation of the
 input that concentrates the information relevant to the task. The output
 is then a simple --- often linear --- read-out of this embedding, $o = f_\theta(x) = g\!\left(\mathbf{W}_{o}\, z + \mathbf{b}_{o}\right)$
-with $g$ a softmax over classes for a classification task. The embedding
-is a central object in modern deep learning: because it distils the
-task-relevant content of the input into a fixed-size vector, the same
-embedding can often be reused for tasks other than the one it was trained
-on --- an idea we return to when discussing pre-trained representations.
-
-A canonical example is the VGG network~\citep{simonyan2014very}, sketched in Figure~\ref{fig:vgg16}: a deep stack
-of small $3\times3$ convolutions and max-pooling layers that successively
-halve the spatial resolution while increasing the number of feature maps,
-followed by a few fully connected layers that map the final embedding to
-the output classes.
+with $g$ a softmax over classes for a classification task, sometimes called Fully-Connected (FC) as in Figure \ref{fig:vgg16}.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=.8\textwidth, trim={.25cm 3cm .25cm 1.3cm}]{ch02_sota/figures/vgg16.pdf}
+    \includegraphics[width=.7\textwidth,clip,trim={.25cm 3cm .25cm 3.3cm}]{ch02_sota/figures/vgg16.pdf}
     \caption{The VGG-16 architecture~\citep{simonyan2014very}, a canonical
     \acrshort{CNN}. Stacks of $3\times3$ convolutions (blue) followed by
     max-pooling (red) progressively reduce the spatial resolution while
@@ -170,6 +159,15 @@ the output classes.
     \label{fig:vgg16}
 \end{figure}
 
+The embedding is a central object in modern deep learning: because it distils the
+task-relevant content of the input into a fixed-size vector, the same
+embedding can often be reused for tasks other than the one it was trained
+on --- an idea we return to when discussing pre-trained representations.
+A canonical example is the VGG network~\citep{simonyan2014very}, sketched in Figure~\ref{fig:vgg16}, a deep stack
+of small $3\times3$ convolutions and max-pooling layers that successively
+halve the spatial resolution while increasing the number of feature maps,
+followed by a few fully connected layers that map the final embedding to
+the output classes.
 
 Beyond a certain depth, adding more layers
 makes the network harder to optimise. ResNets~\citep{he2016deep}
@@ -259,8 +257,7 @@ everything seen so far.
     \textbf{(b)}~Schematic of the plain \acrshort{RNN} cell (a single
     $\tanh$), the \acrshort{LSTM} (a cell-state highway regulated by
     forget, input and output gates), and the \acrshort{GRU} (reset and
-    update gates). $\sigma$ denotes a sigmoid gate, and $\times$, $+$
-    element-wise operations.}
+    update gates). $\sigma$ denotes a sigmoid gate.}
     \label{fig:rnn}
 \end{figure}
 
@@ -313,13 +310,12 @@ sample.
     \centering
     \includegraphics[width=\textwidth,trim={.25cm .26cm .25cm 7cm},clip]{ch02_sota/figures/wavenet.pdf}
     \caption{WaveNet model. Autoregression: each element $x_t$ is predicted
-    from all the previous ones, factorising the sequence distribution as
-    $p(x)=\prod_t p(x_t\mid x_{<t})$; generation proceeds one element at a
+    from all the previous ones; generation proceeds one element at a
     time (dashed). A stack of \emph{dilated causal}
     convolutions: connections reach only into the past (causal) and skip
     an exponentially growing number of steps with depth (dilation
     $1,2,4,8$), so a single output (highlighted) sees a large receptive
-    field --- here the entire input --- with only a few layers.}
+    field with only a few layers.}
     \label{fig:wavenet}
 \end{figure}
 
@@ -358,12 +354,11 @@ a continuous space the network can operate on.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textheight]{ch02_sota/figures/transformer.pdf}
+    \includegraphics[width=\textwidth]{ch02_sota/figures/transformer.pdf}
     \caption{The Transformer~\citep{vaswani2017attention}. The encoder (left) refines the input
     embeddings through stacked \emph{self-attention} and feed-forward
     sublayers, each wrapped in a residual ``Add~\& Norm'' connection (red).
-    The decoder (right) generates the output autoregressively, combining
-    masked self-attention with \emph{cross-attention} (green) that queries
+    The decoder (right) generates the output autoregressively, combining self-attention with \emph{cross-attention} (in green) that queries
     the encoder embeddings. This sketch is a
     simplified rendering of the original figure of
     \citet{vaswani2017attention}.}
@@ -384,7 +379,7 @@ is what keeps such deep stacks trainable. A second form,
 queries the encoder's embeddings, which is how a generator is
 \emph{conditioned} on an input.
 
-
+\vspace{1cm}
 
 The architecture thus splits naturally into an \emph{encoder}, which
 builds contextual embeddings of the input, and a \emph{decoder}, which
@@ -478,7 +473,7 @@ are exactly the tokens over which the autoregressive and Transformer
 models of Section~\ref{sec:bg_dl_temporal} operate, and they underpin
 language-model-style audio generation~\citep{borsos2023audiolm}.
 
-\vspace{0.8cm}
+\vspace{1.8cm}
 
 \textbf{Diffusion ---} Diffusion models~\citep{ho2020denoising} define a
 fixed \emph{forward} process that gradually corrupts data into pure noise,
@@ -614,7 +609,7 @@ below in time.
     \centering
     \includegraphics[width=\columnwidth]{ch02_sota/figures/ambisonics_timeline.pdf}
     \caption{A personal, simplified selection of the Ambisonics,
-    \acrshort{VBAP} and binaural-audio literature, restricted to the
+    \acrshort{VBAP} and binaural audio literature, restricted to the
     concepts most relevant to the work of
     Chapter~\ref{ch03_hearing}; the review extends up to 2023.}
     \label{fig:ambi_timeline}
@@ -671,7 +666,7 @@ interchangeably.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.92\textwidth,trim={.25cm .25cm .75cm 1.25cm},clip]{ch02_sota/figures/spherical_harmonics.pdf}
+    \includegraphics[width=0.92\textwidth,trim={.25cm .25cm .75cm .25cm},clip]{ch02_sota/figures/spherical_harmonics.pdf}
     \caption{The real spherical harmonics up to order $\ell = 3$, the basis
     functions of the Ambisonics sound-field representation.  Orders $\ell \le 1$ 
     form \acrshort{FOA}, i.e.\ the B-format; each additional order adds
@@ -679,6 +674,8 @@ interchangeably.
     \acrshort{HOA}.}
     \label{fig:spherical_harmonics}
 \end{figure}
+
+\vspace{1cm}
 
 \emph{Encoding.} A mono source $s$ arriving from azimuth $\theta$ and
 elevation $\varphi$ is panned into B-format by weighting it with the

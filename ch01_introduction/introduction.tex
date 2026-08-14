@@ -50,7 +50,7 @@ In the present work, we focus on three of these representative tasks, the choice
 \section{Context}
 \label{sec:context}
 
-To situate the contributions of this thesis within the broader shift reshaping audio processing, we first trace the transition from analytical to data-driven methods, which has unfolded along two axes. The first concerns the signal representations. Models
+To situate the contributions of this thesis within the context of audio processing, we first trace the transition from analytical to data-driven methods, which has unfolded along two axes. The first concerns the signal representations. Models
 that used to operate on hand-crafted descriptors built from expert
 domain knowledge have progressively given way to architectures that learn their own representations directly from time--frequency transforms or even from the raw waveform \citep{pons2019}. These learned representations have themselves grown more abstract: continuous, high-dimensional feature maps have transitioned to discrete latent codes, learned end-to-end and quantised into a finite vocabulary. Neural audio codecs epitomise this shift, compressing the waveform into a handful of discrete tokens that preserve perceptual fidelity
 \citep{zeghidour2021soundstream,defossez2022high} while exposing a tokenised
@@ -59,13 +59,13 @@ substrate over which language-model architectures can operate directly
 productive, most notably the encoder-decoder structure of the Variational Auto Encoder (VAE) that underpins latent-diffusion
 generative models such as \citet{evans2025stable}, where a
 compressed continuous latent serves as the domain over which the generative
-process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some notable very recent exceptions in live generation such as \citealp{gdmlyria2025live,novack2025fast}).
+process is defined. However, these models work at a latent rate in the order of $\sim$10 to 20~Hz, so the compactness of the representations intrinsically makes them hard to deploy in real time due to their latency constraints (with some exceptions such as \citealp{gdmlyria2025live,novack2025fast}).
 
 The second axis concerns another recent inflection, visible across machine learning as a whole, which is the move from purely supervised training towards large-scale self- and semi-supervised \emph{pre-training}. Instead of training a model from scratch for a single task, the encoder-decoder model is first trained on vast amounts of unlabelled or weakly labelled data to learn general-purpose representations by contrastive or masking approaches, and only then is adapted to specific downstream tasks, usually by adding task-specific layers. The resulting models, often termed \emph{foundation models}, have delivered remarkable performance in Natural Language Processing (NLP) \citep{devlin2019bert, touvron2023llama} and are increasingly replicated in the audio and speech domains \citep{baevski2020wav2vec2, mohamed2022ssl}, but they are usually bound to large parameter counts and inference budgets that also make them difficult to deploy in real time and on consumer-grade hardware, and that are particularly problematic for wearable applications such as \acrfullpl{HA}.
 
 Likewise, the trajectory from analytical methods to learned, increasingly end-to-end models and with weaker supervision has been observed across the three fields we address. 
 
-\textbf{\textit{(i)}~In the \emph{speech} field}, classical \acrfull{ASR} pipelines were traditionally built on Mel-Frequency Cepstral Coefficients \citep{davis1980mfcc} feeding statistical
+\textbf{\textit{(i)}~In the \emph{speech} field}, classical \acrfull{ASR} used Mel-Frequency Cepstral Coefficients \citep{davis1980mfcc} feeding statistical
 acoustic models \citep{rabiner1989tutorial}, an approach later overtaken by \acrshort{DNN} acoustic modelling
 \citep{hinton2012} and, more recently, by large end-to-end models such as
 Whisper, trained on hundreds of thousands of hours of weakly supervised audio
@@ -121,7 +121,7 @@ relentlessly that successive systems have \emph{saturated} them. By saturation w
       \cite{wang2025flasepformer}.}
     \label{fig:wsj0_2mix_sota}
 \end{figure}
-\vspace{1cm}
+\vspace{0.8cm}
 Speech separation performance is commonly measured by the \acrfull{SI-SDR} proposed by \cite{le2019sdr}, which quantifies the similarity between the separation estimate and a reference ground truth source signal, usually reported as improvement upon the mixture (denoted with the \textit{i} in \acrshort{SI-SDR}i). Traditionally, the speech community has used the WSJ0-2mix dataset \citep{hershey2016deepclustering} to assess progress on clean speech separation and to compare with previous existing literature. \acrshort{SOTA} performance over time shows that progress is increasingly hard, and although the saturation seemed more pronounced at the beginning of this thesis (around 2022, where performance progress had largely stalled), the performance leaps that have been made in \cite{rixen2022sfsrnet} and \cite{shin2024separate} grow smaller every time. Note also how the computational cost, here measured in terms of the number of matrix multiplications per second, is also increasing. As a rule of thumb, an \acrshort{SI-SDR}i >20dB is often taken for near-perfect separation, which was already achieved in 2022.  
 
 However, this apparent progress can be misleading: when the same models are
@@ -151,7 +151,7 @@ recording-condition mismatch \citep{pandey2020crosscorpus}.
 \end{figure}
 
 We frame this gap through the notion of \textbf{\emph{ecological validity}}. The
-term was originally introduced in psychology by Egon Brunswik \cite{brunswik1955}
+term was originally introduced in psychology by Egon Brunswik \citep{brunswik1955}
 with a narrow, technical meaning: within his lens model of perception, it
 denoted the statistical reliability of a perceptual cue. In its contemporary and considerably broader usage, however, the term
 has come to mean something Brunswik did not intend: the extent to which findings
@@ -249,7 +249,9 @@ group can still make a measurable difference.
 
 The choice of the specific tasks in which we investigate towards improving ecological validity has been motivated by the partners involved in this PhD. This dissertation has been carried out as an \emph{industrial PhD}, a doctoral modality designed to bridge academia and industry by embedding the doctoral candidate within a company or organisation while maintaining a formal partnership with a university or research centre. Unlike a traditional academic PhD — which primarily advances knowledge within a scientific discipline — an industrial PhD aligns research objectives with the strategic needs of the industrial partner, targeting outcomes such as technological innovation, process improvement, or competitive advantage. The candidate operates across both environments simultaneously, contributing to the partner's goals while producing original research that culminates in a doctoral thesis.
 
-Eurecat is a foundation whose mission is to promote research, technological development, and knowledge transfer in order to improve the competitiveness of companies and the well-being of society. It was created in 2015 through the consolidation of several industrial research units from across Catalonia. The audio research group at Eurecat traces its origins to Barcelona Media, a foundation for innovation and interdisciplinary research that operated from 2002 and developed solutions across a broad range of technological domains, including image, audio, and social media analysis. Among its most notable achievements, the Barcelona Media audio team developed the immersive 3D audio technology behind Imm Sound, a cinema sound solution acquired by Dolby Laboratories in 2012. The researchers who remained at Barcelona Media after that acquisition formed the core of what would become Eurecat's audio group when the centre was established in 2015.
+From the academic side, the Music Technology Group (MTG) at the Universitat Pompeu Fabra (UPF) in Barcelona is one of the leading research groups in sound and music computing worldwide. Founded in 1994 within UPF's Department of Information and Communication Technologies, and now part of the Department of Engineering, the MTG conducts research spanning signal processing, machine learning, music perception, computational musicology, and human-computer interaction, with applications ranging from music creation and performance to education and cultural heritage. A defining characteristic of the group is its commitment to open science: flagship initiatives such as Freesound, a collaborative repository of Creative Commons audio samples, and Essentia, an open-source library for audio analysis and music description, have become widely adopted tools in both the research community and industry. The MTG has grown into an interdisciplinary team that combines scientific rigour with artistic and societal relevance, and maintains active collaborations with musicians, educators, and industry partners.
+
+From the industrial side, Eurecat is a foundation whose mission is to promote research, technological development, and knowledge transfer in order to improve the competitiveness of companies and the well-being of society. It was created in 2015 through the consolidation of several industrial research units from across Catalonia. The audio research group at Eurecat traces its origins to Barcelona Media, a foundation for innovation and interdisciplinary research that operated from 2002 and developed solutions across a broad range of technological domains, including image, audio, and social media analysis. Among its most notable achievements, the Barcelona Media audio team developed the immersive 3D audio technology behind Imm Sound, a cinema sound solution acquired by Dolby Laboratories in 2012. The researchers who remained at Barcelona Media after that acquisition formed the core of what would become Eurecat's audio group when the centre was established in 2015.
 
 Three Eurecat projects underpin the work presented in this thesis.
 
@@ -262,7 +264,7 @@ Three Eurecat projects underpin the work presented in this thesis.
 }
 \end{itemize}
 
-From the academic side, the Music Technology Group (MTG) at the Universitat Pompeu Fabra (UPF) in Barcelona is one of the leading research groups in sound and music computing worldwide. Founded in 1994 within UPF's Department of Information and Communication Technologies, and now part of the Department of Engineering, the MTG conducts research spanning signal processing, machine learning, music perception, computational musicology, and human-computer interaction, with applications ranging from music creation and performance to education and cultural heritage. A defining characteristic of the group is its commitment to open science: flagship initiatives such as Freesound, a collaborative repository of Creative Commons audio samples, and Essentia, an open-source library for audio analysis and music description, have become widely adopted tools in both the research community and industry. The MTG has grown into an interdisciplinary team that combines scientific rigour with artistic and societal relevance, and maintains active collaborations with musicians, educators, and industry partners.
+
 
 \section{Research objectives and thesis outline}
 \label{sec:outline}
@@ -282,7 +284,9 @@ organized as follows.
 
     \item \textbf{Chapter~\ref{ch05_mss}} brings the same idea to \acrfull{MSS}, in line with the research interests of the MTG (UPF). We identify that \acrfull{SOTA} models designed for studio music do not work well on recordings captured by attendees (mobile-phone recordings from the audience). This raises several questions: can we generate synthetic data that transforms studio datasets into live datasets? Can a generative singing-voice conversion model produce synthetic audiences that sing along to the vocals of the studio songs (\textbf{RO5})? Can we curate additional audience-like noise from internet audio archives (\textbf{RO6})? And what about acoustics --- does adding impulse responses specifically measured in real, modern music venues improve upon using existing non-concert \acrshort{RIR}s (\textbf{RO7})?
 
-    \item \textbf{Chapter~\ref{ch98_conclusions}} closes the dissertation with conclusions and perspectives for future work, and lists the publications and research materials that this thesis has made freely public to foster open research.
+    \item \textbf{Chapter~\ref{ch98_conclusions}} closes the dissertation with some additional discussion, general conclusions and perspectives for future work.
+
+    \item We provide a list of publications (Appendix \ref{sec:pubs}) and research materials (Appendix \ref{app:materials}).
 
 \end{itemize}
 

@@ -1,10 +1,10 @@
 %! TeX root: ../thesis_a4.tex
 
 \chapter{Extending Music Source Separation to Live Recordings with Audience Noise and Concert-Venue Impulse Responses}
-\chaptermark{Extending MSS to Live Recordings}
+\chaptermark{MSS from Live Recordings}
 \label{ch05_mss}
 
-The two previous chapters improved the ecological validity of training data for
+The two previous chapters improve the ecological validity of training data for
 speech; this final chapter brings the same idea to music, in line with the
 research interests of the \acrfull{MTG}, by proposing a new task: adapting
 existing \acrfull{MSS} datasets to a new use case, live recordings made from the
@@ -30,7 +30,7 @@ separation \citep{kandpal2022musicenhancement}.
 The situation mirrors one already met in speech separation, where the WHAM!
 \citep{wichern2019wham} and WHAMR! \citep{maciejewski2020whamr} datasets bridged
 an analogous gap by augmenting the clean WSJ0-2mix corpus with ambient noise and
-reverberation. We follow the same rationale for music: we \emph{formulate} a new \acrfull{MIR}
+reverberation. We follow the same idea for music: we \emph{formulate} a new \acrfull{MIR}
 task, which we call \emph{Live} \acrshort{MSS} --- the separation of music recorded from within a
 live audience, where venue acoustics, the \acrshort{PA} system and crowd noise
 break the linear-mixing assumption of studio \acrshort{MSS}, as illustrated in
@@ -48,6 +48,27 @@ therefore unrelated to the parallel line of work on \emph{real-time}, low-latenc
 \emph{where} the recording was made, not \emph{how fast} it is separated, and
 applies whether separation is performed online or offline.
 
+Concretely, and targeting \emph{audience-side} recordings degraded by crowd
+noise and venue acoustics, this chapter contributes:
+\begin{itemize}
+    \item \textbf{CrowdioSet}, an \emph{audience} noise dataset: a curated
+    selection of real ambience and event recordings from Freesound
+    \citep{anastasopoulou2025freesound} (\textbf{RO6}), together with a
+    generative pipeline that produces synthetic \emph{sing-alongs} by
+    zero-shot singing-voice conversion of the vocals in existing datasets
+    (\textbf{RO5});
+    \item \textbf{PaRIRset}, a stereo \acrshort{RIR} dataset measured across
+    $40$ professional concert venues with a microphone array, the first captured
+    in real venues through their \acrshort{PA} systems (\textbf{RO7}); and
+    \item a \emph{Live} \acrshort{MSS} baseline, obtained by re-training the
+    open-source SCNet model \citep{tong2024scnet} on studio data augmented with
+    both datasets;
+    \item the formulation of \emph{Live} \acrshort{MSS} as a new \acrshort{MIR}
+    task, together with a reproducible recipe for synthesising its training and
+    evaluation data from studio corpora;
+    \item We release the datasets, code, model weights and audio examples publicly.
+\end{itemize}
+
 
 \begin{figure}[htbp]
   \centering
@@ -63,29 +84,6 @@ applies whether separation is performed online or offline.
   \label{fig:mss_paradigm}
 \end{figure}
 
-\vspace{1cm}
-
-Concretely, and targeting \emph{audience-side} recordings degraded by crowd
-noise and venue acoustics, this chapter contributes:
-\begin{itemize}
-    \item the formulation of \emph{Live} \acrshort{MSS} as a new \acrshort{MIR}
-    task, together with a reproducible recipe for synthesising its training and
-    evaluation data from studio corpora;
-    \item \textbf{CrowdioSet}, an \emph{audience} noise dataset: a curated
-    selection of real ambience and event recordings from Freesound
-    \citep{anastasopoulou2025freesound} (\textbf{RO6}), together with a
-    generative pipeline that produces synthetic \emph{sing-alongs} by
-    zero-shot singing-voice conversion of the vocals in existing datasets
-    (\textbf{RO5});
-    \item \textbf{PaRIRset}, a stereo \acrshort{RIR} dataset measured across
-    $40$ professional concert venues with a microphone array, the first captured
-    in real venues through their \acrshort{PA} systems (\textbf{RO7}); and
-    \item a \emph{Live} \acrshort{MSS} baseline, obtained by re-training the
-    open-source SCNet model \citep{tong2024scnet} on studio data augmented with
-    both datasets.
-\end{itemize}
-We release the datasets, code, model weights and audio examples
-publicly.
 
 The rest of the chapter is organised as follows. Section~\ref{sec:sota_mss}
 reviews the background specific to \acrshort{MSS}. Sections~\ref{sec:crowdioset}
@@ -379,7 +377,7 @@ what we want to convolve our sources with.
 
 \begin{figure}[hbp]
   \centering
-  \includegraphics[trim={2cm 9.1cm 2cm 2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/sestup_picture.png}
+  \includegraphics[trim={2cm 9.1cm 2cm 2cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/setup_picture.jpg}
   \caption{PaRIRset recording setup at the \acrfull{FOH} position, next to the
   sound engineer's console.}
   \label{fig:mss_setup}
@@ -683,7 +681,8 @@ ahead in the \textbf{rev} column).
 \begin{figure}[htbp]
   \centering
   \includegraphics[trim={0.1cm 1.0cm 0.1cm 0.1cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/obj1_heatmap.pdf}
-  \caption{Mean \acrshort{SDR} (dB) for all sources combined (top) and
+  \caption[Mean \acrshort{SDR} (dB) for all sources combined (top) and
+  \emph{vocals} isolation (bottom).]{Mean \acrshort{SDR} (dB) for all sources combined (top) and
   \emph{vocals} isolation (bottom). Rows correspond to \acrshort{MSS} models, columns correspond to
   evaluation conditions. $^\dagger$\acrshort{SDR} for the diffusion-based SAM Audio should be read with
 caution, as its outputs may be sample-misaligned.}
@@ -715,8 +714,8 @@ that the improvements are perceptually real.
 \begin{figure}[htbp]
   \centering
   \includegraphics[trim={1.1cm 0.1cm 0cm 0.1cm}, clip, width=0.8\columnwidth]{ch05_mss/figures/fig2b_v3_category_votes_horizontal.pdf}
-  \caption{Subjective AB results comparing our \textbf{noisy} model against the
-  baselines: \textbf{clean} for \emph{vocals} separation and SAM Audio for
+  \caption{Subjective AB results comparing our \textbf{noisy} model against the two
+  baselines: \textbf{clean} for \emph{vocals} separation and \textbf{SAM Audio} for
   \emph{audience} separation.}
   \label{fig:mss_subjective}
 \end{figure}

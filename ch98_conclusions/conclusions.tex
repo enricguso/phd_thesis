@@ -168,22 +168,22 @@ The premise of Chapter~\ref{ch04_mbrirs} --- that the realism of synthetic
 generalisation to real rooms --- has since been taken up, and largely confirmed,
 by industry. The mesh-based responses we used come from SoundSpaces
 \citep{chen2022soundspaces}, a simulator developed at Meta; and Treble
-Technologies has released a commercial wave-based simulation \acrshort{SDK}
+Technologies has released a commercial wave-based simulation Software Development Kit (SDK)
 together with large, physically accurate \acrshort{RIR} datasets built on exactly
 the same rationale \citep{mullins2025treble10}. Most tellingly, a Treble study
 reproduced our experiment at a larger scale and in the multichannel far-field
 setting: training the same enhancement model on \acrshortpl{RIR} of increasing
 simulation fidelity, they report up to a $38\%$ relative reduction in word error
 rate on \emph{measured} data for the high-fidelity set
-\citep{gotz2026improving}. Both works cite \acrshort{MB-RIRs}, placing it in
+\citep{gotz2026improving}. Both works cite MB-RIRs, placing it in
 the lineage of increasing \acrshort{RIR} realism alongside GWA
 \citep{tang2022gwa} and other efforts.
 
-Seen in this light, our contribution was less a wholly novel simulator than an
+In that context, our contribution was less a whole novel simulator and more of an
 ecologically valid \acrshort{RIR} set made openly available, so that
 compute-constrained groups could benefit from the same idea that industry was
-pursuing behind commercial \acrshortpl{SDK}. Made freely downloadable,
-\acrshort{MB-RIRs} has since become the most downloaded resource in the GuestXR
+pursuing behind commercial SDKs. Made freely downloadable,
+MB-RIRs has since become the most downloaded resource in the GuestXR
 project's Zenodo repository, which we take as a sign that open data of this kind
 meets a real need. The comparison with Treble is also instructive about our own
 limitations: their focus on far-field, multichannel conditions is not incidental
@@ -202,10 +202,10 @@ time it sat outside our usual audio venues, having been presented in the
 computer-graphics community. Rather than a mere oversight, the growing interest
 in GWA reinforces our reading that such datasets are valuable: the Treble
 challenge mixes Treble and GWA rooms \citep{lin2025generative}, and the
-multichannel study lists GWA beside \acrshort{MB-RIRs} \citep{gotz2026improving}.
+multichannel study lists GWA beside MB-RIRs \citep{gotz2026improving}.
 We see the most promising direction not as choosing between paradigms but as
 \emph{combining} them --- for instance, the roughly $20{,}000$ mesh-based rooms of
-GWA together with the $60{,}000$ \acrshort{ISM} rooms of \acrshort{MB-RIRs} ---
+GWA together with the $60{,}000$ \acrshort{ISM} rooms of MB-RIRs ---
 pairing geometric realism with sheer variety, and we encourage the community to
 explore it.
 
@@ -221,7 +221,7 @@ problem from the estimation side, inferring \acrshortpl{RIR} or their parameters
 blindly from reverberant speech \citep{gotz2026matching, wang2026recrir}.
 Together with the industrial efforts above, this activity confirms that the
 realism and coverage of room-acoustic data --- the very concern of
-Chapter~\ref{ch04_mbrirs} --- is now widely recognised as a problem worth
+Chapter~\ref{ch04_mbrirs} --- is widely recognised as a problem worth
 addressing.
 
 \subsection{Music source separation}
@@ -231,13 +231,13 @@ Being the most recent of the three studies, our work on live \acrshort{MSS}
 (Chapter~\ref{ch05_mss}) has the least state of the art to catch up with. What
 has been research during this thesis is largely orthogonal to our contribution, which concerns
 \emph{data} rather than architecture. On the modelling side, band-split
-\acrshort{RoPE} transformers have consolidated their lead on studio benchmarks
+Rotary Positional Embedding (RoPE) transformers have consolidated their lead on studio benchmarks
 \citep{lu2024bsroformer}, and lightweight variants now bring comparable quality
 to real-time and embedded settings --- the low-latency line we distinguished from
 our own use of \emph{live} in Section~\ref{sec:sota_mss}. Because our proposal is
 a training and evaluation recipe rather than a network, these advances are
 complementary: any of these separators could be trained on CrowdioSet and
-PaRIRset in place of the \acrshort{SCNet} backbone we used.
+PaRIRset in place of the SCNet backbone we used.
 
 More closely related in spirit is the emergence of Music Source Restoration
 \citep{zang2025music}, run as an \acrshort{ICASSP}~2026 challenge, which likewise
@@ -316,12 +316,10 @@ and still never learn to cook well.
 
 None of this is a criticism of these methods, several of which are genuinely
 sophisticated; it is an encouragement to spend as much care on the ecological
-validity of evaluation data as on the models themselves. Stating which
-distribution the data is meant to represent, and how far it actually does, would
-sharpen these claims, exactly as it sharpened the questions we asked about
-hearing aids, reverberation and live music. It is, we believe, the most
+validity of training and ---more importantly--- evaluation data as on the models themselves. It is, we believe, the most
 transferable recommendation of this thesis.
 
+\vspace{1cm}
 
 \section{Future directions and final thoughts}
 \label{sec:conc_future}
@@ -329,7 +327,7 @@ transferable recommendation of this thesis.
 In light of the discussion above, several next steps follow naturally.
 
 \paragraph{Growing PaRIRset, CrowdioSet and its sing-alongs.}
-CrowdioSet has proven surprisingly effective for the modest effort we invested in
+CrowdioSet has proven surprisingly effective for the modest effort invested in
 it, which makes it the natural place to build. The obvious first step is to
 enlarge it and, above all, to improve the synthetic sing-alongs, whose isolation
 remains its weakest point (\textbf{RO5}). Starting from clean \emph{dry} vocal
@@ -355,12 +353,14 @@ guiding principle --- ``data, not architecture'' --- is exactly ours. We see a
 direct application to \acrshort{RIR}-based training: a speech-enhancement or
 separation model could be pre-trained on abundant synthetic responses ---
 combining the mesh-based rooms of GWA \citep{tang2022gwa} with the \acrshort{ISM}
-rooms of \acrshort{MB-RIRs} (Chapter~\ref{ch04_mbrirs}) --- and then refined with
+rooms of MB-RIRs (Chapter~\ref{ch04_mbrirs}) --- and then refined with
 a reinforcement-learning stage rewarded on the smaller set of \emph{real} concert
 measurements in PaRIRset. This would let a large synthetic corpus supply
 coverage while a handful of real measurements supply the final, ecologically
 valid calibration --- turning the synthetic-versus-real trade-off of this thesis
 into a pipeline rather than a choice.
+
+\vspace{1cm}
 
 \paragraph{A discarded chapter: ecologically valid audio doubling.}
 The initial plan for this thesis included a fourth study, on \emph{automatic
@@ -382,6 +382,8 @@ pre-training, then align the model with our small real set through reinforcement
 learning. Unlike most generative tools now reaching the market, such a system
 would \emph{assist} musicians rather than replace them, helping them widen a
 performance they themselves played.
+
+\vspace{1cm}
 
 We began this thesis by arguing that, when scaling is out of reach, the fidelity
 of the data becomes a productive vector for improvement. We have shown this in

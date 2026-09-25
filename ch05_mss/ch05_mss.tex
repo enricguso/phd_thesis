@@ -53,19 +53,19 @@ noise and venue acoustics, this chapter contributes:
 \begin{itemize}
     \item \textbf{CrowdioSet}, an \emph{audience} noise dataset: a curated
     selection of real ambience and event recordings from Freesound
-    \citep{anastasopoulou2025freesound} (\textbf{RO6}), together with a
+    \citep{anastasopoulou2025freesound} (\RO{6}), together with a
     generative pipeline that produces synthetic \emph{sing-alongs} by
     zero-shot singing-voice conversion of the vocals in existing datasets
-    (\textbf{RO5});
+    (\RO{5});
     \item \textbf{PaRIRset}, a stereo \acrshort{RIR} dataset measured across
     $40$ professional concert venues with a microphone array, the first captured
-    in real venues through their \acrshort{PA} systems (\textbf{RO7}); and
+    in real venues through their \acrshort{PA} systems (\RO{7}); and
     \item a \emph{Live} \acrshort{MSS} baseline, obtained by re-training the
     open-source SCNet model \citep{tong2024scnet} on studio data augmented with
     both datasets;
     \item the formulation of \emph{Live} \acrshort{MSS} as a new \acrshort{MIR}
     task, together with a reproducible recipe for synthesising its training and
-    evaluation data from studio corpora;
+    evaluation data;
     \item We release the datasets, code, model weights and audio examples publicly.
 \end{itemize}
 
@@ -140,17 +140,15 @@ a use case that extends naturally to the live setting.
 \label{sec:crowdioset}
 
 The first ingredient of a live recording that a studio dataset lacks is the
-\emph{audience}. Through informal listening to concert recordings made from the
-crowd, we identified three categories of audience sound: \emph{ambiences} --- the
+\emph{audience}. Through informal listening, we identified three categories of audience sound: \emph{ambiences} --- the
 room tone and background chatter that are almost always present; \emph{events}
 --- punctual reactions such as applause, cheering and shouts of approval or
 disapproval; and \emph{sing-alongs} --- passages where the crowd sings the lyrics
 together with the performer. CrowdioSet accordingly has two parts: a curated
 selection of real Freesound recordings covering \emph{ambiences} and
 \emph{events}, which is the core of our contribution and directly addresses
-\textbf{RO6}, and a preliminary generative pipeline for \emph{sing-alongs}
-(\textbf{RO5}), released as a first step towards the hardest of the three
-categories (Section~\ref{sec:mss_limitations}).
+\RO{6}, and a preliminary generative pipeline for \emph{sing-alongs}
+(\RO{5}), released as a first step (Section~\ref{sec:mss_limitations}).
 
 \subsection{Ambiences and events}
 \label{ssec:mss_ambiences}
@@ -208,7 +206,7 @@ crowd singing along, through the pipeline of Figure~\ref{fig:mss_pipeline}. For
 each of the $N = 384$ \emph{vocals} stems in MUSDB18-HQ and MOISESDB we combine
 two techniques. The first is the Antares AVOX Choir plugin, a choir effect
 (vibrato, detuning and delay) in its $32$-voice configuration. The second, and
-the core of \textbf{RO5}, uses a pool of $I = 200$ vocal samples retrieved from
+the core of \RO{5}, uses a pool of $I = 200$ vocal samples retrieved from
 Freesound (queries \emph{a cappella} and \emph{vocals}) to convert each vocals
 stem with the pre-trained zero-shot voice-conversion model HQ-SVC
 \citep{bai2026hq}: half of the conversions preserve the original $f_0$ contour
@@ -287,7 +285,7 @@ frontfill loudspeakers, as depicted in Figure~\ref{fig:mss_pa}.
 Because no \acrshort{SE} dataset contains real \acrshortpl{RIR} from concert venues, we therefore measured our own set of responses, the \emph{Public Address Room Impulse Response Set}
 (PaRIRset) --- to our knowledge, the first dataset of real \acrshortpl{RIR}
 captured in professional concert venues through their \acrshort{PA} systems, and
-the contribution behind \textbf{RO7}.
+the contribution behind \RO{7}.
 
 PaRIRset covers $40$ professional concert venues across a wide geographical area
 (Figure~\ref{fig:mss_map}) and, more importantly, a wide range of \acrshort{PA}
@@ -422,7 +420,7 @@ Second, the four strategies differ little from one another, which suggests that 
 responses matters more than the particular way they are augmented. Third, 
 $D_3$ (the beamformed virtual microphones) improves significantly over the
 already strong \acrshort{SE}-only baseline (paired $t$-test, $p = 0.027$) 
-supporting the premise behind \textbf{RO7}. A
+supporting the premise behind \RO{7}. A
 plausible reason for this is that its randomly oriented polar patterns inject directional
 diversity that the raw capsule signals of $D_2$ do not, though our evidence does
 not let us claim this conclusively. Conversely, $D_4$ ($\text{PA}_{\text{permute}}$)
@@ -755,15 +753,15 @@ studio datasets.
 
 Concretely, we addressed the three research objectives set out for this chapter:
 \begin{itemize}
-    \item \textbf{RO5} --- generating synthetic audiences that sing along --- was
-    preliminarly addressed through the voice-conversion pipeline of CrowdioSet, which turns
+    \item \RO{5} --- generating synthetic audiences that sing along --- was
+    preliminarily addressed through the voice-conversion pipeline of CrowdioSet, which turns
     the vocals of existing datasets into humanised, timbrally diverse crowd
     sing-alongs;
-    \item \textbf{RO6} --- curating audience noise from freely available
+    \item \RO{6} --- curating audience noise from freely available
     recordings --- was addressed by assembling the ambiences and events of
     CrowdioSet from Freesound, with documented licences and reproducible splits;
     and
-    \item \textbf{RO7} --- capturing impulse responses in real concert venues ---
+    \item \RO{7} --- capturing impulse responses in real concert venues ---
     was addressed with PaRIRset, the first set of stereo \acrshortpl{RIR}
     measured across $40$ concert venues through their \acrshort{PA} systems.
 \end{itemize}

@@ -7,7 +7,7 @@
 \vspace{3cm}
 
 This dissertation has pursued a single idea across three application fields:
-that the \emph{ecological validity} of the data used to train and evaluate \acrshortpl{DNN} (i.e. how faithfully it reflects the conditions of real use) is
+that the \emph{ecological validity} of the data used to train and evaluate \acrshortpl{DNN} (i.e.\ how faithfully it reflects the conditions of real use) is
 as decisive as the models themselves, and sometimes a more accessible lever for
 improving them. Chapter~\ref{ch03_hearing} applied this idea to the
 \emph{evaluation} of \acrshortpl{HA}, Chapter~\ref{ch04_mbrirs} to the
@@ -15,7 +15,7 @@ improving them. Chapter~\ref{ch03_hearing} applied this idea to the
 Chapter~\ref{ch05_mss} to both evaluation and training, in the newly framed task of Live Music Source
 Separation. 
 
-This chapter summarizes the contributions across the three research fields and the
+This chapter summarises the contributions across the three research fields and the
 seven Research Objectives (RO) they addressed
 (Section~\ref{sec:outline}). Because in the \acrshort{MIR} field a lot can change during the course of four years, we then update the changes in the \acrshort{SOTA} for each published work to discuss how the field has moved since:
 which of our intuitions proved well-grounded, where industry has converged on the same
@@ -46,12 +46,12 @@ them on real devices, and compare the devices' own processing against
 \acrshort{DNN}-based enhancement under conditions closer to real use than the
 stationary laboratory tests devices are usually certified with.
 \begin{itemize}
-    \item[\textbf{RO1}] \emph{Expose the performance gap between conventional
+    \item[\RO{1}] \emph{Expose the performance gap between conventional
     \acrshort{HA} enhancement and \acrshort{DNN}-based approaches in
     ecologically valid, complex acoustic scenes.} $\rightarrow$ \textit{Addressed}
     $\rightarrow$ the evaluation revealed a clear gap, with conventional
     enhancement occasionally performing worse than no processing at all.
-    \item[\textbf{RO2}] \emph{Investigate the potential of \acrshort{DNN}-based
+    \item[\RO{2}] \emph{Investigate the potential of \acrshort{DNN}-based
     \acrshort{SE} to outperform conventional \acrshort{HA} processing.}
     $\rightarrow$ \textit{Addressed affirmatively} $\rightarrow$ \acrshortpl{DNN}
     substantially improved denoising and objective intelligibility, and the
@@ -69,12 +69,12 @@ Within the GuestXR project, we asked which properties of a synthetic
 \acrshort{RIR} drive generalisation to real rooms, training one model per
 dataset on six controlled \acrshort{RIR} sets.
 \begin{itemize}
-    \item[\textbf{RO3}] \emph{Determine whether frequency-dependent absorption
+    \item[\RO{3}] \emph{Determine whether frequency-dependent absorption
     and source or receiver directivity improve generalisation to real
     acoustics.} $\rightarrow$ \textit{Addressed with a mixed result}
     $\rightarrow$ frequency-dependent absorption brings the clearest benefit,
     whereas the evidence on source and receiver directivity was inconclusive.
-    \item[\textbf{RO4}] \emph{Determine whether fewer but geometrically more
+    \item[\RO{4}] \emph{Determine whether fewer but geometrically more
     realistic mesh-based \acrshortpl{RIR} are preferable to abundant \acrfull{ISM}
     ones.} $\rightarrow$ \textit{Addressed with a negative result} $\rightarrow$
     mesh-based realism did not compensate for a smaller variety and quantity of
@@ -89,16 +89,16 @@ More in line with the research of the \acrshort{MTG}, we formulated \emph{Live}
 \acrshort{MSS} (i.e.\ separating music recorded from within a live audience) and
 made it trainable by synthesising live conditions on top of studio data.
 \begin{itemize}
-    \item[\textbf{RO5}] \emph{Generate synthetic audiences that sing along,
+    \item[\RO{5}] \emph{Generate synthetic audiences that sing along,
     through singing-voice conversion.} $\rightarrow$ \textit{Addressed as a first
     step} $\rightarrow$ the voice-conversion pipeline produces usable
     sing-alongs, though reliably isolating them remains difficult and is left as
     a limitation.
-    \item[\textbf{RO6}] \emph{Curate audience noise from freely available
+    \item[\RO{6}] \emph{Curate audience noise from freely available
     recordings.} $\rightarrow$ \textit{Addressed affirmatively} $\rightarrow$ the
     curated ambiences and events of CrowdioSet improve separation on live
     recordings while barely affecting clean studio performance.
-    \item[\textbf{RO7}] \emph{Determine whether impulse responses measured in
+    \item[\RO{7}] \emph{Determine whether impulse responses measured in
     real concert venues improve over general-purpose ones.} $\rightarrow$
     \textit{Addressed affirmatively} $\rightarrow$ PaRIRset yielded statistically
     significant gains over the \acrshort{SE} \acrshortpl{RIR} of
@@ -190,10 +190,10 @@ limitations: their focus on far-field, multichannel conditions is not incidental
 --- it is there, rather than in our near-field monaural setup, that the gap
 between simulation methods is widest, which may be why the source- and
 receiver-directivity benefits we looked for turned out inconclusive
-(\textbf{RO3}). The effect we sought was likely clearest precisely where we did
+(\RO{3}). The effect we sought was likely clearest precisely where we did
 not look.
 
-A related point concerns \textbf{RO4}. We found that abundant \acrshort{ISM}
+A related point concerns \RO{4}. We found that abundant \acrshort{ISM}
 rooms outperformed fewer mesh-based ones, but the mesh-based set available to us
 (SoundSpaces) was also the least varied, confounding realism with diversity. The
 natural way to disentangle the two is a mesh-based set that is itself large and
@@ -330,7 +330,7 @@ In light of the discussion above, several next steps follow naturally.
 CrowdioSet has proven surprisingly effective for the modest effort invested in
 it, which makes it the natural place to build. The obvious first step is to
 enlarge it and, above all, to improve the synthetic sing-alongs, whose isolation
-remains its weakest point (\textbf{RO5}). Starting from clean \emph{dry} vocal
+remains its weakest point (\RO{5}). Starting from clean \emph{dry} vocal
 stems, such as those released for Music Source Restoration
 \citep{zang2025music}, would remove the processing our current pipeline inherits
 from already-mixed vocals. So far we have been unable to generate convincing

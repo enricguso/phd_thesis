@@ -10,7 +10,7 @@ Scaling the amount and variety of data has produced models that generalise bette
 Chapter~\ref{ch02_sota} \citep{richter2023speech, kadiouglu2020empirical}, and
 extending speech and noise material to a $48\,\text{kHz}$ sampling rate has
 improved results further \citep{schroter2023deepfilternet3, zhang2023toward,
-zhang2024urgent}. Again, the standard recipe for injecting acoustic diversity is to convolve clean speech with a \acrshort{RIR}, placing it in a variety of
+zhang2024urgent}. Again, the standard recipe for injecting acoustic diversity is to convolve clean speech with an \acrshort{RIR}, placing it in a variety of
 simulated rooms. The scaling and development of \acrshort{RIR} datasets themselves, however, have not kept pace. As noted in the
 dataset review of Chapter~\ref{ch02_sota}, most \acrshort{SOTA} systems still train on the \acrshortpl{RIR} of the early \acrshort{DNS} challenges \citep{ko2017study}: shoebox rooms rendered with the \acrfull{ISM}
 (Section~\ref{sec:bg_rir_ism}), at a $16\,\text{kHz}$ sampling rate, and with a
@@ -22,7 +22,7 @@ Increasing the realism of the \acrshortpl{RIR}
 has already been shown to help related tasks such as \acrshort{ASR} for
 augmented-reality glasses \citep{arakawa2024quantifying} or keyword spotting
 \citep{bezzam2020study}, even when applied only as a post-processing
-augmentation \citep{ratnarajah2021ts}, so the same should hold for monaural general-purpose \acrshort{SE}. This raises the question of \emph{which} properties of a synthetic \acrshort{RIR} actually matter for \acrshort{SE} generalisation to real acoustics (\textbf{RO3}).
+augmentation \citep{ratnarajah2021ts}, so the same should hold for monaural general-purpose \acrshort{SE}. This raises the question of \emph{which} properties of a synthetic \acrshort{RIR} actually matter for \acrshort{SE} generalisation to real acoustics (\RO{3}).
 
 Other recent efforts point in the same direction: the URGENT challenge \citep{zhang2024urgent} pushes \acrshort{SE}
 towards \emph{universality} and \emph{robustness}, bringing together
@@ -40,10 +40,10 @@ positions within each room. However, it
 spans comparatively few distinct rooms, and how models trained on its \acrshortpl{RIR} perform on the \acrshort{SE} task remains unclear. GWA~\citep{tang2022gwa} is likewise mesh-based and does report
 dereverberation and separation experiments, but only uses intrusive metrics on a very limited number of rooms. Whether such geometrically realistic
 yet scarce mesh-based \acrshortpl{RIR} are preferable to abundant but simpler
-shoebox ones is still not well understood (\textbf{RO4}).
+shoebox ones is still not well understood (\RO{4}).
 
-To tackle both \textbf{RO3} and \textbf{RO4}, 
-we evaluate six models trained on the same speech and noise datasets but on six different \acrshort{RIR} datasets (two baselines, three of our own making and one set of SoundSpaces), with the intention of answering whether models benefit from using RIRs with frequency dependent (multiband) absorption coefficients, whether modeling the receiver directivity or the source directivity helps to generalize in monaural models, and whether mesh-based modeling might be helpful or more suitable than \acrshort{ISM}~\citep{bezzam2020study}. To this end, we propose an evaluation of the following RIRs:
+To tackle both \RO{3} and \RO{4}, 
+we evaluate six models trained on the same speech and noise datasets but on six different \acrshort{RIR} datasets (two baselines, three of our own making and one set of SoundSpaces), with the intention of answering whether models benefit from using RIRs with frequency dependent (multiband) absorption coefficients, whether modeling the receiver directivity or the source directivity helps to generalise in monaural models, and whether mesh-based modeling might be helpful or more suitable than \acrshort{ISM}~\citep{bezzam2020study}. To this end, we propose an evaluation of the following RIRs:
 
 \begin{itemize}
     \item  \textbf{DNS5}: the \acrfull{SOTA} baseline from \citet{ko2017study}.
@@ -57,7 +57,7 @@ we evaluate six models trained on the same speech and noise datasets but on six 
 
 
 Keeping the speech, the noise and the room geometries fixed,
-we train one \acrshort{SE} model on each one of the RIR datasets (which are summarized in Table \ref{tab:ch4_datasets}) and evaluate it on \emph{real} \acrshortpl{RIR}, both objectively and through a listening test. We find that
+we train one \acrshort{SE} model on each one of the RIR datasets (which are summarised in Table \ref{tab:ch4_datasets}) and evaluate it on \emph{real} \acrshortpl{RIR}, both objectively and through a listening test. We find that
 frequency-dependent absorption is always a beneficial feature, and we
 release the resulting multiband \acrshort{RIR} dataset, \emph{MB-RIRs}, as well as the multiband with source and receiver directivities, \emph{SRC+REC+MB-RIRs}, as freely available research
 materials\footnote{\url{https://doi.org/10.5281/zenodo.15773093}}.
@@ -348,7 +348,7 @@ $103$ scanned scenes, whereas our \acrshort{ISM}-based sets draw tens of
 thousands of independent room configurations, sampling a far wider range of
 sizes, geometries and per-band reverberation times. Whether the geometric
 realism of a mesh outweighs this loss of acoustic coverage is precisely 
-\textbf{RO4}.
+\RO{4}.
 
 \section{Experimental setup}
 \label{sec:mbrirs_eval}
@@ -371,7 +371,7 @@ chosen because it combines state-of-the-art performance with an open-source,
 real-time implementation --- the same properties that make it a plausible
 candidate for deployment. All six models share its default hyperparameters,
 except for a smaller maximum batch size of $38$ to fit our \acrshortpl{GPU} and
-a reverberation probability $p_{\text{reverb}} = 1$, so that a \acrshort{RIR} is
+a reverberation probability $p_{\text{reverb}} = 1$, so that an \acrshort{RIR} is
 applied to every utterance. Each model is trained on its own dataset for $117$
 to $120$ epochs, depending on early stopping.
 
@@ -624,10 +624,10 @@ we cannot claim a clear improvement.
 
 The results recommend training \acrshort{SE} models on varied,
 high-sampling-rate multiband \acrshortpl{RIR}, optionally adding source and
-receiver directivity depending on the use case. This answers \textbf{RO3} in the
+receiver directivity depending on the use case. This answers \RO{3} in the
 affirmative for frequency-dependent absorption --- which benefits modern
 \acrshort{SE} as it had benefited keyword spotting --- and more cautiously for
-directivity, which does no harm but shows no clear gain. It answers \textbf{RO4}
+directivity, which does no harm but shows no clear gain. It answers \RO{4}
 in the negative: geometric realism does not, on its own, compensate for a loss of
 room diversity, as the amount and variety of \acrshortpl{RIR} prove as important
 as the complexity of each one. We release the two most useful sets, MB and
@@ -644,7 +644,7 @@ has answered it by training a state-of-the-art, real-time model
 (DeepFilterNet3) on six \acrshort{RIR} datasets that differ in a single,
 controlled feature at a time.
 
-Regarding \textbf{RO3}, extending the \acrshortpl{RIR} with
+Regarding \RO{3}, extending the \acrshortpl{RIR} with
 frequency-dependent absorption coefficients --- an idea previously shown to help
 keyword spotting --- also benefits modern \acrshort{SE}, and is the change that
 brings the clearest and most consistent improvement across objective and
@@ -652,20 +652,19 @@ subjective evaluation. Extending the sampling rate from $16$ to $48\,\text{kHz}$
 already helps on its own. Source and receiver directivity, by contrast, neither
 degrade performance nor yield a clear gain: they may help, but on our evidence
 we cannot claim a definite improvement, and the hypothesis that receiver
-directivity would benefit the head-worn \emph{headset} recordings was not borne
-out.
+directivity would benefit the head-worn \emph{headset} recordings was not corroborated.
 
-Regarding \textbf{RO4}, geometric realism does not, on its own, compensate for a
+Regarding \RO{4}, geometric realism does not, on its own, compensate for a
 smaller variety and quantity of rooms: the mesh-based SoundSpaces set, despite
 modelling complex geometries, did not outperform the far more numerous
 \acrshort{ISM} shoebox rooms, and was statistically indistinguishable from the
 baseline. The amount and variability of the \acrshortpl{RIR} thus prove as
 important as the complexity of each individual response: for the ecological
-validity of a \acrshort{RIR} dataset, \emph{coverage} of the space of real rooms
+validity of an \acrshort{RIR} dataset, \emph{coverage} of the space of real rooms
 weighs as heavily as the physical fidelity of any single response --- a theme
 that runs through this thesis.
 
-One limitation of this answer to \textbf{RO4} is that the mesh-based condition
+One limitation of this answer to \RO{4} is that the mesh-based condition
 confounds two factors: SoundSpaces is at once geometrically realistic and
 limited to few rooms, so its poor performance cannot be attributed to the
 mesh-based rendering alone. Disentangling them would require a mesh-based

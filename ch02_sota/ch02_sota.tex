@@ -122,7 +122,7 @@ per filter; stacking many filters per layer and many layers produces a
 hierarchy of feature maps of increasing abstraction. While the
 filters learned in the first layers of an image \acrshort{CNN} resemble
 Gabor functions tuned to particularly oriented edge detectors
-(Figure~\ref{fig:cnn}); in music, the analogous  filters
+(Figure~\ref{fig:cnn}); in music, the analogous filters
 tend to specialise instead on timbre or rhythm. Deeper layers compose these primitives into progressively complex detectors
 for more concrete concepts --- particular colours or shapes
 in vision, or higher-level acoustic patterns in audio.
@@ -322,7 +322,7 @@ sample.
 
 \textbf{Temporal convolutional networks ---} A third strategy keeps the
 convolutional machinery of Section~\ref{sec:bg_dl_advent} but adapts it to
-sequences. Temporal Concolutional Networks (TCNs) are one-dimensional \acrshort{CNN}s built from
+sequences. Temporal Convolutional Networks (TCNs) are one-dimensional \acrshort{CNN}s built from
 \emph{dilated causal} convolutions stacked in residual blocks: \emph{causal}, because each output depends only on present and past inputs --- suiting
 streaming and real-time use; and \emph{dilated}, because inserting gaps
 between the kernel taps expands the receptive field \emph{exponentially}
@@ -418,7 +418,7 @@ Section~\ref{sec:bg_dl_temporal}, this section briefly outlines the remaining
 generative families at the level of detail needed to follow the rest of
 the thesis.
 
-\textbf{GANs ---} A \acrfull{GAN} from~\cite{goodfellow2014generative} casts
+\textbf{GANs ---} A \acrfull{GAN} from~\citep{goodfellow2014generative} casts
 generation as a two-player game: a \emph{generator} maps random noise to
 samples, while a \emph{discriminator} learns to tell real data from the
 generator's output. The two are trained adversarially --- the generator
@@ -483,7 +483,7 @@ sample. This yields high-quality, diverse samples, but at the cost of many
 sequential denoising steps. Running the process not on the raw signal but
 in the compressed latent space of an autoencoder, and parametrising the
 denoiser with a Transformer, gives \emph{latent diffusion} models --- the
-combination behind recent text-to-audio systems such as~\cite{evans2025stable,nistal2024improving}.
+combination behind recent text-to-audio systems such as~\citep{evans2025stable,nistal2024improving}.
 %TODO: add sentence for bit of notion of the solvers (ODE SDE etc)
 
 \textbf{Flow matching ---}~\citep{lipman2022flow}
@@ -634,7 +634,7 @@ and negative towards the right, encoding left--right direction as a single
 \emph{signed} amplitude.
 
 \textbf{\acrshort{ITD} and \acrshort{ILD}.}
-\cite{wendt1964richtungshoren} carried out careful
+\citet{wendt1964richtungshoren} carried out careful
 listening experiments on two-channel stereophony, characterising how time
 and level differences between the loudspeakers map onto the perceived
 direction of a phantom source. These cues reflect the classical duplex
@@ -697,23 +697,13 @@ $[\,W, X, Y, Z\,]$ and scales $W$ by $1/\sqrt{2}$; the conventions differ
 only by a permutation and constant factors.)
 
 
-\emph{A-format versus B-format.} The same B-format can be captured
-acoustically. Ideally it would be recorded with one coincident
-omnidirectional microphone (for $W$) and three coincident figure-of-eight
-microphones aligned with the axes (for $X, Y, Z$). In practice this is
-approximated by a compact tetrahedral array of four cardioid capsules,
-whose raw signals form the \emph{A-format}
-$\mathbf{a} = [\,a_1, a_2, a_3, a_4\,]^\top$; B-format is then obtained
-through a fixed linear transform --- sums yield the omni $W$, differences
-yield the dipoles --- $\mathbf{b} = \mathbf{M}\,\mathbf{a}$, followed by a
-frequency correction for the finite capsule spacing. A-format is thus what
-the microphone records, whereas B-format is the layout-independent
-representation we work with. A-format is encountered only when physically
-recording with an Ambisonics microphone, and even then only as an internal
-intermediate; a large share of today's Ambisonics content is instead
-\emph{encoded} synthetically --- panned, simulated, or rendered --- straight into B-format. We introduce
-it here mainly to make the step from \acrshort{MS} recording to Ambisonics
-concrete.
+\emph{A-format versus B-format.} B-format can also be captured acoustically:
+a compact tetrahedral array of four cardioid capsules yields the raw
+\emph{A-format}, which a fixed linear transform converts into B-format. A-format
+is thus what the microphone records, whereas B-format is the
+layout-independent representation we work with; much of today's Ambisonics
+content is instead \emph{encoded} synthetically --- panned, simulated or
+rendered --- straight into B-format.
 
 
 
@@ -794,14 +784,11 @@ whose decoding matrix $\mathbf{D}$ is built from the loudspeaker directions
 (the basic decoder takes $\mathbf{D}=\mathbf{Y}^{+}$, the pseudo-inverse of
 the spherical-harmonic sampling matrix). Binaural rendering is simply
 the case $L=2$, where the rows of $\mathbf{D}$ are the left- and right-ear
-\acrshort{HRTF}s expressed in the \acrshort{SH} domain. This basic decoding works well only at low frequencies;
-Daniel therefore robustifies the decoder by weighting the \acrshort{SH}s so
-that the secondary lobes of the virtual microphones are attenuated
-($\mathrm{max}\,r_E$) or suppressed (the in-phase decoder). Tapering the \acrshort{SH} orders in this way is the
-angular counterpart of \emph{windowing} a signal before a Fourier
-analysis: smoothing a truncated expansion lowers its side lobes (here, the
-off-axis leakage of the virtual microphones) at the price of a wider main
-lobe (a loss of angular resolution).
+\acrshort{HRTF}s expressed in the \acrshort{SH} domain. This basic decoding works well only at low frequencies; Daniel therefore
+robustifies the decoder by weighting the \acrshort{SH}s so that the secondary
+lobes of the virtual microphones are attenuated ($\mathrm{max}\,r_E$) or
+suppressed (the in-phase decoder), trading angular resolution for reduced
+off-axis leakage.
 
 In \citet{avni2010sound}, \acrshort{HRTF}s are represented in the
 \acrshort{SH} domain, enabling interpolation between their discrete
@@ -812,31 +799,16 @@ decoding to an ideal virtual layout and then rendering those signals with the av
 
 \vspace{0.8cm}
 
-\textbf{Ambisonics to Binaural}. The remaining developments concern improving binaural rendering of 
-limited-order Ambisonics. \citet{bernschutz2013spherical} address low-frequency group
-delay in \acrshort{HRIR} databases by replacing the low band with a
-synthetic spherical model called \acrfull{LFE}, while
-\citet{bernschutz2014binaural} show that pairing high-order \acrshort{HRTF}s
-with lower-order soundfields causes severe losses in the 
-high frequencies in a frequency-dependent way; \citet{ben2017spectral} compensate the resulting
-low-pass effect of \acrshort{SH} truncation with a global Spectral
-Equalisation (SpecEQ) filter. \citet{zaunschirm2018binaural} adapt the
-\acrshort{HRIR}s for direct low-order rendering by removing the
-\acrshort{ITD} linear-phase component and matching diffuse-field covariances
-(Time Alignment and diffuseness Constraint, TAC), and
-\citet{schorkhuber2018binaural} propose \acrfull{MagLS}, which in the high
-frequencies optimises the magnitudes alone, disregarding phase. In parallel,
-\citet{armstrong2018bi} introduce a bi-radial render with two sets of
-virtual loudspeakers, one centred at each ear, gaining up to two Ambisonic
-orders of perceptual quality, and \citet{hold2019improving} reduce
-angle-dependent artefacts by also tapering the \acrshort{SH}s.
-Finally, \citet{ben2021binaural} time-align the \acrshort{HRIR}s with
-respect to each ear for direct bilateral rendering, and these threads are
-combined in \citet{engel2021improving}, the current state of the art:
-\acrfull{BiMagLS}, which ear-aligns the \acrshort{HRTF}s, fits the
-low-frequency \acrshort{SH}-\acrshort{HRTF}s with an L2 approximation of the
-higher-order version, and disregards phase at high frequencies as in
-\acrshort{MagLS}. We use \acrshort{BiMagLS} in Chapters~\ref{ch03_hearing} and~\ref{ch04_mbrirs}.
+\textbf{Ambisonics to binaural}. A final line of work improves the binaural
+rendering of \emph{limited-order} Ambisonics, whose naive decoding loses high
+frequencies because pairing high-order \acrshort{HRTF}s with a low-order
+soundfield acts as a frequency-dependent low-pass \citep{bernschutz2014binaural}.
+A succession of techniques progressively corrects this --- through spectral
+equalisation, ear time-alignment of the \acrshort{HRTF}s, and magnitude-only
+optimisation at high frequencies where phase is perceptually irrelevant --- and
+these threads converge in \acrfull{BiMagLS} \citep{engel2021improving}, the
+current state of the art, which we use in Chapters~\ref{ch03_hearing}
+and~\ref{ch04_mbrirs}.
 
 \textbf{Beyond this scope.}
 Several further directions, left out of the timeline above because they lie
@@ -865,7 +837,7 @@ is the convolution
     \label{eq:rir_convolution}
 \end{equation}
 
-As illustrated in Figure~\ref{fig:rir}, a \acrshort{RIR} is conventionally
+As illustrated in Figure~\ref{fig:rir}, an \acrshort{RIR} is conventionally
 split into three regions. The \emph{direct sound} is the first arrival,
 travelling straight from source to receiver. It is followed by the
 \emph{early reflections}, a sparse set of strong, temporally distinct
@@ -890,7 +862,7 @@ the reverberation time $T_{60}$, the time its energy takes to decay by
 \label{sec:bg_rir_sweep}
 
 
-In principle, a \acrshort{RIR} could be obtained by exciting the room acoustically with a
+In principle, an \acrshort{RIR} could be obtained by exciting the room acoustically with a
 physical impulse --- like a pistol shot or a bursting balloon --- and recording
 the result, but such sources are poorly repeatable, difficult to equalise
 and offer a limited \acrfull{SNR}. 
@@ -956,7 +928,7 @@ similar throughout the room.
 \subsection{Room impulse response simulation}
 \label{sec:bg_rir_ism}
 
-The most straightforward way to simulate a \acrshort{RIR} is the \acrfull{ISM}
+The most straightforward way to simulate an \acrshort{RIR} is the \acrfull{ISM}
 \citep{allen1979image}. It rests on a simple geometric observation: a
 specular reflection off a flat wall is indistinguishable, at the receiver,
 from the direct sound of a \emph{mirror image} of the source, placed behind

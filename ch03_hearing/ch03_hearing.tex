@@ -32,7 +32,7 @@ non-stationary and spatially complex, precisely the regime these methods
 handle worst. The resulting mismatch between the conditions under which a
 device is \emph{evaluated} and those in which it is \emph{used} is a question
 of ecological validity, and closing it for \acrshortpl{HA} is the aim of
-\textbf{RO1}.
+\RO{1}.
 
 In parallel, end-to-end \acrshortpl{DNN} (Section~\ref{sec:bg_dl}) have
 transformed \acrshort{SE}, achieving strong denoising even in the
@@ -52,7 +52,7 @@ architectures or any ablation quantifying the gain they bring. Whether
 \acrshortpl{DNN} genuinely generalise better than the mature, hand-engineered
 enhancement of current devices, especially in the complex scenes where the
 latter struggle, is therefore an open question and the object of
-\textbf{RO2}.
+\RO{2}.
 
 This chapter, carried out as part of the GuestXR project in collaboration with Microson (Amplifon Group),
 addresses both objectives with a single evaluation setup. \textbf{We
@@ -137,13 +137,13 @@ Room acoustics are simulated with an adaptation of the \acrfull{MASP} library\fo
 extended to output the field directly in Ambisonics domain. \acrshort{MASP} is the translation from \citet*{politis2016microphone}'s MATLAB library into the Python programming language \citep{perez2020parametric}. Working at 10th order, which affords sufficient spatial
 resolution, we simulate for each scene two sound fields at the left-ear,
 right-ear and \emph{head} positions: an anechoic one, propagating only the
-direct sound, and a reverberant one. The two ear positions were placed
+direct sound, and a reverberant one. The two ear positions are placed
 $17.5\,\text{cm}$ apart to match the \acrshort{KU100} inter-ear distance. The
-three rooms measured $15\times10\times3.5\,\text{m}$,
+three rooms measure $15\times10\times3.5\,\text{m}$,
 $28\times17\times4.2\,\text{m}$ and $5\times2\times2.5\,\text{m}$ for the
 \emph{party}, \emph{restaurant} and \emph{office} scenes respectively, and the
-target was placed $1\,\text{m}$ from the head at either $0^{\circ}$ or
-$30^{\circ}$ to the right. The reverberation times were set by informal
+target is placed $1\,\text{m}$ from the head at either $0^{\circ}$ or
+$30^{\circ}$ to the right. The reverberation times are set by informal
 listening against the ARTE recordings, choosing $T_{60}$ values
 around $60\%$ of those reported for ARTE to account for the
 absorption of furniture and people. The result is a set of clean (anechoic)
@@ -228,7 +228,7 @@ Ambisonics to binaural, which in turn calls for a set of \acrshort{HRTF}s
 specific to the device-on-head configuration. Although \citet{oldenburg}
 published \acrshort{HRTF}s for the microphones of a \acrshort{BTE} \acrshortpl{HA} on a head-and-torso simulator, none were available for the \acrshort{KU100}, and, evaluating commercial devices, we had no access to their microphone signals. We therefore measured our own \acrshort{HRTF}s in a configuration as close as possible to the recording setup: in the same room, with a pair of \emph{audifon lewi R} \acrshortpl{HA} coupled to the dummy-head ear canals, enhancement features disabled and only a linear gain applied.
 
-The \acrshort{HRTF}s were measured with the exponential-sweep method
+The \acrshort{HRTF}s are measured with the exponential-sweep method
 (Section~\ref{sec:bg_rir_sweep}) using a single Genelec 8020 loudspeaker
 positioned at each of the 50 directions of a \emph{Lebedev grid}
 (Figure~\ref{fig:lebedev}). Lebedev grids are sets of directions distributed as evenly as possible over
@@ -256,10 +256,7 @@ spherical-harmonic tapering above a cutoff of $6239\,\text{Hz}$ --- the
 theoretical limit for correct representation at 10th order. The clean binaural
 reference is then obtained by decoding the anechoic
 left and right-ear sound fields simulated in \acrshort{MASP}. The measured \acrshort{HRTF}s are released in the \acrfull{SOFA} format
-\citep{aes69}. \acrshort{SOFA}\footnote{we use the Python library from \url{https://github.com/Jencke/pySOFA}}, standardised as AES69, is a self-describing container that stores acoustic impulse responses --- here the
-\acrshort{HRIR} pairs --- together with the full measurement geometry (source
-and receiver positions and orientations) and metadata, so that a dataset can
-be exchanged and reused across tools without ambiguity. 
+\citep{aes69}. \acrshort{SOFA}\footnote{we use the Python library from \url{https://github.com/Jencke/pySOFA}}, standardised as AES69, is a self-describing container that stores acoustic impulse responses together with the full measurement metadata.
 
 \begin{figure}[t]
   \centering
@@ -537,7 +534,7 @@ kernels of size 21 producing embeddings of length 512, and four attention heads
 of depth 256 with a dropout of $0.1$ applied during training only. All
 hyperparameters are shared between the two models except for the batch size, which
 had to be reduced from 12 for \emph{\acrshort{DNN}-C} to 2 for \emph{DNN} to fit in GPU
-memory. We optimize with Adam at a learning rate of $10^{-3}$, divided by
+memory. We optimise with Adam at a learning rate of $10^{-3}$, divided by
 three every eight epochs, for 25 epochs over the whole dataset. Fresh mixtures
 are generated at every epoch by permuting the reverberant speech and the noise
 within each batch, which effectively works as an additional augmentation, as no pairing is
@@ -555,11 +552,11 @@ Figure \ref{fig:ha_results1} displays \acrshort{SI-SDR}, \acrshort{HASPI}, \acrs
 \begin{figure}[h!]
   \centering
   \includegraphics[width=0.75\columnwidth, trim={0cm 0cm 0cm 0.3cm},clip]{ch03_hearing/figures/results1.pdf}
-  \caption{Objective metrics across devices, anonymized for avoiding any drawal of inappropriate interdevice conclusions.}
+  \caption{Objective metrics across devices, anonymised for avoiding any drawal of inappropriate interdevice conclusions.}
   \label{fig:ha_results1}
 \end{figure}
 
-Figure \ref{fig:ha_results2} depicts the signal enhancement benefit. Violin plots summarize the values obtained from the 15 hearing devices averaged along all scenes. For \acrshortpl{HA}' features the benefit is on average 0.014 dB for \acrshort{SI-SDR}, -0.02 for \acrshort{HASQI}, -0.01 for \acrshort{HASPI}, and -0.01 for \acrshort{MBSTOI}. A much larger improvement could be observed for DNN-based enhancement. For a causal model, the mean benefit was 4.96 dB for \acrshort{SI-SDR}, -0.01 for \acrshort{HASQI}, 0.02 for \acrshort{HASPI}, and 0.15 for \acrshort{MBSTOI}. The largest benefit was achieved by the non-causal DNN model, with mean values reaching 6.09 dB for \acrshort{SI-SDR}, 0.02 for \acrshort{HASQI}, 0.07 for \acrshort{HASPI}, and 0.17 for \acrshort{MBSTOI}.
+Figure \ref{fig:ha_results2} depicts the signal enhancement benefit. Violin plots summarise the values obtained from the 15 hearing devices averaged along all scenes. For \acrshortpl{HA}' features the benefit is on average 0.014 dB for \acrshort{SI-SDR}, -0.02 for \acrshort{HASQI}, -0.01 for \acrshort{HASPI}, and -0.01 for \acrshort{MBSTOI}. A much larger improvement could be observed for DNN-based enhancement. For a causal model, the mean benefit was 4.96 dB for \acrshort{SI-SDR}, -0.01 for \acrshort{HASQI}, 0.02 for \acrshort{HASPI}, and 0.15 for \acrshort{MBSTOI}. The largest benefit was achieved by the non-causal DNN model, with mean values reaching 6.09 dB for \acrshort{SI-SDR}, 0.02 for \acrshort{HASQI}, 0.07 for \acrshort{HASPI}, and 0.17 for \acrshort{MBSTOI}.
 
 
 \begin{figure}[h!]
@@ -647,12 +644,12 @@ non-stationary and spatially complex. By reproducing such scenes over an
 Ambisonic loudspeaker array and capturing them on real devices, we evaluated under conditions closer to real use, and
 could compare five \acrshortpl{HA} devices against \acrshort{DNN}-based \acrshort{SE}.
 
-Regarding \textbf{RO1}, this ecologically valid evaluation exposed a clear
+Regarding \RO{1}, this ecologically valid evaluation exposed a clear
 performance gap: the signal-enhancement algorithms of the five devices struggle
 in complex, real-world speech-in-noise scenes, in several cases degrading the
 signal relative to applying no enhancement at all. 
 
-Regarding \textbf{RO2}, we have shown that \acrshort{DNN}-based \acrfull{SE} has the potential to outperform
+Regarding \RO{2}, we have shown that \acrshort{DNN}-based \acrfull{SE} has the potential to outperform
 them substantially in denoising and objective intelligibility, and that the
 causal variant retains
 most of that advantage. Together, these findings encourage further work on the

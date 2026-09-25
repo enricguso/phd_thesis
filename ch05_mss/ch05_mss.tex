@@ -394,7 +394,7 @@ $D_2$ adds the raw signals of the $19$ Zylia capsules ($\text{zylia}_{\text{caps
 each with a slightly different position; $D_3$ adds $19$ virtual microphones
 synthesised by the array's proprietary beamformer with random orientations and
 polar patterns ($\text{zylia}_{\text{beams}}$); and $D_4$ permutes the direct
-part $d_h$ of one venue with the tail $t_h$ of another (in what we call $\text{PA}_{\text{permute}}$).
+part $d_h$ of one venue with the tail $t_h$ of another (in what we call $\text{PA}_{\text{permute}}$ because $d_h$ captures \acrshort{LTI} \acrshort{PA} system's response).
 
 To assess them, we retrained an SCNet \citep{tong2024scnet} model from scratch on
 MUSDB18-HQ with default hyperparameters, convolving all sources and targets with
@@ -408,15 +408,13 @@ yield three observations.
   \includegraphics[trim={2.4cm 0.8cm 0.2cm 0.2cm}, clip, width=0.9\columnwidth]{ch05_mss/figures/parirset_sdr.pdf}
   \caption{Ablation of the PaRIRset augmentation strategies, adding one set at a
   time. Significance from paired $t$-tests: \textasteriskcentered\ $p \leq 0.05$,
-  \textasteriskcentered\textasteriskcentered\ $p \leq 0.01$; error bars are
+  \textasteriskcentered\textasteriskcentered\ $p \leq 0.01$; \textasteriskcentered\textasteriskcentered\textasteriskcentered\ $p \leq 0.001$; error bars are
   $95\%$ confidence intervals.}
   \label{fig:mss_ablation}
 \end{figure}
 
 First,
-every configuration that includes \acrshortpl{RIR} significantly outperforms the
-no-reverberation baseline, confirming that exposing the model to acoustics is what matters most. 
-Second, the four strategies differ little from one another, which suggests that \emph{including} real venue
+every configuration that includes \acrshortpl{RIR} significantly outperforms not including any. Second, the four strategies differ little from one another, which suggests that \emph{including} real venue
 responses matters more than the particular way they are augmented. Third, 
 $D_3$ (the beamformed virtual microphones) improves significantly over the
 already strong \acrshort{SE}-only baseline (paired $t$-test, $p = 0.027$) 

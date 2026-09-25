@@ -3,7 +3,7 @@
 \label{ch03_hearing}
 In broad terms, \acrshortpl{HA} are body-worn devices that capture the
 acoustic scene with one or more microphones, processes it --- amplifying and compressing it according to the user's audiogram, and increasingly applying noise reduction and directional processing --- and deliver the result to the
-ear through a small loudspeaker, conventionally called the \emph{receiver}. Devices are commonly grouped by form factor. In-The-Ear (ITE) \acrshortpl{HA} house the entire electronics in a custom shell that sits in the concha or ear canal; they are discreet but constrained in size, battery life and microphone spacing. \acrfull{BTE} \acrshortpl{HA} instead place the electronics in a unit worn behind the pinna, which routes the amplified sound to the ear through a tube ending in an earmould; the larger housing affords more processing power and a wider spacing between microphones, at the cost of visibility. The
+ear through a small loudspeaker, conventionally called the \emph{receiver}. Devices are commonly grouped by form factor. In-The-Ear (ITE) \acrshortpl{HA} house the entire electronics in a custom shell that sits in the concha or ear canal; they are discreet but constrained in size, battery life and microphone spacing. \acrfull{BTE} \acrshortpl{HA} instead place the electronics in a unit worn behind the pinna, which routes the amplified sound to the ear through a tube ending in an earmould; the larger housing affords more processing power and a wider spacing between microphones, which improves directional beamforming, at the cost of visibility. The
 \acrfull{RIC} style, now the most widespread, is a variant of the \acrshort{BTE} in which the receiver is removed from the housing and placed directly in the ear canal, connected to the behind-the-ear unit by a thin wire and sealed by a soft dome (Figure~\ref{fig:lewi_ric}). This separation keeps the \acrshort{BTE} unit small while moving the loudspeaker close to the eardrum, reducing the risk of acoustic feedback and improving sound quality --- which, together with its discreetness, explains its popularity and its choice for the present study.
 
 \begin{figure}[htbp]
@@ -231,7 +231,7 @@ published \acrshort{HRTF}s for the microphones of a \acrshort{BTE} \acrshortpl{H
 The \acrshort{HRTF}s are measured with the exponential-sweep method
 (Section~\ref{sec:bg_rir_sweep}) using a single Genelec 8020 loudspeaker
 positioned at each of the 50 directions of a \emph{Lebedev grid}
-(Figure~\ref{fig:lebedev}). Lebedev grids are sets of directions distributed as evenly as possible over
+(Figure~\ref{fig:lebedev}). Lebedev grids \citep{lebedev1976quadratures}are sets of directions distributed as evenly as possible over
 the sphere, arranged so that each one has its mirror image across every axis.
 This symmetry covers all directions uniformly with comparatively few points:
 the 50 directions comprise the $6$ vertices of an octahedron, the $8$ vertices
@@ -304,9 +304,9 @@ we take the better ear and normalise the signals as in \citet{clarity}, using a
 flat normal-hearing audiogram as input to \acrshort{HASPI} and \acrshort{HASQI}.
 Because \acrshort{HASPI} and \acrshort{HASQI} rest on a level-dependent auditory
 model, they require a calibration relating digital amplitude to presentation
-level; both reference and estimate are scaled so that their root mean square
+level; both reference and estimate are scaled so that their Root Mean Square (RMS)
 match the $70\,\text{dB}$ \acrshort{SPL} at which the scenes are reproduced, rather than the $65\,\text{dB}$ \acrshort{SPL}
-assumed by default for a signal with Root Mean Square of one. The
+assumed by default for a signal with RMS of one. The
 scale-invariant \acrshort{SI-SDR} is defined as,
 \begin{equation}
     \mathrm{SI\text{-}SDR}(\tilde{y}, y) =
@@ -336,7 +336,7 @@ intelligibility. Unlike \acrshort{SI-SDR}, which is a generic signal-fidelity
 ratio in decibels, these three are perceptually motivated and bounded, which is
 why we report them alongside it.
 
-Because absolute metric values conflate the enhancement with the difficulty of
+Because absolute metric values confound the enhancement with the difficulty of
 the scene, we report the \emph{signal-enhancement benefit}: the improvement an
 enhancement brings over the unprocessed recording. For \acrshort{SI-SDR}, for
 instance,

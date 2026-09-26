@@ -253,13 +253,10 @@ frequency, at the cost of $N$ simulations per room instead of one.
 \subsection{Receiver directivity RIRs (REC+MB)}
 \label{ssec:mbrirs_rec}
 
-The second strategy models the directivity of the \emph{receiver}. In the
-\acrshort{ISM} above, both source and receiver are omnidirectional points, but
-the microphones of a real capture device are not: when the device is worn on or
+We can also model the directivity of the \emph{receiver} in the
+\acrshort{ISM}: when the device is worn on or
 near the head, they inherit its acoustic shadow, so that a reflection arriving
-from one side is coloured and attenuated depending on its direction of arrival.
-
-Our motivation for modelling the head shadow directivity is that beyond its
+from one side is coloured and attenuated depending on its direction of arrival. Our motivation for modelling the head shadow directivity is that beyond its
 synthetic training material, \acrshort{DNS}5 provides two special test sets of
 \emph{real} noisy recordings without ground truth --- and thus evaluated only
 with non-intrusive metrics --- grouped by capture device: a \emph{headset} set,
@@ -274,7 +271,7 @@ directivity to be relevant for speech separation and recognition with
 augmented-reality glasses.
 
 We model it by applying a \acrshort{HRTF} to every reflection of the simulated
-\acrshort{RIR}, reusing the pipeline of the hearing-aid decoder of
+\acrshort{RIR}, reusing the pipeline of the \acrshort{HA} decoder of
 Chapter~\ref{ch03_hearing}. Since the \acrshortpl{RIR} produced by
 \acrshort{MASP} are already expressed in the spherical-harmonic domain,
 decoding them to the ear with a \acrfull{BiMagLS} decoder
@@ -282,7 +279,7 @@ decoding them to the ear with a \acrfull{BiMagLS} decoder
 convolves each directional component with the corresponding \acrshort{HRTF}.
 As the task is monaural, we restrict the decoding to the \emph{left} ear, using
 a set of normal-hearing \acrshortpl{HRTF} of a Neumann \acrshort{KU100} dummy
-head. Applied on top of the multiband set, this yields the \textbf{REC+MB}
+head. This yields the \textbf{REC+MB}
 dataset.
 
 \subsection{Source directivity RIRs (SRC+REC+MB)}
@@ -341,6 +338,8 @@ one most directly comparable to our REC+MB set because it uses multi-band absorp
 Ambisonics and decodes to binaural, while additionally offering the geometric realism that a shoebox
 cannot. To keep the comparison fair, we take $60$k of its \acrshortpl{RIR} and,
 as in REC+MB and SRC+REC+MB, use the left channel of the binaural downmix.
+
+\vspace{1.5cm}
 
 The crucial difference lies not in how each response is rendered, but in the
 number and acoustic diversity of the rooms available: SoundSpaces spans only
@@ -540,6 +539,7 @@ complexity of each response.
   \label{fig:mbrirs_mushra}
 \end{figure}
 
+\vspace{0.5cm}
 
 Every dataset except SSPA scores significantly above the DNS5 baseline (SB:
 $p = 3\times10^{-3}$; MB: $p = 7\times10^{-14}$; REC+MB: $p = 8\times10^{-7}$;

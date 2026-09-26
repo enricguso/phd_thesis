@@ -190,7 +190,6 @@ Table~\ref{tab:crowdioset_queries}, amounting to $105$ hours of audience noise.
   \end{tabular}
 \end{table}
 
-\vspace{1cm}
 Per-file attribution and licence metadata are released with the dataset, and
 because most files ($92\%$, of which $59\%$ are CC0) permit commercial use, the
 $8\%$ under non-commercial licences can be excluded without retraining from
@@ -529,6 +528,8 @@ overall  & $6.94$ & $6.74$ & $+0.20$ \\
 \end{table}
 %$+0.07\,\text{dB}$ (paired $t$-test, $p = 0.53$).
 
+\vspace{0.5cm}
+
 The core of the experiment is a comparison of four configurations, which differ
 only in the degradations applied to the same clean sources and which we name
 after them. These same four recipes serve \emph{both} to build the training data
@@ -660,7 +661,7 @@ sources. Second, and more useful in practice, the \textbf{noisy} model retains
 near-baseline performance on clean inputs ($9.97$ vs.\ $10.05\,\text{dB}$ on
 vocals), so audience-noise augmentation alone does not meaningfully harm
 studio-quality separation. We therefore recommend the \textbf{noisy} model for
-vocal extraction when the recording conditions are unknown.
+vocal extraction.
 
 Table~\ref{tab:mss_audience} reports audience isolation, of which only the
 audience-trained models are capable. Under reverberant evaluation \textbf{noisy}

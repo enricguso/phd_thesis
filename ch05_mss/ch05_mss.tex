@@ -34,7 +34,9 @@ reverberation. We follow the same idea for music: we \emph{formulate} a new \acr
 task, which we call \emph{Live} \acrshort{MSS} --- the separation of music recorded from within a
 live audience, where venue acoustics, the \acrshort{PA} system and crowd noise
 break the linear-mixing assumption of studio \acrshort{MSS}, as illustrated in
-Figure~\ref{fig:mss_paradigm}. Rather than relying on the scarce and
+Figure~\ref{fig:mss_paradigm}. As a newly formulated task it has no
+public benchmark yet; providing the data to make it tractable --- CrowdioSet and
+PaRIRset --- is itself one of our contributions. Rather than relying on the scarce and
 hard-to-annotate real live recordings, we \emph{synthesise} live conditions on
 top of existing studio datasets --- exactly the ecological-validity-through-synthesis
 strategy of the rest of this thesis.
@@ -335,11 +337,15 @@ $44.1\,\text{kHz}$ to match the source-separation corpora\footnote{\url{https://
 Access to professional venues and their \acrshort{PA} systems is tightly
 constrained --- typically a short window during a soundcheck --- so we limited each
 measurement to a single exponential sine sweep per \acrshort{PA} side (left and
-right). The microphone was placed at the \acrfull{FOH} position, next to the
-mixing console, which is the reference listening spot in the room. As shown in
-Figure~\ref{fig:mss_setup}, we captured each sweep with a Zylia ZM-1 microphone
-array alongside a beyerdynamic MM1 measurement microphone through a Zoom AMS-24
-interface. 
+right). The microphone was placed at the \acrfull{FOH} position, next to the mixing
+console, which is the reference listening spot in the room --- the point the
+sound engineer mixes for, and thus a representative location for how the audience
+hears the show. Capturing a single position was also a practical necessity:
+measurements had to be taken during the load-in, in the short window before
+each concert, which allowed for only one sweep per \acrshort{PA} side. As shown
+in Figure~\ref{fig:mss_setup}, we captured each sweep with a Zylia ZM-1
+microphone array alongside a beyerdynamic MM1 measurement microphone through a
+Zoom AMS-24 interface.
 
 
 
@@ -523,9 +529,13 @@ overall  & $6.94$ & $6.74$ & $+0.20$ \\
 \end{table}
 %$+0.07\,\text{dB}$ (paired $t$-test, $p = 0.53$).
 
-The core of the experiment is a comparison of four training configurations,
-which differ only in the degradations applied to the same clean sources and
-which we name after them:
+The core of the experiment is a comparison of four configurations, which differ
+only in the degradations applied to the same clean sources and which we name
+after them. These same four recipes serve \emph{both} to build the training data
+and to build the evaluation data, so each of the four trained models is tested on
+each of the four conditions --- a full $4\times4$ cross of training and test
+degradations:
+
 \begin{itemize}
     \item \textbf{clean}: MUSDB18-HQ + MOISESDB;
     \item \textbf{rev}: (MUSDB18-HQ + MOISESDB) $\circledast$ PaRIRset;
@@ -553,10 +563,13 @@ prior work --- augmented with the held-out \emph{audience} test stems and the
 PaRIRset test set. Reverberation is applied here \emph{deterministically}, so
 that every model sees the same conditions: $25\%$ of the samples with no
 reverberation, $25\%$ with the full \acrshort{RIR}, and the remaining $50\%$
-split equally between tails attenuated by $-6$ and $-12\,\text{dB}$. Each of the
-four models is evaluated under the same four conditions (\textbf{clean},
-\textbf{rev}, \textbf{noisy}, \textbf{noisyrev}), giving a full cross of training
-and test degradations.
+split equally between tails attenuated by $-6$ and $-12\,\text{dB}$. The underlying test material is fixed --- the MUSDB18-HQ test set, the held-out
+\emph{audience} test stems and the PaRIRset test set --- and the same
+deterministic degradations are applied to it regardless of which model is being
+evaluated. Each of the four models is then evaluated on each of the four
+conditions (\textbf{clean}, \textbf{rev}, \textbf{noisy}, \textbf{noisyrev}): the
+\textbf{noisyrev} test partition, for instance, is held constant across all four
+training cases, so differences there reflect the training data alone.
 
 To place the audience-separation results in context, we add SAM Audio
 \citep{shi2025samaudio} as a baseline capable of isolating arbitrary sources
@@ -573,8 +586,12 @@ unforgiving of diffusion-based models such as SAM Audio, whose outputs are not
 sample-aligned and are therefore penalised regardless of how they sound --- so we
 complement it with a subjective AB listening test. To retain statistical power
 with a modest sample, we restrict the test to two tasks, \emph{vocals isolation}
-and \emph{audience isolation}, on $10$ real audience recordings sourced from
-social media and split into two groups of five. For vocals isolation,
+and \emph{audience isolation}, on $10$ \emph{real} concert recordings --- genuine audience-made videos sourced
+from social media, with real venue acoustics, \acrshort{PA}
+colouration and crowd noise --- split into two groups of five. This is a
+deliberate choice: since our synthetic pipeline exists precisely to approximate
+such in-the-wild conditions, the ultimate test of the models is how they perform
+on actual live recordings, which is what the subjective evaluation measures. For vocals isolation,
 participants compared the vocals from our \textbf{noisy} model against those of
 the \textbf{clean} baseline; for audience isolation, the audience stem from the
 \textbf{noisy} model against SAM Audio; in both cases they chose which
@@ -600,8 +617,15 @@ $3.72\,\text{dB}$ on clean \emph{vocals}, against the $10.05\,\text{dB}$ of our
 open-vocabulary formulation and the fixed four-stem taxonomy of MUSDB18-HQ:
 SAM Audio tends either to extract a source or to fail outright, and its
 successful extractions still yield positive \acrshort{SDR}, which suggests the
-gap is not merely a sample-alignment artefact of its diffusion outputs. We
-nonetheless rely primarily on the subjective test below.
+gap is not merely a sample-alignment artefact of its diffusion outputs. Two
+caveats are in order, however. First, we use SAM Audio zero-shot with a fixed
+text prompt, and such models are known to be highly sensitive to prompt wording:
+perturbing the query towards synonyms or different levels of abstraction can
+change the results appreciably, so our single-prompt setup likely
+underestimates its achievable performance. Second, and consequently, a fairer
+use of such a model would be not as an off-the-shelf baseline but as a
+\emph{backbone} fine-tuned to each data setting --- a promising direction we leave
+for future work. In any case, we rely primarily on the subjective test below.
 
 \begin{table}[htbp]
 \centering\footnotesize
@@ -736,6 +760,16 @@ model (epoch $144$ against $\sim\!200$ for the others) hints that the combined
 noise-and-reverberation setting may need architectural changes or a fuller
 hyperparameter search to be exploited fully.
 
+Another limitation is that our \emph{objective} evaluation necessarily relies on
+synthetic live mixtures rather than on real concert recordings.Computing source-separation metrics such as
+\acrshort{SDR} requires the isolated ground-truth stems of each source, which by
+definition cannot be obtained from a real audience recording --- the venue sums
+the sources acoustically and they can never be un-mixed for reference. Collecting
+real data with ground truth would require multitrack access to the venue's
+console \emph{and} the isolated audience signal, simultaneously, across many
+concerts. This is exactly the gap that motivates synthesising live conditions on
+top of studio stems, and why we validate on real recordings \emph{subjectively},
+through the listening test, where no ground truth is needed.
 
 \section{Conclusions}
 \label{sec:mss_conclusions}

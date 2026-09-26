@@ -3,7 +3,7 @@
 \label{ch03_hearing}
 In broad terms, \acrshortpl{HA} are body-worn devices that capture the
 acoustic scene with one or more microphones, processes it --- amplifying and compressing it according to the user's audiogram, and increasingly applying noise reduction and directional processing --- and deliver the result to the
-ear through a small loudspeaker, conventionally called the \emph{receiver}. Devices are commonly grouped by form factor. In-The-Ear (ITE) \acrshortpl{HA} house the entire electronics in a custom shell that sits in the concha or ear canal; they are discreet but constrained in size, battery life and microphone spacing. \acrfull{BTE} \acrshortpl{HA} instead place the electronics in a unit worn behind the pinna, which routes the amplified sound to the ear through a tube ending in an earmould; the larger housing affords more processing power and a wider spacing between microphones, which improves directional beamforming, at the cost of visibility. The
+ear through a small loudspeaker, conventionally called the \emph{receiver}. Devices are commonly grouped by form factor. In-The-Ear (ITE) \acrshortpl{HA} house the entire electronics in a custom shell that sits in the concha or ear canal; they are discreet but constrained in size, battery life and microphone spacing. \acrfull{BTE} \acrshortpl{HA} instead place the electronics in a unit worn behind the pinna, which routes the amplified sound to the ear through a tube ending in an earmould; the larger housing affords more processing power and a wider spacing between microphones, at the cost of visibility. The
 \acrfull{RIC} style, now the most widespread, is a variant of the \acrshort{BTE} in which the receiver is removed from the housing and placed directly in the ear canal, connected to the behind-the-ear unit by a thin wire and sealed by a soft dome (Figure~\ref{fig:lewi_ric}). This separation keeps the \acrshort{BTE} unit small while moving the loudspeaker close to the eardrum, reducing the risk of acoustic feedback and improving sound quality --- which, together with its discreetness, explains its popularity and its choice for the present study.
 
 \begin{figure}[htbp]
@@ -104,7 +104,10 @@ component of the pipeline.
   by the \acrshortpl{HA} are captured with the microphones of a dummy head, with
   and without its signal-enhancing features. \emph{Evaluation}: the
   \acrshortpl{HA}-enhanced recordings are compared with the \acrshort{DNN}-processed
-  ones through a range of objective metrics.}
+  ones through a range of objective metrics. Throughout, $\hat{y}$ denotes an
+  unprocessed (\emph{bypass}) recording, $\tilde{y}$ its enhanced version
+  (by the \acrshortpl{HA} or a \acrshort{DNN}), and $y$ the clean anechoic
+  reference the metrics are computed against.}
   \label{fig:ha_setup}
 \end{figure}
 
@@ -117,9 +120,7 @@ scenes are represented and reproduced as Ambisonics sound fields
 noise, corresponding to three common environments: \emph{party},
 \emph{restaurant} and \emph{office}. The noise comes from the Ambisonic Recordings of Typical Environments (ARTE) database \citep{weisser2019ambisonic},
 whose recordings were captured in real environments with a 62-channel
-microphone array and distributed as 31-channel \emph{mixed-order} Ambisonics.
-
-In a mixed-order representation, the horizontal plane is encoded at a higher
+microphone array and distributed as 31-channel \emph{mixed-order} Ambisonics. In a mixed-order representation, the horizontal plane is encoded at a higher
 spherical-harmonic order than the vertical one, exploiting the fact that both
 most sources and human localisation are concentrated near the horizontal:
 full-sphere resolution is kept only up to a low order, and the
@@ -221,17 +222,23 @@ Returning to the evaluation pipeline of Figure~\ref{fig:ha_setup}, the one
 element missing before being able to evaluate the performance is a way to obtain the clean references against which the
 metrics are computed. The intrusive metrics below require a clean binaural
 reference matching what the \acrshortpl{HA}' microphones would capture in the
-absence of noise and reverberation. Since our scenes live in the Ambisonic
-domain --- including the anechoic speech field simulated in MASP
-(Section~\ref{sec:ha_scenes}) --- obtaining that reference amounts to decoding
-Ambisonics to binaural, which in turn calls for a set of \acrshort{HRTF}s
+\emph{anechoic} version of each scene. Two seemingly simpler alternatives do not
+provide this. Re-recording the anechoic scene through the loudspeaker array is
+not an option, because the array sits in a real room whose residual reverberation
+would be imprinted on the ``clean'' reference; and the \emph{bypass} recording
+cannot serve as a reference either, as it already contains the noise, the room
+and the array colouration --- it is the degraded signal we aim to enhance, not a
+clean target. The reference must instead be synthesised in the same domain as the
+recordings --- including the anechoic speech field simulated in \acrshort{MASP}
+(Section~\ref{sec:ha_scenes}) --- which amounts to decoding that field from
+Ambisonics to binaural, and in turn calls for a set of \acrshort{HRTF}s
 specific to the device-on-head configuration. Although \citet{oldenburg}
 published \acrshort{HRTF}s for the microphones of a \acrshort{BTE} \acrshortpl{HA} on a head-and-torso simulator, none were available for the \acrshort{KU100}, and, evaluating commercial devices, we had no access to their microphone signals. We therefore measured our own \acrshort{HRTF}s in a configuration as close as possible to the recording setup: in the same room, with a pair of \emph{audifon lewi R} \acrshortpl{HA} coupled to the dummy-head ear canals, enhancement features disabled and only a linear gain applied.
 
 The \acrshort{HRTF}s are measured with the exponential-sweep method
 (Section~\ref{sec:bg_rir_sweep}) using a single Genelec 8020 loudspeaker
 positioned at each of the 50 directions of a \emph{Lebedev grid}
-(Figure~\ref{fig:lebedev}). Lebedev grids \citep{lebedev1976quadratures}are sets of directions distributed as evenly as possible over
+(Figure~\ref{fig:lebedev}). Lebedev grids are sets of directions distributed as evenly as possible over
 the sphere, arranged so that each one has its mirror image across every axis.
 This symmetry covers all directions uniformly with comparatively few points:
 the 50 directions comprise the $6$ vertices of an octahedron, the $8$ vertices
@@ -256,7 +263,10 @@ spherical-harmonic tapering above a cutoff of $6239\,\text{Hz}$ --- the
 theoretical limit for correct representation at 10th order. The clean binaural
 reference is then obtained by decoding the anechoic
 left and right-ear sound fields simulated in \acrshort{MASP}. The measured \acrshort{HRTF}s are released in the \acrfull{SOFA} format
-\citep{aes69}. \acrshort{SOFA}\footnote{we use the Python library from \url{https://github.com/Jencke/pySOFA}}, standardised as AES69, is a self-describing container that stores acoustic impulse responses together with the full measurement metadata.
+\citep{aes69}. \acrshort{SOFA}\footnote{we use the Python library from \url{https://github.com/Jencke/pySOFA}}, standardised as AES69, is a self-describing container that stores acoustic impulse responses --- here the
+\acrshort{HRIR} pairs --- together with the full measurement geometry (source
+and receiver positions and orientations) and metadata, so that a dataset can
+be exchanged and reused across tools without ambiguity. 
 
 \begin{figure}[t]
   \centering
@@ -294,8 +304,13 @@ mapping breaks the assumption outright, making the estimates unreliable. We
 therefore rely on intrusive, reference-based metrics computed against the clean
 binaural reference $y$ of Section~\ref{sec:ha_bindecoder}.
 
-Given an enhanced estimate $\tilde{y}$ and the corresponding unprocessed
-recording $\hat{y}$, we time-align each pair to the reference by
+We denote by $y$ the clean binaural reference (the anechoic target of
+Section~\ref{sec:ha_bindecoder}), by $\hat{y}$ the \emph{unprocessed} recording
+captured at the dummy head (the \emph{bypass} condition, before any enhancement),
+and by $\tilde{y}$ the corresponding \emph{enhanced} estimate --- that is,
+$\hat{y}$ after the hearing aid's own processing (\emph{enabled}) or after one of
+the \acrshort{DNN} models. Given an enhanced estimate $\tilde{y}$ and its
+unprocessed counterpart $\hat{y}$, we time-align each pair to the reference $y$ by
 cross-correlation and compute four objective measures: the \acrfull{HASQI}
 \citep{hasqi}, the \acrfull{HASPI} \citep{haspi}, the \acrfull{MBSTOI}
 \citep{andersen2018refinement} and the \acrfull{SI-SDR} \citep{le2019sdr}. For
@@ -304,9 +319,9 @@ we take the better ear and normalise the signals as in \citet{clarity}, using a
 flat normal-hearing audiogram as input to \acrshort{HASPI} and \acrshort{HASQI}.
 Because \acrshort{HASPI} and \acrshort{HASQI} rest on a level-dependent auditory
 model, they require a calibration relating digital amplitude to presentation
-level; both reference and estimate are scaled so that their Root Mean Square (RMS)
+level; both reference and estimate are scaled so that their root mean square
 match the $70\,\text{dB}$ \acrshort{SPL} at which the scenes are reproduced, rather than the $65\,\text{dB}$ \acrshort{SPL}
-assumed by default for a signal with RMS of one. The
+assumed by default for a signal with Root Mean Square of one. The
 scale-invariant \acrshort{SI-SDR} is defined as,
 \begin{equation}
     \mathrm{SI\text{-}SDR}(\tilde{y}, y) =
@@ -336,7 +351,7 @@ intelligibility. Unlike \acrshort{SI-SDR}, which is a generic signal-fidelity
 ratio in decibels, these three are perceptually motivated and bounded, which is
 why we report them alongside it.
 
-Because absolute metric values confound the enhancement with the difficulty of
+Because absolute metric values conflate the enhancement with the difficulty of
 the scene, we report the \emph{signal-enhancement benefit}: the improvement an
 enhancement brings over the unprocessed recording. For \acrshort{SI-SDR}, for
 instance,
@@ -588,6 +603,36 @@ DNN   & $6.09$  & $0.02$  & $0.07$  & $0.17$  \\
 \label{sec:ha_discussion}
 
 In this chapter we have presented a setup which allows to quantify the performance gap between the current \acrshortpl{HA} signal enhancement strategies and DNN-based approaches. On the one hand, HA processing seems to struggle in these complex situations, even performing worse than in \textit{bypass} for some devices, perhaps because beamformers cannot estimate the direction of the target speech due to the noise and competing talkers being non-stationary. On the other hand, this does not seem to affect \acrshortpl{DNN}, which improve SISDR and MBSTOI consistently. Interestingly, differences between devices in \textit{bypass} are still observed after being processed by the \acrshortpl{DNN}, suggesting that DNN models are sensitive to the quality of the inputs. It would be interesting to study the concatenation of \acrshortpl{DNN} with traditional \acrshortpl{HA} strategies in future work.
+
+A central premise of this chapter is that the proposed setup is a more
+\emph{ecologically valid} testbed than the stationary laboratory signals devices
+are usually certified with. This claim rests on three design choices rather than
+on a formal statistical match to field recordings. First, the scenes are built
+from \emph{real} material --- speech from Sharvard and multichannel noise from
+ARTE, recorded in real environments --- rather than from synthetic or stationary
+noise, and their \acrshortpl{SNR} and reverberation times are set to values
+reported for everyday listening situations. Second, the acoustic complexity is
+representative of real use: multiple spatially distributed sources and
+\emph{non-stationary} noise reproduced in three dimensions, which is precisely
+the regime where conventional processing is expected to struggle. Third, and most
+importantly, we do not \emph{simulate} the enhancement chain but capture it
+physically: real commercial devices, with their proprietary and adaptive
+processing, are recorded on a dummy head, so the measurement reflects how these
+devices actually behave rather than an idealised model of them.
+
+We are nonetheless careful not to overstate this validity. We do not provide a
+formal, quantitative demonstration that the distribution of our scenes matches
+that of in-the-wild recordings --- for instance, a two-sample comparison of
+acoustic descriptors between our material and real everyday captures --- nor a
+perceptual study confirming that listeners judge the scenes as realistic. The
+former is difficult to establish in the absence of a large, labelled corpus of
+real hearing-aid-worn recordings; the latter is partially addressed by the
+follow-up listening test of Section~\ref{sec:ha_followup}, where
+hearing-impaired and normal-hearing listeners rated the same recordings, and
+whose preferences broadly tracked the objective metrics. A fuller validation of
+ecological validity --- statistical and perceptual --- remains an important
+direction for future work, and the released materials are intended to make such a
+study possible.
 
 We acknowledge that using the binaural decoding of the anechoic signal as reference can seem counter-intuitive because \acrshortpl{HA}
 are not designed to provide anechoic estimates yet. However, this

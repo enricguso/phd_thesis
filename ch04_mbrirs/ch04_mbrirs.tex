@@ -350,8 +350,60 @@ sizes, geometries and per-band reverberation times. Whether the geometric
 realism of a mesh outweighs this loss of acoustic coverage is precisely 
 \RO{4}.
 
+We note that other mesh and wave-based datasets would combine geometric realism
+with a much larger number of rooms, and would therefore be natural candidates for
+disentangling realism from room variety. Two prominent examples, which we were
+not aware of at the time, are GWA \citep{tang2022gwa}, a large corpus of
+wave-solver \acrshortpl{RIR} across thousands of scenes, and the $1{,}000$-room
+dataset of \citet{falconperez2025scenewide}, which, although built from
+procedurally generated rooms, offers substantial room variety. Evaluating such
+sets (or combining them with our \acrshort{ISM} rooms) is a promising
+direction we return to in the conclusions (Chapter~\ref{ch98_conclusions}).
+
 \section{Experimental setup}
 \label{sec:mbrirs_eval}
+Before detailing the setup, Table~\ref{tab:ch4_design} summarises the whole
+experimental design: what varies across models (only the training
+\acrshortpl{RIR}), and how each model is evaluated. Every test set carries real
+room acoustics, so the experiment measures how well models trained on
+\emph{synthetic} \acrshortpl{RIR} generalise to \emph{real} ones.
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+\caption{Overview of the experimental design. All six models share identical
+clean speech and noise (\acrshort{DNS}5) and differ \emph{only} in the synthetic
+\acrshortpl{RIR} used for training (Table~\ref{tab:ch4_datasets}); each is then
+evaluated on the same test sets, all carrying \emph{real} acoustics.}
+\label{tab:ch4_design}
+\begin{tabular}{@{}p{0.25\textwidth} p{0.31\textwidth} p{0.09\textwidth} p{0.22\textwidth}@{}}
+\toprule
+\textbf{Stage} & \textbf{Data} & \textbf{Acoustics} & \textbf{Metrics} \\
+\midrule
+\textbf{Training} &
+Clean speech + noise (\acrshort{DNS}5), reverberated with one of the six synthetic \acrshort{RIR} sets &
+Synthetic & --- \\
+\midrule
+\textbf{Eval 1:} synthetic mix &
+\acrshort{DNS}5 test speech + noise convolved with $397$ real \acrshortpl{RIR} (ACE, MIT, OpenAIR, BUT, OpenSLR28) &
+Real & Intrusive + non-intrusive \\
+\addlinespace
+\textbf{Eval 2:} subjective &
+A subset of the Eval 1 outputs, rated by listeners &
+Real & \acrshort{MUSHRA} \\
+\addlinespace
+\textbf{Eval 3:} \textit{headset} &
+\acrshort{DNS}5 real noisy recordings, head-worn devices &
+Real & Non-intrusive \\
+\addlinespace
+\textbf{Eval 4:} \textit{speakerphone} &
+\acrshort{DNS}5 real noisy recordings, hand-held/desk devices &
+Real & Non-intrusive \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 Given the shared speech and noise and the six \acrshort{RIR} datasets described
 above, we train six \acrfull{SE} models --- one per dataset --- and evaluate
@@ -400,9 +452,7 @@ gathered from the ACE \citep{eaton2015ace}, MIT IR Survey
 \citep{ko2017study} responses not used in training. Each clean four-second chunk
 $y$ is convolved with a real \acrshort{RIR} $h$ and mixed with a noise sample
 $n$ at $\mathrm{SNR} = \mathcal{U}(0, 30)\,\text{dB}$, giving the noisy,
-reverberant input $x$.
-
-Two methodological points deserve mention. First, preserving the time alignment
+reverberant input $x$. Two methodological points deserve mention. First, preserving the time alignment
 between $x$ and its target $y$ proved less trivial than expected: the onset of a
 \emph{real} \acrshort{RIR} is harder to detect than that of a clean synthetic
 one, so rather than the widely used correlation-based synchronisation --- which
@@ -427,8 +477,6 @@ measures, less common in \acrshort{SE}, gauge whether linguistic and speaker
 content survive enhancement: a phonetic similarity, a speaker-embedding cosine
 similarity, and a Bidirectional Encoder Representations from Transformers (BERT)-based textual similarity between transcripts.
 
-\vspace{0.5cm}
-
 Because some of these rely on a clean reference and others do not, we group them
 into \emph{intrusive} metrics --- computed against the reference $y$ --- and
 \emph{non-intrusive} ones, computed from the estimate alone. The latter are
@@ -438,8 +486,7 @@ use Deep Noise Suppression Mean Opinion Score (DNSMOS, \citealp{reddy2021dnsmos}
 Speech Quality and Intelligibility Measures (SQUIM) estimators \citep{kumar2023torchaudio}, which predict
 reference-free versions of \acrshort{SI-SDR}, \acrshort{PESQ}, \acrshort{STOI}
 and MOS directly from the noisy signal (denoted with the subscript
-$_{\text{squim}}$). Most of these follow the metric set of the URGENT challenge
-\citep{zhang2024urgent}.
+$_{\text{squim}}$). Most follow the \citet{zhang2024urgent}.
 
 As in Chapter~\ref{ch03_hearing}, and because reverberation itself can bias
 several of these measures, we report each metric as an \emph{increment} over the
@@ -648,7 +695,23 @@ Regarding \RO{3}, extending the \acrshortpl{RIR} with
 frequency-dependent absorption coefficients --- an idea previously shown to help
 keyword spotting --- also benefits modern \acrshort{SE}, and is the change that
 brings the clearest and most consistent improvement across objective and
-subjective evaluation. Extending the sampling rate from $16$ to $48\,\text{kHz}$
+subjective evaluation. Real materials absorb sound unevenly across frequency ---
+carpets and curtains absorb high frequencies while reflecting low ones, whereas
+hard surfaces such as concrete reflect almost uniformly --- so in a real room the
+reverberation time varies substantially with frequency, typically decaying faster
+at high frequencies than at low ones. A single-coefficient \acrshort{RIR} imposes
+the same decay at all frequencies, producing a flat spectral colouration that no
+real room exhibits, whereas multiband absorption reproduces this
+frequency-dependent decay, a first-order property of measured responses. This
+matters here because the \acrshortpl{RIR} used in evaluation (drawn from the
+ACE \citep{eaton2015ace}, MIT \citep{traer2016statistics}, OpenAIR
+\citep{murphy2010openair}, BUT ReverbDB \citep{szoke2019building} and OpenSLR28
+\citep{ko2017study} databases) were all measured in real rooms, and therefore
+carry this frequency-dependent absorption by construction. A model trained on
+single-coefficient responses never sees this pattern and generalises worse to
+real acoustics, whereas one trained on multiband responses is exposed to it,
+which is why frequency-dependent absorption yields the clearest and most
+consistent gains. Extending the sampling rate from $16$ to $48\,\text{kHz}$
 already helps on its own. Source and receiver directivity, by contrast, neither
 degrade performance nor yield a clear gain: they may help, but on our evidence
 we cannot claim a definite improvement, and the hypothesis that receiver

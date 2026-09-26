@@ -66,25 +66,18 @@ simplest instance of the parametric map $f_\theta : \mathcal{X}
     \label{fig:perceptron}
 \end{figure}
 
-Training begins from \emph{randomly initialised} weights and proceeds by
-making the output $o$ progressively closer to a target $y$ by a \emph{loss} $\mathcal{L}(o, y)$ whose form depends on the task. For a
-\emph{classification} task the target $y$ is a class label and a common
-choice is the binary cross-entropy, $\mathcal{L}_{\mathrm{BCE}}(o, y) = -\big[\, y \log o + (1-y)\log(1-o)\,\big] $, whereas for a \emph{regression} task --- the family this thesis focuses
-on, where $y$ is itself a signal --- the loss measures a numerical
-distance, such as the mean absolute error $ \mathcal{L}_{\mathrm{MAE}}(o, y) = \lvert o - y \rvert $. 
-
-The weights are then adjusted to reduce this loss by
-\emph{back-propagation}, which computes the gradient of the loss with
-respect to every parameter, followed by Stochastic Gradient Descent (SGD), which takes a small
-step against that gradient: $\theta \leftarrow \theta - \eta\, \nabla_\theta \mathcal{L}(o, y) $, where $\eta$ is the learning rate. Because evaluating the expectation in Equation~\ref{eq:erm} over the whole dataset at once is impractical, in
-practice SGD approximates it on small random subsets of the
-data, the \emph{mini-batches}: each iteration of SGD is
-computed on a fresh mini-batch, and the loop is repeated until the loss
-converges. This cycle --- forward pass, loss, back-propagation,
-parameter update --- is the engine behind every model in this thesis. Crucially, all of the above presupposes that for every input $x$ we have
-access to its corresponding target $y$: it is the pairing $(x, y)$ that
-makes the loss in Equation~\ref{eq:erm} computable. This is
-known as \emph{supervised learning}. 
+The parameters are fitted by \emph{supervised learning}: given input--target
+pairs $(x, y)$, a \emph{loss} $\mathcal{L}(o, y)$ measures how far the output
+$o$ is from the target, and the weights are updated to reduce it by
+back-propagation and Stochastic Gradient Descent (SGD),
+$\theta \leftarrow \theta - \eta\, \nabla_\theta \mathcal{L}$, iterating over
+mini-batches until convergence. The loss depends on the task: cross-entropy for
+\emph{classification}, and a numerical distance --- such as the mean absolute
+error --- for \emph{regression}, the family this thesis focuses on, where the
+target $y$ is itself a signal. This forward-pass/loss/back-propagation/update
+cycle is the engine behind every model in this thesis, and it requires a target
+$y$ for every input $x$: it is the pairing $(x, y)$ that makes the empirical risk
+of Equation~\ref{eq:erm} computable. 
 
 \textbf{The multi-layer perceptron}~\citep{rumelhart1986learning} stacks many perceptron units into
 layers and composing them yields a \acrshort{DNN}, but the learning
@@ -338,19 +331,16 @@ causality made them particularly well suited to the real-time, on-device
 setting. Notably, many of these temporal models ---WaveNet, Conv-TasNet and Wave-U-Net among them--- operate directly on the raw waveform, and in doing so sidestep the magnitude--phase compromise of the early spectrogram \acrshort{CNN}s of Section~\ref{sec:bg_dl_advent}, which discarded the phase altogether.
 
 
-\textbf{Attention and Transformers ---} The Transformer~\citep{vaswani2017attention} replaced recurrence with \emph{attention}, yielding a better
+\textbf{Attention and Transformers ---}~\citep{vaswani2017attention} replaced recurrence with \emph{attention}, yielding a better
 \emph{parallelisable} architecture that processes all positions of a
-sequence at once rather than one step at a time --- a decisive advantage
+sequence at once rather than one step at a time, a decisive advantage
 for training on modern \acrshort{GPU}s. Its structure is
 sketched in Figure~\ref{fig:transformer}. Both the input and the output are treated as sequences of discrete
-\emph{tokens} --- words or sub-words for text and, in the audio domain,
-short frames or the discrete codes produced by a neural codec. Each token
-is first mapped to an \emph{embedding} --- the same compact, learned
-vector representation introduced for \acrshort{CNN}s in
+\emph{tokens} (words or sub-words for text and, in the audio domain,
+short frames or the discrete codes produced by a neural codec). Each token
+is first mapped to an \emph{embedding} --- introduced for \acrshort{CNN}s in
 Section~\ref{sec:bg_dl_advent} --- so that every token becomes a point in
 a continuous space the network can operate on.
-
-\vspace{0.8cm}
 
 \begin{figure}[htbp]
     \centering
@@ -473,7 +463,6 @@ are exactly the tokens over which the autoregressive and Transformer
 models of Section~\ref{sec:bg_dl_temporal} operate, and they underpin
 language-model-style audio generation~\citep{borsos2023audiolm}.
 
-\vspace{1.8cm}
 
 \textbf{Diffusion ---} Diffusion models~\citep{ho2020denoising} define a
 fixed \emph{forward} process that gradually corrupts data into pure noise,
@@ -692,9 +681,8 @@ spherical harmonics evaluated at that direction. In the now-standard
 \end{equation}
 so that $W = s$ carries the pressure while $X, Y, Z$ carry the projection
 of the source onto the three axes; a full sound field is the superposition
-of all such contributions. (The older FuMa B-format orders the channels
-$[\,W, X, Y, Z\,]$ and scales $W$ by $1/\sqrt{2}$; the conventions differ
-only by a permutation and constant factors.)
+of all such contributions. The older FuMa B-format orders the channels
+$[\,W, X, Y, Z\,]$ and scales $W$ by $1/\sqrt{2}$.
 
 
 \emph{A-format versus B-format.} B-format can also be captured acoustically:
@@ -704,8 +692,6 @@ is thus what the microphone records, whereas B-format is the
 layout-independent representation we work with; much of today's Ambisonics
 content is instead \emph{encoded} synthetically --- panned, simulated or
 rendered --- straight into B-format.
-
-
 
 \emph{Decoding.} To play a B-format signal over $L$ loudspeakers at unit
 directions $\mathbf{n}_l = (\cos\theta_l\cos\varphi_l,\,
@@ -734,7 +720,7 @@ concentration: $\|r_E\| = 0$ indicates no directionality and
 $\|r_E\| = 1$ a spatial Dirac.
 
 
-\textbf{A parallel line: amplitude panning.}
+\textbf{Amplitude panning.}
 Developed independently of, and in parallel to, Ambisonics,
 \citet{pulkki1997virtual} introduced \acrfull{VBAP}, which reproduces a
 source by decomposing space into loudspeaker pairs or triplets and panning
@@ -795,7 +781,10 @@ In \citet{avni2010sound}, \acrshort{HRTF}s are represented in the
 measured directions, and in \citet{zotter2012all} AllRAD provides
 a physics-based \acrshort{HOA} decoder for irregular layouts by first
 decoding to an ideal virtual layout and then rendering those signals with the available speaker triplets through
-\acrshort{VBAP}.
+\acrshort{VBAP}. For the irregular $25$-loudspeaker array of
+Chapter~\ref{ch03_hearing} we instead use a fifth-order \emph{in-phase} decoder
+numerically optimised for that specific layout with IDHOA
+\citep{scaini2014decoding}.
 
 \vspace{0.8cm}
 
